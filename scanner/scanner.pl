@@ -20,8 +20,8 @@ close $pipe;
 
 #split apart data, insert to database
 my @datas = split /---/, $data;
-my $insert = $db->prepare("INSERT INTO songs (path, artist, album, title, length) VALUES (?, ?, ?, ?, ?)");
-my $update = $db->prepare("UPDATE songs SET artist=?,album=?,title=?,length=? WHERE path=?");
+my $insert = $db->prepare("INSERT INTO songs (path, artist, album, title, length, track) VALUES (?, ?, ?, ?, ?, ?)");
+my $update = $db->prepare("UPDATE songs SET artist=?,album=?,title=?,length=?,track=? WHERE path=?");
 
 $db->begin_work();
 for my $item (@datas) {
@@ -35,12 +35,12 @@ for my $item (@datas) {
 	if($count[0] == 0)
 	{
 		print "file $hash{path} added\n";
-		$insert->execute((map {$hash{$_}} qw(path artist album title length)));
+		$insert->execute((map {$hash{$_}} qw(path artist album title length track)));
 	}
 	else
 	{
 		print "file $hash{path} updated\n";
-		$update->execute((map {$hash{$_}} qw(artist album title length path)));
+		$update->execute((map {$hash{$_}} qw(artist album title length track path)));
 	}
 }
 $db->commit();
