@@ -1,0 +1,20 @@
+Acoustics Ideas:
+- Simple database
+- Simple web interface (queue, search, change volume)
+- VLC-backed player
+
+Database:
+- ID, artist, title, album, path, length
+
+Player:
+- vlc with "rc" interface
+- replaygain
+
+Web interface:
+- reorder queue
+- aggressive dedup view
+- push mode so clients can get real-time data
+- keep it fast
+
+Queue is round-robin by person, tries to satisfy the most number of votes with a
+single play.
