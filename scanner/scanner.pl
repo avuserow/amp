@@ -10,9 +10,7 @@ use Cwd qw(abs_path);
 #database creation, move later
 my $db = DBI->connect("DBI:SQLite:../acoustics.db","","",{RaiseError=>1, AutoCommit=>1});
 
-$db->do("CREATE TABLE IF NOT EXISTS songs (song_id VARCHAR, path VARCHAR, artist VARCHAR, album VARCHAR, title VARCHAR, length INTEGER)");
-$db->do("CREATE TABLE IF NOT EXISTS votes (song_id VARCHAR, who VARCHAR, player_id VARCHAR, time DATETIME)");
-$db->do("CREATE TABLE IF NOT EXISTS players (player VARCHAR, volume INTEGER, song_id VARCHAR)");
+$db->do("CREATE TABLE IF NOT EXISTS songs (song_id INTEGER PRIMARY KEY AUTOINCREMENT, path VARCHAR, artist VARCHAR, album VARCHAR, title VARCHAR, length INTEGER)");
 
 #get list of unique filenames from paths passed on command line
 my @files = uniq(map {abs_path($_)} File::Find::Rule->file()->in(@ARGV));
@@ -24,7 +22,9 @@ close $pipe;
 
 #split apart data, insert to database
 my @datas = split /---/, $data;
-my $sth = $db->prepare("INSERT INTO songs (path, artist, album, title, length) VALUES (?, ?, ?, ?, ?)");
+my $insert = $db->prepare("INSERT INTO songs (path, artist, album, title, length) VALUES (?, ?, ?, ?, ?)");
+my $update = $db->prepare("UPDATE songs SET artist=?,album=?,title=?,length=? WHERE path=?");
+
 $db->begin_work();
 for my $item (@datas) {
 	my %hash = map {(split /:/, $_, 2)} split /\n/, $item;
@@ -33,8 +33,17 @@ for my $item (@datas) {
 		print "file $hash{path} not music\n";
 		next;
 	}
-	print "file $hash{path} processed\n";
-	$sth->execute((map {$hash{$_}} qw(path artist album title length)));
+	my @count = $db->selectrow_array("SELECT count(*) FROM songs WHERE path=?", undef, $hash{path});
+	if($count[0] == 0)
+	{
+		print "file $hash{path} added\n";
+		$insert->execute((map {$hash{$_}} qw(path artist album title length)));
+	}
+	else
+	{
+		print "file $hash{path} updated\n";
+		$update->execute((map {$hash{$_}} qw(artist album title length path)));
+	}
 }
 $db->commit();
 
