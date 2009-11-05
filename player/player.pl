@@ -12,7 +12,7 @@ my $delete = $db->prepare("DELETE FROM votes WHERE song_id=?");
 my $history_insert = $db->prepare("INSERT INTO history (song_id, who, time, pretty_name) VALUES(?,?,?,?)");
 my $garbage = $db->prepare("DELETE FROM songs WHERE path=?");
 
-#while(1)
+while(1)
 {
 	$select->execute();
 	my @rows = @{$select->fetchall_arrayref({})};
@@ -43,4 +43,5 @@ my $garbage = $db->prepare("DELETE FROM songs WHERE path=?");
 	{
 		$garbage->execute($data{path});
 	}
+	sleep(1);
 }
