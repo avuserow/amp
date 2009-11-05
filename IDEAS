@@ -18,6 +18,7 @@ Web interface:
 - aggressive dedup view
 - push mode so clients can get real-time data
 - keep it fast
+- UTF8
 
 Queue is round-robin by person, tries to satisfy the most number of votes with a
 single play.

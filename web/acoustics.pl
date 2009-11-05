@@ -12,6 +12,7 @@ my $db = DBI->connect("DBI:SQLite:../acoustics.db","","",{RaiseError=>1, AutoCom
 my $select = $db->prepare("SELECT * FROM songs ORDER BY artist,album,track ASC");
 
 my $cgi = CGI->new;
+
 if($cgi->param("mode") eq "vote")
 {
     vote($db, $cgi->param("song_id"));
