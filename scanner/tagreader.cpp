@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
       cout << "bitrate:" << properties->bitrate() << endl;
       cout << "length:" << properties->length()  << endl;
     }
-
+  if(i!=argc-1)
     cout << "---" << endl;
   }
   return 0;
