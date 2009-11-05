@@ -7,6 +7,7 @@ Database:
 - songs(song_id, path, artist, album, title, length)
 - votes(song_id, who, player_id, time)
 - players(player, volume, song_id)
+- history(song_id, pretty_name, time, who)
 
 Player:
 - vlc with "rc" interface
