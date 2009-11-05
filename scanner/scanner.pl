@@ -10,8 +10,6 @@ use Cwd qw(abs_path);
 #database creation, move later
 my $db = DBI->connect("DBI:SQLite:../acoustics.db","","",{RaiseError=>1, AutoCommit=>1});
 
-$db->do("CREATE TABLE IF NOT EXISTS songs (song_id INTEGER PRIMARY KEY AUTOINCREMENT, path VARCHAR, artist VARCHAR, album VARCHAR, title VARCHAR, length INTEGER)");
-
 #get list of unique filenames from paths passed on command line
 my @files = uniq(map {abs_path($_)} File::Find::Rule->file()->in(@ARGV));
 
