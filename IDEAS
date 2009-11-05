@@ -4,7 +4,9 @@ Acoustics Ideas:
 - VLC-backed player
 
 Database:
-- ID, artist, title, album, path, length
+- songs(song_id, path, artist, album, title, length)
+- votes(song_id, who, player_id, time)
+- players(player, volume, song_id)
 
 Player:
 - vlc with "rc" interface
