@@ -31,6 +31,7 @@ print "<table>";
 
 my @order = qw(artist album track title);
 print "<tr>";
+print "<th>vote</th>";
 print "<th>$_</th>" for @order;
 print "<th>length</th>";
 print "</tr>";
