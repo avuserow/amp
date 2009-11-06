@@ -106,4 +106,23 @@ sub delete_song {
 	$sth->execute($song);
 }
 
+sub get_library {
+	my $self = shift;
+
+	my $sth = $self->db->prepare("SELECT * FROM songs ORDER BY artist,album,track ASC");
+
+	$sth->execute();
+
+	my @songs = @{$sth->fetchall_arrayref({})};
+}
+
+sub vote {
+	my $self = shift;
+	my $song_id = shift;
+
+	my $sth = $self->db->prepare("INSERT INTO votes (song_id, time) VALUES (?,?)");
+
+	$sth->execute($song_id, time);
+}
+
 1;

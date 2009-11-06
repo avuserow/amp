@@ -4,25 +4,23 @@ use strict;
 use warnings;
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
-use DBI;
 use Time::Format qw(%time);
+use lib '../lib';
+use Acoustics;
 require "vote.pl";
 
-my $db = DBI->connect("DBI:SQLite:../acoustics.db","","",{RaiseError=>1, AutoCommit=>1});
-my $select = $db->prepare("SELECT * FROM songs ORDER BY artist,album,track ASC");
+my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
 
 my $cgi = CGI->new;
 
 if($cgi->param("mode") eq "vote")
 {
-    vote($db, $cgi->param("song_id"));
+    $acoustics->vote($cgi->param("song_id"));
     print $cgi->redirect("acoustics.pl");
     exit;
 }
 
-$select->execute();
-
-my @rows = @{$select->fetchall_arrayref({})};
+my @rows = $acoustics->get_library;
 
 print $cgi->header;
 print "<html><head><title>Acoustics - Music Library</title></head><body>";
