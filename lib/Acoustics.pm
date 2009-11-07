@@ -64,8 +64,8 @@ sub get_playlist {
 
 	# Find all the voters, and add them to our ordering
 	my @voter_list = @{$self->db->selectcol_arrayref(
-		'SELECT who FROM votes GROUP BY who
-		ORDER BY MIN(time) WHERE player_id = ?',
+		'SELECT who FROM votes WHERE player_id = ?
+		GROUP BY who ORDER BY MIN(time)',
 		undef, $self->player_id,
 	)};
 
@@ -79,7 +79,7 @@ sub get_playlist {
 	my $select_votes = $self->db->prepare('
 		SELECT votes.song_id, votes.who, songs.artist, songs.album,
 		songs.title, songs.length, songs.path FROM votes INNER JOIN songs ON
-		votes.song_id == songs.song_id WHERE votes.player = ?
+		votes.song_id == songs.song_id WHERE votes.player_id = ?
 	');
 	$select_votes->execute($self->player_id);
 	while (my $row = $select_votes->fetchrow_hashref()) {
