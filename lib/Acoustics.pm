@@ -9,6 +9,8 @@ use DBI;
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'data_source' => (is => 'ro', isa => 'Str');
 
+has 'voter_order' => (is => 'rw', isa => 'ArrayRef[Str]', default => sub {[]});
+
 sub BUILD {
 	my $self = shift;
 
@@ -58,14 +60,50 @@ sub update_song {
 sub get_playlist {
 	my $self = shift;
 
-	# If we have votes, then get the corresponding songs
-	my @songs = @{$self->db->selectall_arrayref(
-		'SELECT songs.path, songs.song_id, songs.title, songs.album,
-		songs.artist, songs.length, votes.who, votes.time
-		FROM songs, votes WHERE songs.song_id == votes.song_id
-		ORDER BY votes.time DESC',
-		{Slice => {}},
+	# Find all the voters, and add them to our ordering
+	my @voter_list = @{$self->db->selectcol_arrayref(
+		'SELECT who FROM votes GROUP BY who ORDER BY MIN(time)'
 	)};
+
+	# add any voters that we don't have listed to the end of the queue
+	for my $who (@voter_list) {
+		push @{$self->voter_order}, $who unless $who ~~ $self->voter_order;
+	}
+
+	# Make a hash mapping voters to all the songs they have voted for
+	my %votes;
+	my $select_votes = $self->db->prepare('
+		SELECT votes.song_id, votes.who, songs.artist, songs.album,
+		songs.title, songs.length, songs.path FROM votes INNER JOIN songs ON
+		votes.song_id == songs.song_id
+	');
+	$select_votes->execute();
+	while (my $row = $select_votes->fetchrow_hashref()) {
+		my $who = delete $row->{who}; # remove the who, save it
+		$votes{$row->{song_id}} ||= $row;
+		push @{$votes{$row->{song_id}}{who}}, $who; # re-add the voter
+	}
+
+	# round-robin between voters, removing them from the temporary voter list
+	# when all their songs are added to the playlist
+	my @songs;
+	while (@voter_list) {
+		# pick the first voter
+		my $voter = shift @voter_list;
+
+		# find all songs matching this voter and sort by number of voters
+		my @candidates = grep {$_->{who} ~~ $voter} values %votes;
+		@candidates    = sort {$a->{who} <=> $b->{who}} @candidates;
+
+		# if this user has no more stored votes, ignore them
+		next unless @candidates;
+
+		# grab the first candidate, remove it from the hash of votes
+		push @songs, delete $votes{$candidates[0]{song_id}};
+
+		# re-add the voter to the list since they probably have more songs
+		push @voter_list, $voter;
+	}
 
 	unless (@songs) {
 		# if we don't have any votes, then get a random song
