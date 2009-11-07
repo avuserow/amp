@@ -167,12 +167,13 @@ sub get_library {
 sub vote {
 	my $self = shift;
 	my $song_id = shift;
+	my $who = shift;
 
 	my $sth = $self->db->prepare(
-		'INSERT INTO votes (song_id, time, player_id) VALUES (?, ?, ?)'
+		'INSERT INTO votes (song_id, time, player_id, who) VALUES (?, ?, ?, ?)'
 	);
 
-	$sth->execute($song_id, time, $self->player_id);
+	$sth->execute($song_id, time, $self->player_id, $who);
 }
 
 sub add_player {
