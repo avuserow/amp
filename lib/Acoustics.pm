@@ -3,7 +3,7 @@ package Acoustics;
 use strict;
 use warnings;
 
-use Mouse;
+use Moose;
 use DBI;
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
