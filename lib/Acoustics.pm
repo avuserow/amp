@@ -9,6 +9,8 @@ use DBI;
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'data_source' => (is => 'ro', isa => 'Str');
 
+has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
+
 has 'voter_order' => (is => 'rw', isa => 'ArrayRef[Str]', default => sub {[]});
 
 sub BUILD {
@@ -62,7 +64,9 @@ sub get_playlist {
 
 	# Find all the voters, and add them to our ordering
 	my @voter_list = @{$self->db->selectcol_arrayref(
-		'SELECT who FROM votes GROUP BY who ORDER BY MIN(time)'
+		'SELECT who FROM votes GROUP BY who
+		ORDER BY MIN(time) WHERE player_id = ?',
+		undef, $self->player_id,
 	)};
 
 	# add any voters that we don't have listed to the end of the queue
@@ -75,9 +79,9 @@ sub get_playlist {
 	my $select_votes = $self->db->prepare('
 		SELECT votes.song_id, votes.who, songs.artist, songs.album,
 		songs.title, songs.length, songs.path FROM votes INNER JOIN songs ON
-		votes.song_id == songs.song_id
+		votes.song_id == songs.song_id WHERE votes.player = ?
 	');
-	$select_votes->execute();
+	$select_votes->execute($self->player_id);
 	while (my $row = $select_votes->fetchrow_hashref()) {
 		my $who = delete $row->{who}; # remove the who, save it
 		$votes{$row->{song_id}} ||= $row;
@@ -107,10 +111,10 @@ sub get_playlist {
 
 	unless (@songs) {
 		# if we don't have any votes, then get a random song
-		@songs = $self->db->selectrow_hashref(
-			'SELECT song_id, title, artist, album, path, length
-			FROM songs ORDER BY RANDOM() LIMIT 1'
-		);
+		@songs = $self->db->selectrow_hashref('
+			SELECT song_id, title, artist, album, path, length
+			FROM songs ORDER BY RANDOM() LIMIT 1
+		');
 	}
 
 	return @songs;
@@ -120,8 +124,10 @@ sub delete_vote {
 	my $self = shift;
 	my $song = shift;
 
-	my $sth = $self->db->prepare('DELETE FROM votes WHERE song_id = ?');
-	$sth->execute($song);
+	my $sth = $self->db->prepare(
+		'DELETE FROM votes WHERE song_id = ? AND player_id = ?'
+	);
+	$sth->execute($song, $self->player_id);
 }
 
 sub add_playhistory {
@@ -129,10 +135,12 @@ sub add_playhistory {
 	my $data = shift;
 
 	my $sth = $self->db->prepare(
-		'INSERT INTO history(song_id, who, time, pretty_name) values(?, ?, ?, ?)'
+		'INSERT INTO history(song_id, who, time, pretty_name, player_id)
+		values(?, ?, ?, ?, ?)'
 	);
 	$sth->execute(
 		$data->{song_id}, '', time, "$data->{artist} - $data->{title}",
+		$self->player_id,
 	);
 }
 
@@ -147,7 +155,9 @@ sub delete_song {
 sub get_library {
 	my $self = shift;
 
-	my $sth = $self->db->prepare("SELECT * FROM songs ORDER BY artist,album,track ASC");
+	my $sth = $self->db->prepare(
+		'SELECT * FROM songs ORDER BY artist, album, track ASC'
+	);
 
 	$sth->execute();
 
@@ -158,9 +168,33 @@ sub vote {
 	my $self = shift;
 	my $song_id = shift;
 
-	my $sth = $self->db->prepare("INSERT INTO votes (song_id, time) VALUES (?,?)");
+	my $sth = $self->db->prepare(
+		'INSERT INTO votes (song_id, time, player_id) VALUES (?, ?, ?)'
+	);
 
-	$sth->execute($song_id, time);
+	$sth->execute($song_id, time, $self->player_id);
+}
+
+sub add_player {
+	my $self = shift;
+	my $sth  = $self->db->prepare('INSERT INTO players(player_id) values(?)');
+
+	$sth->execute($self->player_id);
+}
+
+sub remove_player {
+	my $self = shift;
+	my $sth  = $self->db->prepare('DELETE FROM players WHERE player_id = ?');
+
+	$sth->execute($self->player_id);
+
+	# XXX: Should this also remove all the votes for this player?
+}
+
+sub list_players {
+	my $self = shift;
+
+	return @{$self->db->selectcol_arrayref('SELECT player_id FROM players')};
 }
 
 1;
