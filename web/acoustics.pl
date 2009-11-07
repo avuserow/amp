@@ -7,7 +7,6 @@ use CGI::Carp qw(fatalsToBrowser);
 use Time::Format qw(%time);
 use lib '../lib';
 use Acoustics;
-require "vote.pl";
 
 my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
 
