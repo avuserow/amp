@@ -5,6 +5,7 @@ use warnings;
 
 use Moose;
 use DBI;
+use Time::Format qw(%time);
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'data_source' => (is => 'ro', isa => 'Str');
@@ -115,6 +116,11 @@ sub get_playlist {
 			SELECT song_id, title, artist, album, path, length
 			FROM songs ORDER BY RANDOM() LIMIT 1
 		');
+	}
+
+	foreach my $song (@songs)
+	{
+		$song->{length} = $time{'mm:ss', $song->{length}};
 	}
 
 	return @songs;
