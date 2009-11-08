@@ -48,6 +48,7 @@ log4perl.appender.Logfile.layout   = Log::Log4perl::Layout::PatternLayout
 log4perl.appender.Logfile.layout.ConversionPattern = %p %d %F{1} %L> %m %n
 );
 Log::Log4perl::init(\$log4perl_conf);
+my $logger = Log::Log4perl::get_logger;
 
 sub BUILD {
 	my $self = shift;
