@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use lib '../lib';
 use Acoustics;
+use Log::Log4perl ':easy';
 
 my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
 
@@ -18,11 +19,12 @@ while(1)
 	{
 		$acoustics->add_playhistory(\%data);
 		#TODO: update player table
-		print "okay! playing $data{path} now!\n";
+		INFO "Playing '$data{path}'";
 		system("vlc", "-Irc", $data{path}, "vlc://quit");
 	}
 	else
 	{
+		ERROR "Song '$data{path}' is invalid, deleting";
 		$acoustics->delete_song({song_id => $data{song_id}});
 	}
 	sleep(1);

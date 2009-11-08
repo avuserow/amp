@@ -6,6 +6,7 @@ use warnings;
 use Moose;
 use DBI;
 use SQL::Abstract::Limit;
+use Log::Log4perl;
 use Time::Format qw(%time);
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
@@ -15,6 +16,38 @@ has 'abstract' => (is => 'ro', isa => 'SQL::Abstract');
 has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
 
 has 'voter_order' => (is => 'rw', isa => 'ArrayRef[Str]', default => sub {[]});
+
+# Logger configuration:
+# - Print out all INFO and above messages to the screen
+# - Write out all WARN and above messages to a logfile
+my $log4perl_conf = q(
+log4perl.logger = INFO, Screen, Logfile
+log4perl.logger.Acoustics.Web = INFO, Logfile
+
+# INFO messages
+log4perl.filter.MatchInfo = Log::Log4perl::Filter::LevelRange
+log4perl.filter.MatchInfo.LevelMin      = INFO
+log4perl.filter.MatchInfo.AcceptOnMatch = true
+
+# Error messages
+log4perl.filter.MatchError = Log::Log4perl::Filter::LevelRange
+log4perl.filter.MatchError.LevelMin      = ERROR
+log4perl.filter.MatchError.AcceptOnMatch = true
+
+# INFO to Screen
+log4perl.appender.Screen        = Log::Log4perl::Appender::ScreenColoredLevels
+log4perl.appender.Screen.Filter = MatchInfo
+log4perl.appender.Screen.layout = Log::Log4perl::Layout::PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern = %p %d %F{1} %L> %m %n
+
+# ERROR to Logfile
+log4perl.appender.Logfile          = Log::Log4perl::Appender::File
+log4perl.appender.Logfile.Filter   = MatchError
+log4perl.appender.Logfile.filename = ../acoustics.log
+log4perl.appender.Logfile.layout   = Log::Log4perl::Layout::PatternLayout
+log4perl.appender.Logfile.layout.ConversionPattern = %p %d %F{1} %L> %m %n
+);
+Log::Log4perl::init(\$log4perl_conf);
 
 sub BUILD {
 	my $self = shift;
@@ -130,7 +163,9 @@ sub delete_vote {
 	my $self  = shift;
 	my $where = shift;
 
-	die 'you must explicitly pass a hashref to delete all values' unless $where;
+	unless ($where) {
+		$logger->logdie('you must pass an empty hashref to delete all votes');
+	}
 
 	$where->{player_id} ||= $self->player_id;
 
@@ -157,7 +192,9 @@ sub delete_song {
 	my $self  = shift;
 	my $where = shift;
 
-	die 'you must explicitly pass a hashref to delete all values' unless $where;
+	unless ($where) {
+		$logger->logdie('you must pass an empty hashref to delete all songs');
+	}
 
 	my($sql, @values) = $self->abstract->delete('songs', $where);
 	my $sth = $self->db->prepare($sql);

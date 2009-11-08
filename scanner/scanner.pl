@@ -6,6 +6,7 @@ use lib '../lib';
 use Acoustics;
 use File::Find::Rule ();
 use List::MoreUtils qw(uniq);
+use Log::Log4perl ':easy';
 use Cwd qw(abs_path);
 
 my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
@@ -27,18 +28,18 @@ for my $item (@datas) {
 	delete $hash{bitrate}; # no bitrate field in the database yet
 	unless($hash{length})
 	{
-		print "file $hash{path} not music\n";
+		WARN "file $hash{path} not music";
 		next;
 	}
 	if($acoustics->check_if_song_exists($hash{path}))
 	{
-		print "file $hash{path} updated\n";
+		INFO "file $hash{path} updated";
 		my $path = delete $hash{path};
 		$acoustics->update_song(\%hash, {path => $path});
 	}
 	else
 	{
-		print "file $hash{path} added\n";
+		INFO "file $hash{path} added";
 		$acoustics->add_song(\%hash);
 	}
 }
