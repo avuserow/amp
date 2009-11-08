@@ -1,3 +1,4 @@
+[%# USE date %]
 <table>
 [% FOREACH entry IN playlist %]
     <tr>

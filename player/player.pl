@@ -12,7 +12,7 @@ while(1)
 	my @songs = $acoustics->get_playlist;
 	my %data  = %{$songs[0]};
 
-	$acoustics->delete_vote($data{song_id});
+	$acoustics->delete_vote({song_id => $data{song_id}});
 
 	if(-e $data{path})
 	{
@@ -23,7 +23,7 @@ while(1)
 	}
 	else
 	{
-		$acoustics->delete_song($data{song_id});
+		$acoustics->delete_song({song_id => $data{song_id}});
 	}
 	sleep(1);
 }

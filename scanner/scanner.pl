@@ -24,6 +24,7 @@ my @datas = split /---/, $data;
 $acoustics->begin_work;
 for my $item (@datas) {
 	my %hash = map {(split /:/, $_, 2)} split /\n/, $item;
+	delete $hash{bitrate}; # no bitrate field in the database yet
 	unless($hash{length})
 	{
 		print "file $hash{path} not music\n";
@@ -32,7 +33,8 @@ for my $item (@datas) {
 	if($acoustics->check_if_song_exists($hash{path}))
 	{
 		print "file $hash{path} updated\n";
-		$acoustics->update_song(\%hash);
+		my $path = delete $hash{path};
+		$acoustics->update_song(\%hash, {path => $path});
 	}
 	else
 	{

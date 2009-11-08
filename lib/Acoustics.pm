@@ -5,10 +5,12 @@ use warnings;
 
 use Moose;
 use DBI;
+use SQL::Abstract::Limit;
 use Time::Format qw(%time);
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'data_source' => (is => 'ro', isa => 'Str');
+has 'abstract' => (is => 'ro', isa => 'SQL::Abstract');
 
 has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
 
@@ -22,6 +24,9 @@ sub BUILD {
 		'', '', # user, pass
 		{RaiseError => 1, AutoCommit => 1},
 	);
+	$self->{abstract} = SQL::Abstract::Limit->new({
+		limit_dialect => $self->{db},
+	});
 }
 
 sub check_if_song_exists {
@@ -40,24 +45,19 @@ sub add_song {
 	my $self = shift;
 	my $data = shift;
 
-	my $sth = $self->db->prepare('
-		INSERT INTO songs(artist, album, title, length, track, path)
-		VALUES(?, ?, ?, ?, ?, ?)
-	');
-
-	$sth->execute((map {$data->{$_}} qw(artist album title length track path)));
+	my($sql, @values) = $self->abstract->insert('songs', $data);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
 }
 
 sub update_song {
-	my $self = shift;
-	my $data = shift;
+	my $self  = shift;
+	my $data  = shift;
+	my $where = shift;
 
-	my $sth = $self->db->prepare('
-		UPDATE songs SET artist=?, album=?, title=?, length=?, track=?
-		WHERE path = ?
-	');
-
-	$sth->execute((map {$data->{$_}} qw(artist album title length track path)));
+	my($sql, @values) = $self->abstract->update('songs', $data, $where);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
 }
 
 sub get_playlist {
@@ -127,13 +127,16 @@ sub get_playlist {
 }
 
 sub delete_vote {
-	my $self = shift;
-	my $song = shift;
+	my $self  = shift;
+	my $where = shift;
 
-	my $sth = $self->db->prepare(
-		'DELETE FROM votes WHERE song_id = ? AND player_id = ?'
-	);
-	$sth->execute($song, $self->player_id);
+	die 'you must explicitly pass a hashref to delete all values' unless $where;
+
+	$where->{player_id} ||= $self->player_id;
+
+	my($sql, @values) = $self->abstract->delete('votes', $where);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
 }
 
 sub add_playhistory {
@@ -151,11 +154,14 @@ sub add_playhistory {
 }
 
 sub delete_song {
-	my $self = shift;
-	my $song = shift;
+	my $self  = shift;
+	my $where = shift;
 
-	my $sth = $self->db->prepare('DELETE FROM songs WHERE song_id = ?');
-	$sth->execute($song);
+	die 'you must explicitly pass a hashref to delete all values' unless $where;
+
+	my($sql, @values) = $self->abstract->delete('songs', $where);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
 }
 
 sub get_library {
@@ -189,6 +195,17 @@ sub add_player {
 	$sth->execute($self->player_id);
 }
 
+sub update_player {
+	my $self  = shift;
+	my $data  = shift;
+
+	my($sql, @values) = $self->abstract->update(
+		'players', $data, {player_id => $self->player_id},
+	);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
+}
+
 sub remove_player {
 	my $self = shift;
 	my $sth  = $self->db->prepare('DELETE FROM players WHERE player_id = ?');
@@ -198,10 +215,15 @@ sub remove_player {
 	# XXX: Should this also remove all the votes for this player?
 }
 
-sub list_players {
-	my $self = shift;
+sub get_player {
+	my $self  = shift;
+	my $where = shift;
 
-	return @{$self->db->selectcol_arrayref('SELECT player_id FROM players')};
+	my($sql, @values) = $self->abstract->select('players', '*', $where);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
+
+	return @{$sth->fetchall_arrayref({})};
 }
 
 1;
