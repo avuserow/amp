@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
+use CGI::Session;
 use Time::Format qw(%time);
 use lib '../lib';
 use Acoustics;
@@ -11,6 +12,7 @@ use Acoustics;
 my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
 
 my $cgi = CGI->new;
+my $session = CGI::Session->new;
 
 if($cgi->param("mode") eq "vote")
 {
@@ -34,8 +36,9 @@ else
     my @rows = $acoustics->get_library;
 
     print $cgi->header;
-    print "<html><head><title>Acoustics - Music Library</title></head><body>";
 
+    print "<html><head><title>Acoustics - Music Library</title></head><body>";
+    print $session->param("user");
     print "<table>";
 
     my @order = qw(artist album track title);
