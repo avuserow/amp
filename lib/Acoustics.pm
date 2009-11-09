@@ -220,18 +220,6 @@ sub delete_song {
 	$sth->execute(@values);
 }
 
-sub get_library {
-	my $self = shift;
-
-	my $sth = $self->db->prepare(
-		'SELECT * FROM songs ORDER BY artist, album, track ASC'
-	);
-
-	$sth->execute();
-
-	my @songs = @{$sth->fetchall_arrayref({})};
-}
-
 sub vote {
 	my $self = shift;
 	my $song_id = shift;

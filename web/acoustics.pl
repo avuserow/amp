@@ -6,13 +6,17 @@ use CGI;
 use CGI::Carp qw(fatalsToBrowser);
 use CGI::Session;
 use Time::Format qw(%time);
+use Template;
 use lib '../lib';
 use Acoustics;
 
 my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
-
 my $cgi = CGI->new;
 my $session = CGI::Session->new;
+
+my $template = Template->new;
+my $file = "main.tpl";
+my $vars = {mode => $cgi->param("mode").".tpl"};
 
 if($cgi->param("mode") eq "vote")
 {
@@ -23,41 +27,15 @@ if($cgi->param("mode") eq "vote")
 elsif($cgi->param("mode") eq "auth")
 {
     print $cgi->header;
-    print "<html><body>";
-    print qq{<form method="POST" action="authenticate.pl">};
-    print qq{<input type="text" name="user">};
-    print qq{<input type="password" name="pass">};
-    print qq{<input type="submit">};
-    print "</form>";
-    print "</body></html>";
+    $template->process($file, $vars);
 }
 else
 {
-    my @rows = $acoustics->get_library;
+    my @rows = $acoustics->get_song({}, [qw(artist album track)]);
+    $vars->{playlist} = \@rows;
+    $vars->{mode} = "playlist.tpl";
 
     print $cgi->header;
+    $template->process($file, $vars);
 
-    print "<html><head><title>Acoustics - Music Library</title></head><body>";
-    print $session->param("user");
-    print "<table>";
-
-    my @order = qw(artist album track title);
-    print "<tr>";
-    print "<th>vote</th>";
-    print "<th>$_</th>" for @order;
-    print "<th>length</th>";
-    print "</tr>";
-
-    foreach my $row (@rows)
-    {
-        print "<tr>";
-        print qq{<td><a href="acoustics.pl?mode=vote;song_id=$row->{song_id}">vote</a></td>};
-        print map {"<td>$row->{$_}</td>"} @order;
-        print "<td>$time{'mm:ss', $row->{length}}</td>";
-        print "</tr>";
-    }
-
-    print "</table>";
-
-    print "</body></html>";
 }
