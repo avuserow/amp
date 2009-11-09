@@ -94,7 +94,23 @@ sub update_song {
 	$sth->execute(@values);
 }
 
-sub get_playlist {
+sub get_song {
+	my $self   = shift;
+	my $where  = shift;
+	my $order  = shift;
+	my $limit  = shift;
+	my $offset = shift;
+
+	my($sql, @values) = $self->abstract->select(
+		'songs', '*', $where, $order, $limit, $offset,
+	);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
+
+	return @{$sth->fetchall_arrayref({})};
+}
+
+sub get_songs_by_votes {
 	my $self = shift;
 
 	# Find all the voters, and add them to our ordering
@@ -110,25 +126,35 @@ sub get_playlist {
 	}
 
 	# Make a hash mapping voters to all the songs they have voted for
-	my %votes;
 	my $select_votes = $self->db->prepare('
 		SELECT votes.song_id, votes.who, songs.artist, songs.album,
 		songs.title, songs.length, songs.path FROM votes INNER JOIN songs ON
 		votes.song_id == songs.song_id WHERE votes.player_id = ?
 	');
 	$select_votes->execute($self->player_id);
+
+	my %votes;
 	while (my $row = $select_votes->fetchrow_hashref()) {
 		my $who = delete $row->{who}; # remove the who, save it
 		$votes{$row->{song_id}} ||= $row;
 		push @{$votes{$row->{song_id}}{who}}, $who; # re-add the voter
 	}
 
+	return %votes;
+}
+
+sub get_playlist {
+	my $self = shift;
+
+	my %votes = $self->get_songs_by_votes;
+	my @voter_order = @{$self->voter_order};
+
 	# round-robin between voters, removing them from the temporary voter list
 	# when all their songs are added to the playlist
 	my @songs;
-	while (@voter_list) {
+	while (@voter_order) {
 		# pick the first voter
-		my $voter = shift @voter_list;
+		my $voter = shift @voter_order;
 
 		# find all songs matching this voter and sort by number of voters
 		my @candidates = grep {$_->{who} ~~ $voter} values %votes;
@@ -141,15 +167,7 @@ sub get_playlist {
 		push @songs, delete $votes{$candidates[0]{song_id}};
 
 		# re-add the voter to the list since they probably have more songs
-		push @voter_list, $voter;
-	}
-
-	unless (@songs) {
-		# if we don't have any votes, then get a random song
-		@songs = $self->db->selectrow_hashref('
-			SELECT song_id, title, artist, album, path, length
-			FROM songs ORDER BY RANDOM() LIMIT 1
-		');
+		push @voter_order, $voter;
 	}
 
 	foreach my $song (@songs)
