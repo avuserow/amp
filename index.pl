@@ -7,24 +7,27 @@ use CGI::Carp qw(fatalsToBrowser);
 use CGI::Session;
 use Time::Format qw(%time);
 use Template;
-use lib '../lib';
+use lib 'lib';
 use Acoustics;
 
-my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
+my $acoustics = Acoustics->new({data_source => 'acoustics.db'});
 my $cgi = CGI->new;
 my $session = CGI::Session->new;
 
-my $template = Template->new;
+my $template = Template->new({INCLUDE_PATH => 'www-data'});
 my $file = "main.tpl";
-my $vars = {mode => $cgi->param("mode").".tpl"};
+my $mode = $cgi->param('mode') || 'library';
 
-if($cgi->param("mode") eq "vote")
+# FIXME: don't literally use $mode
+my $vars = {mode => "$mode.tpl"};
+
+if($mode eq "vote")
 {
     $acoustics->vote($cgi->param("song_id"));
     print $cgi->redirect("acoustics.pl");
     exit;
 }
-elsif($cgi->param("mode") eq "auth")
+elsif($mode eq "auth")
 {
     print $cgi->header;
     $template->process($file, $vars);

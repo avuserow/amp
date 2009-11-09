@@ -43,7 +43,7 @@ log4perl.appender.Screen.layout.ConversionPattern = %p %d %F{1} %L> %m %n
 # ERROR to Logfile
 log4perl.appender.Logfile          = Log::Log4perl::Appender::File
 log4perl.appender.Logfile.Filter   = MatchError
-log4perl.appender.Logfile.filename = ../acoustics.log
+log4perl.appender.Logfile.filename = /tmp/acoustics.log
 log4perl.appender.Logfile.layout   = Log::Log4perl::Layout::PatternLayout
 log4perl.appender.Logfile.layout.ConversionPattern = %p %d %F{1} %L> %m %n
 );
