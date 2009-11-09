@@ -1,10 +1,10 @@
 <html>
 	<head>
 		<title></title>
+		<link type="text/css" href="acoustics.css">
 	</head>
 	<body>
-		<div name="left">
-			[% INCLUDE left.tpl %]
+		<div name="top">
 		</div>
 		<div name="center">
 			[% INCLUDE $mode %]
