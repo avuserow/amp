@@ -1,0 +1,21 @@
+body
+{
+    min-width: 500px;
+}
+#container
+{
+    padding-right: 200px;
+}
+#container .column
+{
+    float: left;
+}
+#center 
+{
+    width: 100%;
+}
+#right
+{
+    width: 200px;
+    margin-right: -200px;
+}

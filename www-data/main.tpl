@@ -1,16 +1,18 @@
 <html>
 	<head>
 		<title></title>
-		<link type="text/css" href="acoustics.css">
+		<link type="text/css" rel="stylesheet" href="www-data/acoustics.css">
 	</head>
 	<body>
-		<div name="top">
+	<div id="header">
 		</div>
-		<div name="center">
+	<div id="container">
+		<div id="center" class="column">
 			[% INCLUDE $mode %]
 		</div>
-		<div name="right">
-			[% INCLUDE right.tpl %]
+		<div id="right" class="column">
+			[% INCLUDE auth.tpl %]
 		</div>
+	</div>
 	</body>
 </html>
