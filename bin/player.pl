@@ -2,11 +2,13 @@
 
 use strict;
 use warnings;
-use lib '../lib';
+use lib ($0 =~ m{(.+)/})[0] . '/../lib';
 use Acoustics;
 use Log::Log4perl ':easy';
 
-my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
+my $acoustics = Acoustics->new({
+	data_source => ($0 =~ m{(.+)/})[0] . '/../acoustics.db',
+});
 
 while(1)
 {

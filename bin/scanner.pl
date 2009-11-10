@@ -2,20 +2,22 @@
 
 use strict;
 use warnings;
-use lib '../lib';
+use lib ($0 =~ m{(.+)/})[0] . '/../lib';
 use Acoustics;
 use File::Find::Rule ();
 use List::MoreUtils qw(uniq);
 use Log::Log4perl ':easy';
 use Cwd qw(abs_path);
 
-my $acoustics = Acoustics->new({data_source => '../acoustics.db'});
+my $acoustics = Acoustics->new({
+	data_source => ($0 =~ m{(.+)/})[0] . '/../acoustics.db',
+});
 
 #get list of unique filenames from paths passed on command line
 my @files = uniq(map {abs_path($_)} File::Find::Rule->file()->in(@ARGV));
 
 #pass filenames through tagreader
-open my $pipe, '-|', './tagreader', @files or die "couldn't open tagreader: $!";
+open my $pipe, '-|', ($0 =~ m{(.+)/})[0] . '/tagreader', @files or die "couldn't open tagreader: $!";
 my $data = join '', <$pipe>;
 close $pipe;
 
