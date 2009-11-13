@@ -45,14 +45,14 @@ sub auth
     my $cgi = shift;
     my $session = shift;
     
-    return (mode => "auth.tpl");
+    return {mode => "auth.tpl"};
 }
 sub library
 {
     my $acoustics = shift;
     my $cgi = shift;
     my $session = shift;
-    my $vars = ();
+    my $vars = {};
 
     my @rows = $acoustics->get_song({}, [qw(artist album track)]);
     $vars->{playlist} = \@rows;
