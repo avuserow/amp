@@ -14,31 +14,49 @@ my $acoustics = Acoustics->new({data_source => 'acoustics.db'});
 my $cgi = CGI->new;
 my $session = CGI::Session->new;
 
+my %mode_table = (
+    vote => \&vote,
+    auth => \&auth,
+    library => \&library
+);
+
 my $template = Template->new({INCLUDE_PATH => 'www-data'});
 my $file = "main.tpl";
 my $mode = $cgi->param('mode') || 'library';
 
-# FIXME: don't literally use $mode
-my $vars = {mode => "$mode.tpl"};
+my $vars = $mode_table{$mode}->($acoustics, $cgi, $session);
 
-if($mode eq "vote")
+print $cgi->header;
+$template->process($file, $vars);
+
+sub vote
 {
+    my $acoustics = shift;
+    my $cgi = shift;
+    my $session = shift;
+
     $acoustics->vote($cgi->param("song_id"));
-    print $cgi->redirect("acoustics.pl");
+    print $cgi->redirect("index.pl");
     exit;
 }
-elsif($mode eq "auth")
+sub auth
 {
-    print $cgi->header;
-    $template->process($file, $vars);
+    my $acoustics = shift;
+    my $cgi = shift;
+    my $session = shift;
+    
+    return (mode => "auth.tpl");
 }
-else
+sub library
 {
+    my $acoustics = shift;
+    my $cgi = shift;
+    my $session = shift;
+    my $vars = ();
+
     my @rows = $acoustics->get_song({}, [qw(artist album track)]);
     $vars->{playlist} = \@rows;
     $vars->{mode} = "playlist.tpl";
-
-    print $cgi->header;
-    $template->process($file, $vars);
-
+    
+    return $vars;
 }

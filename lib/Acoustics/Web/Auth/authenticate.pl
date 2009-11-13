@@ -7,9 +7,12 @@ use CGI::Carp qw(fatalsToBrowser);
 use CGI::Session;
 use Authen::Krb5::Simple;
 
+krb5_auth(CGI->new, CGI::Session->new);
 
-my $cgi = CGI->new;
-my $session = new CGI::Session();
+sub krb5_auth {
+
+my $cgi = shift;
+my $session = shift;
 
 my $user = $cgi->param("user");
 my $pass = $cgi->param("pass");
@@ -35,4 +38,5 @@ else
     $session->param('user', $user);
     print $session->header;
     print "authorization successful";
+}
 }
