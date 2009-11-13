@@ -10,7 +10,7 @@ use Log::Log4perl ':easy';
 use Cwd qw(abs_path);
 
 my $acoustics = Acoustics->new({
-	data_source => ($0 =~ m{(.+)/})[0] . '/../acoustics.db',
+	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
 });
 
 #get list of unique filenames from paths passed on command line

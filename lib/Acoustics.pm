@@ -8,10 +8,12 @@ use DBI;
 use SQL::Abstract::Limit;
 use Log::Log4perl;
 use Time::Format qw(%time);
+use Config::Tiny;
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
-has 'data_source' => (is => 'ro', isa => 'Str');
+has 'config' => (is => 'ro', isa => 'Config::Tiny');
 has 'abstract' => (is => 'ro', isa => 'SQL::Abstract');
+has 'config_file' => (is => 'ro', isa => 'Str');
 
 has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
 
@@ -53,13 +55,16 @@ my $logger = Log::Log4perl::get_logger;
 sub BUILD {
 	my $self = shift;
 
+	$self->{config} = Config::Tiny->read($self->config_file)
+		or die "couldn't read config: " . $self->config_file . " ($!)";
+
 	$self->{db} = DBI->connect(
-		'dbi:SQLite:' . $self->data_source,
-		'', '', # user, pass
+		$self->config->{database}{data_source},
+		$self->config->{database}{user}, $self->config->{database}{pass},
 		{RaiseError => 1, AutoCommit => 1},
 	);
 	$self->{abstract} = SQL::Abstract::Limit->new({
-		limit_dialect => $self->{db},
+		limit_dialect => $self->db,
 	});
 }
 

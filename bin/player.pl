@@ -8,7 +8,7 @@ use Log::Log4perl ':easy';
 use IPC::Open2 'open2';
 
 my $acoustics = Acoustics->new({
-	data_source => ($0 =~ m{(.+)/})[0] . '/../acoustics.db',
+	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
 });
 
 while(1)

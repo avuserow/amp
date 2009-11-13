@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-use strict; 
+use strict;
 use warnings;
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
@@ -10,7 +10,7 @@ use Template;
 use lib 'lib';
 use Acoustics;
 
-my $acoustics = Acoustics->new({data_source => 'acoustics.db'});
+my $acoustics = Acoustics->new({config_file => 'lib/acoustics.ini'});
 my $cgi = CGI->new;
 my $session = CGI::Session->new;
 
