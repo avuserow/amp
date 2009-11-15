@@ -11,8 +11,18 @@ my $acoustics = Acoustics->new({
 	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
 });
 
+$acoustics->remove_player;
+$acoustics->add_player({local_id => $$});
+
+$SIG{INT} = sub {
+	WARN "Exiting player $$";
+	$acoustics->remove_player;
+	exit;
+};
+
 while(1)
 {
+
 	my @songs = $acoustics->get_playlist;
 	@songs    = $acoustics->get_song({}, 'RANDOM()', 1) unless @songs;
 	my %data  = %{$songs[0]};

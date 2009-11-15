@@ -3,6 +3,7 @@ package Acoustics;
 use strict;
 use warnings;
 
+use Acoustics::RPC;
 use Moose;
 use DBI;
 use SQL::Abstract::Limit;
@@ -56,7 +57,7 @@ sub BUILD {
 	my $self = shift;
 
 	$self->{config} = Config::Tiny->read($self->config_file)
-		or die "couldn't read config: " . $self->config_file . " ($!)";
+		or die "couldn't read config: \"" . $self->config_file . '"';
 
 	$self->{db} = DBI->connect(
 		$self->config->{database}{data_source},
@@ -66,6 +67,11 @@ sub BUILD {
 	$self->{abstract} = SQL::Abstract::Limit->new({
 		limit_dialect => $self->db,
 	});
+}
+
+sub rpc {
+	my $self = shift;
+	Acoustics::RPC->new({config => $self->config});
 }
 
 sub check_if_song_exists {
@@ -239,14 +245,19 @@ sub vote {
 
 sub add_player {
 	my $self = shift;
-	my $sth  = $self->db->prepare('INSERT INTO players(player_id) values(?)');
+	my $data = shift;
+	$data  ||= {};
+	$data->{player_id} = $self->player_id;
 
-	$sth->execute($self->player_id);
+	my($sql, @values) = $self->abstract->insert('players', $data);
+	my $sth  = $self->db->prepare($sql);
+
+	$sth->execute(@values);
 }
 
 sub update_player {
-	my $self  = shift;
-	my $data  = shift;
+	my $self = shift;
+	my $data = shift;
 
 	my($sql, @values) = $self->abstract->update(
 		'players', $data, {player_id => $self->player_id},
