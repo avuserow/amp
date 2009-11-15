@@ -70,11 +70,6 @@ sub BUILD {
 	});
 }
 
-sub rpc {
-	my $self = shift;
-	Acoustics::RPC->new({config => $self->config});
-}
-
 sub check_if_song_exists {
 	my $self = shift;
 	my $path = shift;
@@ -295,6 +290,16 @@ sub player {
 	load $player_class;
 
 	$player_class->$act($self);
+}
+
+sub rpc {
+	my $self = shift;
+	my $act  = shift;
+
+	my $rpc_class = $self->config->{rpc}{module};
+	load $rpc_class;
+
+	$rpc_class->$act($self);
 }
 
 1;

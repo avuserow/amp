@@ -16,7 +16,6 @@ $acoustics->add_player({local_id => $$});
 $SIG{TERM} = $SIG{INT} = sub {
 	WARN "Exiting player $$";
 	$acoustics->remove_player;
-	{local $SIG{INT} = 'IGNORE'; kill INT => -$$;}
 	exit;
 };
 $SIG{HUP} = 'IGNORE';
@@ -49,6 +48,13 @@ while(1)
 		local $SIG{HUP} = sub {
 			WARN "skipping song: $data{path}!";
 			print $child_in "quit\n";
+		};
+
+		local $SIG{TERM} = $SIG{INT} = sub {
+			WARN "Exiting player $$";
+			print $child_in "quit\n";
+			$acoustics->remove_player;
+			exit;
 		};
 
 		# loop until mplayer ends
