@@ -4,32 +4,34 @@ use strict;
 use warnings;
 
 use Log::Log4perl ':easy';
-Log::Log4perl->easy_init($INFO);
 
 sub skip {
+	my $class     = shift;
 	my $acoustics = shift;
-	my($player)   = $acoustics->get_player({player_id => $acoustics->player_id});
-
-	my $success = kill HUP => $player->{local_id};
-
-	if ($success) {
-		INFO "Skipped song $player->{song_id}";
-	} else {
-		ERROR "Skipping song failed: $!";
-	}
+	$class->send_signal($acoustics, 'HUP');
 }
 
 sub stop {
+	my $class     = shift;
 	my $acoustics = shift;
+	$class->send_signal($acoustics, 'INT');
+}
+
+sub send_signal {
+	my $class     = shift;
+	my $acoustics = shift;
+	my $signal    = shift;
 	my($player)   = $acoustics->get_player({player_id => $acoustics->player_id});
 
-	my $success = kill INT => $player->{local_id};
+	my $success   = kill $signal => $player->{local_id};
 
 	if ($success) {
-		INFO "Stopping player $player->{local_id}";
+		INFO "Sent $signal to $player->{local_id}";
 	} else {
-		ERROR "Stopping player failed: $!";
+		ERROR "Sending $signal to $player->{local_id} failed: $!";
 	}
+
+	return $success;
 }
 
 1;

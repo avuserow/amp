@@ -5,6 +5,7 @@ use warnings;
 
 use Acoustics::RPC;
 use Moose;
+use Module::Load 'load';
 use DBI;
 use SQL::Abstract::Limit;
 use Log::Log4perl;
@@ -284,6 +285,16 @@ sub get_player {
 	$sth->execute(@values);
 
 	return @{$sth->fetchall_arrayref({})};
+}
+
+sub player {
+	my $self = shift;
+	my $act  = shift;
+
+	my $player_class = $self->config->{player}{module};
+	load $player_class;
+
+	$player_class->$act($self);
 }
 
 1;

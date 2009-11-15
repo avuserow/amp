@@ -11,14 +11,16 @@ my $acoustics = Acoustics->new({
 	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
 });
 
-$acoustics->remove_player;
 $acoustics->add_player({local_id => $$});
 
-$SIG{INT} = sub {
+$SIG{TERM} = $SIG{INT} = sub {
 	WARN "Exiting player $$";
 	$acoustics->remove_player;
+	{local $SIG{INT} = 'IGNORE'; kill INT => -$$;}
 	exit;
 };
+$SIG{HUP} = 'IGNORE';
+$SIG{CHLD} = 'IGNORE';
 
 while(1)
 {
@@ -34,6 +36,7 @@ while(1)
 		$acoustics->add_playhistory(\%data);
 		$acoustics->update_player({song_id => $data{song_id}});
 		INFO "Playing '$data{path}'";
+		INFO "$data{title} by $data{artist} from $data{album}";
 
 		# General plan: open both input and output of the mplayer process
 		# then continually read from input so we know it's still running
@@ -43,8 +46,8 @@ while(1)
 			or LOGDIE "couldn't open mplayer: $!";
 
 		# when we get SIGHUP, ask mplayer to quit
-		$SIG{HUP} = sub {
-			WARN "skipping song: $data{path}!\n";
+		local $SIG{HUP} = sub {
+			WARN "skipping song: $data{path}!";
 			print $child_in "quit\n";
 		};
 
@@ -52,9 +55,6 @@ while(1)
 		while (<$child_out>) {}
 
 		close $child_out; close $child_in;
-
-		# restore SIGHUP to reasonable stuff
-		$SIG{HUP} = 'IGNORE';
 	}
 	else
 	{

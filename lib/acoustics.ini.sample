@@ -2,3 +2,6 @@
 data_source=dbi:SQLite:acoustics.db
 user=
 pass=
+
+[player]
+module=Acoustics::Player::MPlayer
