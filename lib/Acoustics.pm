@@ -3,7 +3,6 @@ package Acoustics;
 use strict;
 use warnings;
 
-use Acoustics::RPC;
 use Moose;
 use Module::Load 'load';
 use DBI;
