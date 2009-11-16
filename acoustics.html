@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<title>Acoustics</title>
+		<link title="Acoustics" rel="stylesheet" href="www-data/acoustics.css" />
+		<script src="closure-library-read-only/closure/goog/base.js"></script>
+		<script src="acoustics.js"></script>
+		<style type="text/css">
+			.goog-tablesorter-header {cursor: pointer}
+			th.goog-tablesorter-sorted {background-color: #ddf;}
+			th.goog-tablesorter-sorted-reverse {background-color: #dfd;}
+		</style>
+	</head>
+	<body>
+		<h1>Acoustics</h1>
+		<div id="container">
+			<div id="center" class="column">
+				10 Random Songs
+				(<a href="javascript:loadRandomSongs()">reload</a>)
+				<table id="songresults"></table>
+			</div>
+			<div id="right" class="column">
+				<span id="nowplaying"></span>
+				<ul>
+					<li><a href="javascript:sendPlayerCommand('start')">start</a></li>
+					<li><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
+					<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
+				</ul>
+			</div>
+		</div>
+		<script>
+			nowPlayingRequest();
+			loadRandomSongs();
+		</script>
+	</body>
+</html>
