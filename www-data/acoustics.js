@@ -52,3 +52,11 @@ function fillResultTable(json) {
 	component.decorate(goog.dom.$('songresults'));
 	component.setDefaultSortFunction(goog.ui.TableSorter.alphaSort);
 }
+
+function voteSong(song_id) {
+	goog.net.XhrIo.send(
+		'/acoustics/json.pl?mode=vote;song_id=' + song_id,
+		// XXX: make this more useful
+		function () {alert('vote succeeded');}
+	);
+}
