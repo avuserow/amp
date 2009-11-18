@@ -16,7 +16,7 @@ my $q = CGI::Simple->new;
 my $mode = $q->param('mode');
 my $data;
 if ($mode eq 'random') {
-	$data = [$acoustics->get_song({}, 'RANDOM()', 10)];
+	$data = [$acoustics->get_song({}, 'RAND()', 10)];
 } elsif ($mode eq 'vote') {
 	my $song_id = $q->param('song_id');
 	if ($song_id) {

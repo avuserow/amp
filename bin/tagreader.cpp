@@ -42,9 +42,9 @@ int main(int argc, char *argv[])
 
       TagLib::Tag *tag = f.tag();
 
-      cout << "title:" << tag->title()   << endl;
-      cout << "artist:" << tag->artist() << endl;
-      cout << "album:" << tag->album()   << endl;
+      cout << "title:" << (tag->title()).toCString(true)   << endl;
+      cout << "artist:" << (tag->artist()).toCString(true) << endl;
+      cout << "album:" << (tag->album()).toCString(true)   << endl;
       cout << "track:" << tag->track()   << endl;
     }
 

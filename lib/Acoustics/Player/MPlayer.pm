@@ -81,7 +81,7 @@ sub start_player {
 sub player_loop {
 	my $acoustics = shift;
 	my @songs = $acoustics->get_playlist;
-	@songs    = $acoustics->get_song({}, 'RANDOM()', 1) unless @songs;
+	@songs    = $acoustics->get_song({}, 'RAND()', 1) unless @songs;
 	my %data  = %{$songs[0]};
 
 	$acoustics->delete_vote({song_id => $data{song_id}});
