@@ -20,9 +20,14 @@ if ($mode eq 'random') {
 } elsif ($mode eq 'vote') {
 	my $song_id = $q->param('song_id');
 	if ($song_id) {
-		$acoustics->vote($song_id, 'test');
+		$acoustics->vote($song_id, $ENV{REMOTE_USER} || "test");
 	}
-} elsif ($mode) {
+}
+elsif($mode eq 'playlist')
+{
+	$data = [$acoustics->get_playlist()];
+}
+elsif ($mode) {
 	$acoustics->rpc($mode);
 	sleep 0.25;
 

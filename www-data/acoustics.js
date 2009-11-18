@@ -16,6 +16,25 @@ function nowPlayingRequest () {
 	);
 }
 
+function getPlaylistRequest() 
+{
+	goog.net.XhrIo.send(
+			'/acoustics/json.pl?mode=playlist',
+			function () {getPlaylist(this.getResponseJson());}
+	);
+}
+
+function getPlaylist(json)
+{
+	list = '<ul>';
+	for (var item in json)
+	{
+		list += '<li>' + json[item].artist + ' - ' + json[item].title + '</li>';
+	}
+	list += '</ui>';
+	goog.dom.$('playlist').innerHTML = list;
+}
+
 function updateNowPlaying(json) {
 	if (json) {
 		nowPlaying = json.title + ' by ' + json.artist;

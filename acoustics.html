@@ -25,11 +25,14 @@
 					<li><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
 					<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
 				</ul>
+				<div id="playlist">
+				</div>
 			</div>
 		</div>
 		<script>
 			nowPlayingRequest();
 			loadRandomSongs();
+			getPlaylistRequest();
 		</script>
 	</body>
 </html>
