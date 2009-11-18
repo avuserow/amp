@@ -135,7 +135,7 @@ sub get_songs_by_votes {
 	my $select_votes = $self->db->prepare('
 		SELECT votes.song_id, votes.who, songs.artist, songs.album,
 		songs.title, songs.length, songs.path FROM votes INNER JOIN songs ON
-		votes.song_id == songs.song_id WHERE votes.player_id = ?
+		votes.song_id = songs.song_id WHERE votes.player_id = ?
 	');
 	$select_votes->execute($self->player_id);
 
@@ -299,6 +299,12 @@ sub rpc {
 	load $rpc_class;
 
 	$rpc_class->$act($self);
+}
+
+sub reinit {
+	my $self = shift;
+
+	return Acoustics->new({config_file => $self->config_file});
 }
 
 1;

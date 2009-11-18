@@ -15,6 +15,7 @@ sub start {
 		return;
 	} elsif ($pid == 0) {
 		daemonize();
+		$acoustics = $acoustics->reinit;
 		start_player($acoustics);
 	} else {
 		ERROR "fork failed: $!";
