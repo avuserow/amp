@@ -51,6 +51,14 @@ function loadRandomSongs() {
 	);
 }
 
+function showAlbums()
+{
+	goog.net.XhrIo.send(
+			'/acoustics/json.pl?mode=album',
+			function () {fillResultTable(this.getResponseJson())}
+	);
+}
+
 function fillResultTable(json) {
 	rows = '<thead><tr><td></td>'
 		+  '<th>Title</th>'

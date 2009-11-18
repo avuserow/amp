@@ -27,6 +27,10 @@ elsif($mode eq 'playlist')
 {
 	$data = [$acoustics->get_playlist()];
 }
+elsif($mode eq 'album')
+{
+	$data = [$acoustics->get_song({}, [qw(artist album)])];
+}
 elsif ($mode) {
 	$acoustics->rpc($mode);
 	sleep 0.25;
