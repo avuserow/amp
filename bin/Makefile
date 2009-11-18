@@ -4,8 +4,8 @@ LINKOPTS = -ltag
 
 all: tagreader
 
-tagreader:
-	$(CC) $(CCOPTS) $(LINKOPTS) -o $@ tagreader.cpp
+tagreader: tagreader.cpp
+	$(CC) $(CCOPTS) $(LINKOPTS) -o $@ $<
 
 clean:
 	rm -f tagreader
