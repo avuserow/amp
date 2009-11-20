@@ -48,5 +48,8 @@ elsif ($mode ~~ [qw(start stop skip)]) {
 	($data)     = $acoustics->get_song({song_id => $player->{song_id}});
 }
 
-print $q->header('application/json');
+binmode STDOUT, ':utf8';
+print $q->header(
+	-type     => 'application/json',
+);
 print JSON::DWIW->to_json($data);
