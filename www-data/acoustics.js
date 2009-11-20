@@ -9,6 +9,14 @@ function sendPlayerCommand(mode) {
 	);
 }
 
+function searchRequest(form)
+{
+	goog.net.XhrIo.send(
+			'/acoustics/json.pl?mode=search;field='+form.field.value+';value='+form.search_value.value,
+			function () {fillResultTable(this.getResponseJson());}
+	);
+}
+
 function nowPlayingRequest () {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl',

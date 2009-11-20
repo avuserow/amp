@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>Acoustics</title>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" >
 		<link title="Acoustics" rel="stylesheet" href="www-data/acoustics.css" />
 		<script src="closure-library-read-only/closure/goog/base.js"></script>
 		<script src="www-data/acoustics.js"></script>
@@ -12,6 +13,16 @@
 	</head>
 	<body>
 		<h1>Acoustics</h1>
+		<form action="" onSubmit="javascript:searchRequest(this); return false;">
+			<input type="text" id="search_value" />
+			<select id="field">
+				<option value="artist">Artist</option>
+				<option value="album">Album</option>
+				<option value="title">Title</option>
+				<option value="path">Path</option>
+			</select>
+			<input type="submit" />
+		</form>
 		<div id="container">
 			<div id="center" class="column">
 				<span id="result_title">10 Random Songs</span>
