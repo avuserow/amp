@@ -13,7 +13,7 @@
 	</head>
 	<body>
 		<h1>Acoustics</h1>
-		<form action="" onSubmit="javascript:searchRequest(this); return false;">
+		<form action="" onSubmit="javascript:searchRequest(this.field.value, this.search_value.value); return false;">
 			<input type="text" id="search_value" />
 			<select id="field">
 				<option value="artist">Artist</option>

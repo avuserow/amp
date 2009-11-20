@@ -9,10 +9,10 @@ function sendPlayerCommand(mode) {
 	);
 }
 
-function searchRequest(form)
+function searchRequest(field, value)
 {
 	goog.net.XhrIo.send(
-			'/acoustics/json.pl?mode=search;field='+form.field.value+';value='+form.search_value.value,
+			'/acoustics/json.pl?mode=search;field='+field+';value='+value,
 			function () {fillResultTable(this.getResponseJson());}
 	);
 }
@@ -70,7 +70,7 @@ function browseSongs(field)
 function fillResultList(json, field) {
 	list = '<ul>';
 	for (var item in json) {
-		list += '<li>' + json[item][field] + '</li>';
+		list += '<li><a href="javascript:searchRequest(\''+field+'\',\''+json[item][field]+'\')">' + json[item][field] + '</a></li>';
 	}
 	list += '</ul>';
 	goog.dom.$('songresults').innerHTML = list;
