@@ -27,11 +27,17 @@ elsif($mode eq 'playlist')
 {
 	$data = [$acoustics->get_playlist()];
 }
-elsif($mode eq 'album')
+elsif($mode eq 'browse')
 {
-	$data = [$acoustics->get_song({}, [qw(artist album)])];
+	my $field = $q->param('field');
+	$data = [$acoustics->browse_songs_by_column($field, $field)];
 }
-elsif ($mode) {
+elsif($mode eq 'search' && $q->param('field') ~~ [qw(artist album title path)]) {
+	my $field = $q->param('field');
+	my $value = $q->param('value');
+	$data = [$acoustics->get_song({$field => $value}, [qw(artist album track title)])];
+}
+elsif ($mode ~~ [qw(start stop skip)]) {
 	$acoustics->rpc($mode);
 	sleep 0.25;
 

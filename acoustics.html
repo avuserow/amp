@@ -16,8 +16,11 @@
 			<div id="center" class="column">
 				<span id="result_title">10 Random Songs</span>
 				(<a href="javascript:loadRandomSongs()">reload</a>)
-				(<a href="javascript:showAlbums()">Albums</a>)
-				<table id="songresults"></table>
+				(browse by:
+				<a href="javascript:browseSongs('album')">album</a>
+				<a href="javascript:browseSongs('artist')">artist</a>
+				)
+				<div id="songresults"></div>
 			</div>
 			<div id="right" class="column">
 				<span id="nowplaying"></span>

@@ -51,32 +51,41 @@ function loadRandomSongs() {
 	);
 }
 
-function showAlbums()
+function browseSongs(field)
 {
 	goog.net.XhrIo.send(
-			'/acoustics/json.pl?mode=album',
-			function () {fillResultTable(this.getResponseJson())}
+			'/acoustics/json.pl?mode=browse;field=' + field,
+			function () {fillResultList(this.getResponseJson(), field)}
 	);
 }
 
+function fillResultList(json, field) {
+	list = '<ul>';
+	for (var item in json) {
+		list += '<li>' + json[item][field] + '</li>';
+	}
+	list += '</ul>';
+	goog.dom.$('songresults').innerHTML = list;
+}
+
 function fillResultTable(json) {
-	rows = '<thead><tr><td></td>'
+	table = '<table id="result_table"><thead><tr><td></td>'
 		+  '<th>Title</th>'
 		+  '<th>Album</th>'
 		+  '<th>Artist</th></tr></thead><tbody>';
 	for (var item in json) {
-		rows += '<tr>'
+		table += '<tr>'
 		+ '<td><a href="javascript:voteSong(' + json[item].song_id + ')">vote</a></td>'
 		+ '<td>' + json[item].title + '</td>'
 		+ '<td>' + json[item].album + '</td>'
 		+ '<td>' + json[item].artist + '</td>'
 		+ '</tr>';
 	};
-	rows += '</tbody>';
-	goog.dom.$('songresults').innerHTML = rows;
+	table += '</tbody></table>';
+	goog.dom.$('songresults').innerHTML = table;
 
 	var component = new goog.ui.TableSorter();
-	component.decorate(goog.dom.$('songresults'));
+	component.decorate(goog.dom.$('result_table'));
 	component.setDefaultSortFunction(goog.ui.TableSorter.alphaSort);
 }
 

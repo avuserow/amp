@@ -116,6 +116,28 @@ sub get_song {
 	return @{$sth->fetchall_arrayref({})};
 }
 
+sub browse_songs_by_column {
+	my $self   = shift;
+	my $col    = shift;
+	my $order  = shift;
+	my $limit  = shift;
+	my $offset = shift;
+
+	# SQL injection.
+	if ($col =~ /\W/) {
+		$logger->error("SQL injection attempt with column '$col'");
+		return;
+	}
+
+	my($sql, @values) = $self->abstract->select(
+		'songs', "DISTINCT $col", {}, $order, $limit, $offset,
+	);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
+
+	return @{$sth->fetchall_arrayref({})};
+}
+
 sub get_songs_by_votes {
 	my $self = shift;
 
