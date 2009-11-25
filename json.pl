@@ -33,7 +33,7 @@ elsif($mode eq 'browse')
 	$data = [$acoustics->browse_songs_by_column($field, $field)];
 }
 elsif($mode ~~ ['search', 'select']
-	&& $q->param('field') ~~ [qw(any artist album title path)]) {
+	&& $q->param('field') ~~ [qw(any artist album title path song_id)]) {
 
 	my $field = $q->param('field');
 	my $value = $q->param('value');

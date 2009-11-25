@@ -50,7 +50,7 @@ function nowPlayingRequest () {
 	);
 }
 
-function getPlaylistRequest() 
+function getPlaylistRequest()
 {
 	goog.net.XhrIo.send(
 			'/acoustics/json.pl?mode=playlist',
@@ -63,7 +63,11 @@ function getPlaylist(json)
 	list = '<ul>';
 	for (var item in json)
 	{
-		list += '<li>' + json[item].artist + ' - ' + json[item].title + '</li>';
+		list += '<li><a href="javascript:selectRequest(\'title\', \''
+			+ json[item].title + '\')">' + json[item].title
+			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
+			+ json[item].artist + '\')">' + json[item].artist
+			+ '</a></li>';
 	}
 	list += '</ui>';
 	goog.dom.$('playlist').innerHTML = list;
@@ -71,11 +75,18 @@ function getPlaylist(json)
 
 function updateNowPlaying(json) {
 	if (json) {
-		nowPlaying = json.title + ' by ' + json.artist;
+		nowPlaying = '<a href="javascript:selectRequest(\'title\', '
+			+ json.title + '\')">' + json.title
+			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
+			+ json.artist + '\')">' + json.artist + '</a>';
+		if (json.album) {
+			nowPlaying += ' (from <a href="javascript:selectRequest(\'album\', \''
+				+ json.album + '\')">' + json.album + '</a>)';
+		}
 	} else {
 		nowPlaying = 'nothing playing';
 	}
-	goog.dom.setTextContent(goog.dom.$('nowplaying'), nowPlaying);
+	goog.dom.$('nowplaying').innerHTML = nowPlaying;
 }
 
 function loadRandomSongs() {
@@ -96,7 +107,7 @@ function browseSongs(field)
 function fillResultList(json, field) {
 	list = '<ul>';
 	for (var item in json) {
-		list += '<li><a href="javascript:searchRequest(\''+field+'\',\''+json[item][field]+'\')">' + json[item][field] + '</a></li>';
+		list += '<li><a href="javascript:selectRequest(\''+field+'\',\''+json[item][field]+'\')">' + json[item][field] + '</a></li>';
 	}
 	list += '</ul>';
 	goog.dom.$('songresults').innerHTML = list;
@@ -110,7 +121,7 @@ function fillResultTable(json) {
 	for (var item in json) {
 		table += '<tr>'
 		+ '<td><a href="javascript:voteSong(' + json[item].song_id
-		+ ')">vote</a></td>'
+		+ ')"><img src="www-data/icons/add.png" alt="vote" /></a></td>'
 		+ '<td><a href="javascript:selectRequest(\'title\', \''
 		+ json[item].title + '\')">' + json[item].title + '</a></td>'
 		+ '<td><a href="javascript:selectRequest(\'album\', \''
@@ -130,8 +141,7 @@ function fillResultTable(json) {
 function voteSong(song_id) {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=vote;song_id=' + song_id,
-		// XXX: make this more useful
-		function () {alert('vote succeeded');}
+		function () {getPlaylistRequest();}
 	);
 }
 
