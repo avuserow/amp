@@ -23,6 +23,19 @@ if ($mode eq 'random') {
 		$acoustics->vote($song_id, $ENV{REMOTE_USER} || "test");
 	}
 }
+elsif ($mode eq 'unvote') {
+	my $song_id = $q->param('song_id');
+	if ($song_id) {
+		$acoustics->delete_vote({
+			song_id => $song_id,
+			who     => $ENV{REMOTE_USER} || "test",
+		});
+	} else {
+		$acoustics->delete_vote({
+			who => $ENV{REMOTE_USER} || "test",
+		});
+	}
+}
 elsif($mode eq 'playlist')
 {
 	$data = [$acoustics->get_playlist()];

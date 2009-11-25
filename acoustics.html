@@ -7,9 +7,6 @@
 		<script src="www-data/acoustics.js"></script>
 		<style type="text/css">
 			.goog-tablesorter-header {cursor: pointer}
-			th.goog-tablesorter-sorted {background-color: #ddf;}
-			th.goog-tablesorter-sorted-reverse {background-color: #dfd;}
-			.goog-slider-vertical,
 			.goog-slider-horizontal {
 				background-color: ThreeDFace;
 				position: relative;
@@ -22,52 +19,36 @@
 				overflow: hidden;
 			}
 
-			.goog-slider-vertical .goog-slider-thumb {
-				left: 0;
-				height: 20px;
-				width: 100%;
-			}
-
 			.goog-slider-horizontal .goog-slider-thumb {
 				top: 0;
-				width: 20px;
+				width: 10%;
 				height: 100%;
 			}
-			#s-h {
-				margin-bottom: 2em;
-			}
-			strong {
-				display: block;
-				margin-bottom: 3px;
-			}
-			#out1, #out2 {
-				color: #999;
-				margin-left: 1em;
-			}
-
-			#playlist {list-style-image: url(www-data/icons/music.png);}
 		</style>
 	</head>
 	<body>
-		<h1>Acoustics</h1>
-		<form action="" onSubmit="javascript:searchRequest(this.field.value, this.search_value.value); return false;">
-			<input type="text" id="search_value" />
-			<select id="field">
-				<option value="any">Any</option>
-				<option value="artist">Artist</option>
-				<option value="album">Album</option>
-				<option value="title">Title</option>
-				<option value="path">Path</option>
-			</select>
-			<input type="submit" />
-		</form>
 		<div id="container">
+			<div id="top">
+				<h1>Acoustics</h1>
+				<form action="" onSubmit="javascript:searchRequest(this.field.value, this.search_value.value); return false;">
+					search:
+					<input type="text" id="search_value" />
+					<select id="field">
+						<option value="any">Any</option>
+						<option value="artist">Artist</option>
+						<option value="album">Album</option>
+						<option value="title">Title</option>
+						<option value="path">Path</option>
+					</select>
+					<input type="submit" />
+				</form>
+			</div>
 			<div id="center" class="column">
 				<span id="result_title">10 Random Songs</span>
-				(<a href="javascript:loadRandomSongs()">reload</a>)
 				(browse by:
-				<a href="javascript:browseSongs('album')">album</a>
-				<a href="javascript:browseSongs('artist')">artist</a>
+				<a href="javascript:loadRandomSongs()"><img src="www-data/icons/sport_8ball.png" alt="" /> random</a>
+				<a href="javascript:browseSongs('album')"><img src="www-data/icons/cd.png" alt="" /> album</a>
+				<a href="javascript:browseSongs('artist')"><img src="www-data/icons/user.png" alt="" /> artist</a>
 				)
 				<div id="songresults"></div>
 			</div>
@@ -80,13 +61,17 @@
 				</ul>
 
 				<img src="www-data/icons/sound.png" alt="" /> volume
-				<div id="volume" class="goog-slider" style="width: 100%;
-					height: 20px">
+				<div id="volume" class="goog-slider" style="width: 97%;
+					height: 20px; margin: 0 2%">
 				</div>
 
+				<br />
+				<img src="www-data/icons/music.png" alt="" /> playlist
+				(<a href="javascript:unvoteSong(0)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>)
 				<div id="playlist">
 				</div>
 			</div>
+			<div id="footer"></div>
 		</div>
 		<script>
 			makeVolumeSlider(document.getElementById('volume'));

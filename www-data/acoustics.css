@@ -1,21 +1,64 @@
 body
 {
-    min-width: 500px;
+    background: #f0f0ff;
 }
+
+img {
+    border: none
+}
+
+th.goog-tablesorter-sorted {
+    background-color: #ffcccc;
+}
+th.goog-tablesorter-sorted-reverse {
+    background-color: #ccccff;
+}
+
 #container
 {
-    padding-right: 200px;
+    background: #f0f0ff;
 }
 #container .column
 {
-    float: left;
+    border: 1px solid gray;
 }
-#center 
+#center
 {
-    width: 100%;
+    float: left;
+    width: 75%;
 }
 #right
 {
-    width: 200px;
-    margin-right: -200px;
+    width: 22%;
+    float: right;
+}
+
+#footer {
+    font-style: italic;
+    clear: both;
+}
+
+#songresults td {
+    border: 1px dotted gray;
+}
+
+#playlist ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#playlist li {
+    font-size: .8em;
+    padding-bottom: .5em;
+}
+
+#result_table {
+    width: 100%;
+}
+
+
+#result_table .datacol {
+    font-size: .9em;
+    width: 33%;
 }

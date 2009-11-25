@@ -24,7 +24,10 @@ function searchRequest(field, value)
 {
 	goog.net.XhrIo.send(
 			'/acoustics/json.pl?mode=search;field='+field+';value='+value,
-			function () {fillResultTable(this.getResponseJson());}
+			function () {
+				goog.dom.$('result_title').innerHTML = 'Search on ' + field;
+				fillResultTable(this.getResponseJson());
+			}
 	);
 }
 
@@ -32,7 +35,10 @@ function selectRequest(field, value)
 {
 	goog.net.XhrIo.send(
 			'/acoustics/json.pl?mode=select;field='+field+';value='+value,
-			function () {fillResultTable(this.getResponseJson());}
+			function () {
+				goog.dom.$('result_title').innerHTML = 'Select on ' + field;
+				fillResultTable(this.getResponseJson());
+			}
 	);
 }
 
@@ -63,10 +69,18 @@ function getPlaylist(json)
 	list = '<ul>';
 	for (var item in json)
 	{
-		list += '<li><a href="javascript:selectRequest(\'title\', \''
-			+ json[item].title + '\')">' + json[item].title
+		list += '<li>';
+		if (json[item].who && json[item].who.indexOf('test') != -1) {
+			list += '<a href="javascript:unvoteSong(' + json[item].song_id
+				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> ';
+		} else {
+			list += '<a href="javascript:voteSong(' + json[item].song_id
+				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
+		}
+		list += '<a href="javascript:selectRequest(\'title\', \''
+			+ qsencode(json[item].title) + '\')">' + json[item].title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
-			+ json[item].artist + '\')">' + json[item].artist
+			+ qsencode(json[item].artist) + '\')">' + json[item].artist
 			+ '</a></li>';
 	}
 	list += '</ui>';
@@ -92,7 +106,10 @@ function updateNowPlaying(json) {
 function loadRandomSongs() {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=random',
-		function () {fillResultTable(this.getResponseJson())}
+		function () {
+			goog.dom.$('result_title').innerHTML = '10 Random Songs';
+			fillResultTable(this.getResponseJson());
+		}
 	);
 }
 
@@ -100,34 +117,40 @@ function browseSongs(field)
 {
 	goog.net.XhrIo.send(
 			'/acoustics/json.pl?mode=browse;field=' + field,
-			function () {fillResultList(this.getResponseJson(), field)}
+			function () {
+				goog.dom.$('result_title').innerHTML = 'Browse by ' + field;
+				fillResultList(this.getResponseJson(), field);
+			}
 	);
 }
 
 function fillResultList(json, field) {
 	list = '<ul>';
 	for (var item in json) {
-		list += '<li><a href="javascript:selectRequest(\''+field+'\',\''+json[item][field]+'\')">' + json[item][field] + '</a></li>';
+		list += '<li><a href="javascript:selectRequest(\'' + field
+			+ '\',\'' + qsencode(json[item][field]) + '\')">'
+			+ json[item][field] + '</a></li>';
 	}
 	list += '</ul>';
 	goog.dom.$('songresults').innerHTML = list;
 }
 
 function fillResultTable(json) {
-	table = '<table id="result_table"><thead><tr><td></td>'
+	table = '<table id="result_table"><thead><tr><th>vote</th>'
 		+  '<th>Title</th>'
 		+  '<th>Album</th>'
 		+  '<th>Artist</th></tr></thead><tbody>';
 	for (var item in json) {
 		table += '<tr>'
-		+ '<td><a href="javascript:voteSong(' + json[item].song_id
+		+ '<td style="text-align: center"><a href="javascript:voteSong('
+		+ json[item].song_id
 		+ ')"><img src="www-data/icons/add.png" alt="vote" /></a></td>'
-		+ '<td><a href="javascript:selectRequest(\'title\', \''
-		+ json[item].title + '\')">' + json[item].title + '</a></td>'
-		+ '<td><a href="javascript:selectRequest(\'album\', \''
-		+ json[item].album + '\')">' + json[item].album + '</a></td>'
-		+ '<td><a href="javascript:selectRequest(\'artist\', \''
-		+ json[item].artist + '\')">' + json[item].artist + '</a></td>'
+		+ '<td class="datacol"><a href="javascript:selectRequest(\'title\', \''
+		+ qsencode(json[item].title) + '\')">' + json[item].title + '</a></td>'
+		+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \''
+		+ qsencode(json[item].album) + '\')">' + json[item].album + '</a></td>'
+		+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \''
+		+ qsencode(json[item].artist) + '\')">' + json[item].artist + '</a></td>'
 		+ '</tr>';
 	};
 	table += '</tbody></table>';
@@ -141,6 +164,13 @@ function fillResultTable(json) {
 function voteSong(song_id) {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=vote;song_id=' + song_id,
+		function () {getPlaylistRequest();}
+	);
+}
+
+function unvoteSong(song_id) {
+	goog.net.XhrIo.send(
+		'/acoustics/json.pl?mode=unvote;song_id=' + song_id,
 		function () {getPlaylistRequest();}
 	);
 }
@@ -164,4 +194,8 @@ function makeVolumeSlider(elm) {
 	s.addEventListener(goog.ui.Component.EventType.CHANGE, function() {
 			throttle.fire();
 	});
+}
+
+function qsencode(str) {
+	return escape(escape(str));
 }
