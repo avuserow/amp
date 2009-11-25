@@ -4,6 +4,7 @@ goog.require('goog.ui.TableSorter');
 goog.require('goog.ui.Slider');
 goog.require('goog.ui.Component');
 goog.require('goog.Throttle');
+goog.require('goog.Timer');
 goog.require('goog.async.Delay');
 
 function sendPlayerCommand(mode) {
@@ -25,6 +26,13 @@ function searchRequest(field, value)
 			'/acoustics/json.pl?mode=search;field='+field+';value='+value,
 			function () {fillResultTable(this.getResponseJson());}
 	);
+}
+
+function startPlayerStateTimer () {
+	nowPlayingRequest();
+	var timer = new goog.Timer(15000);
+	timer.start();
+	goog.events.listen(timer, goog.Timer.TICK, function () {nowPlayingRequest()});
 }
 
 function nowPlayingRequest () {
