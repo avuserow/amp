@@ -44,6 +44,21 @@ sub stop {
 	$class->send_signal($acoustics, 'INT');
 }
 
+sub volume {
+	my $class     = shift;
+	my $acoustics = shift;
+	my $volume    = shift;
+
+	if ($volume !~ /^\d+$/) {
+		ERROR "volume must be a number, not something like '$volume'";
+		return;
+	}
+
+	$acoustics->update_player({volume => $volume});
+	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	$class->send_signal($acoustics, 'USR1');
+}
+
 sub send_signal {
 	my $class     = shift;
 	my $acoustics = shift;
@@ -64,7 +79,10 @@ sub send_signal {
 sub start_player {
 	my $acoustics = shift;
 
-	$acoustics->add_player({local_id => $$});
+	$acoustics->add_player({
+		local_id => $$,
+		volume   => 50,
+	});
 
 	$SIG{TERM} = $SIG{INT} = sub {
 		WARN "Exiting player $$";
@@ -73,6 +91,8 @@ sub start_player {
 	};
 	$SIG{HUP}  = 'IGNORE';
 	$SIG{CHLD} = 'IGNORE';
+	$SIG{USR1} = 'IGNORE';
+	$SIG{USR2} = 'IGNORE';
 
 	while (1) {
 		player_loop($acoustics);
@@ -94,20 +114,37 @@ sub player_loop {
 		INFO "Playing '$data{path}'";
 		INFO "$data{title} by $data{artist} from $data{album}";
 
+		my($player) = $acoustics->get_player({
+			player_id => $acoustics->player_id,
+		});
+
 		# General plan: open both input and output of the mplayer process
 		# then continually read from input so we know it's still running
 		# and handle SIGHUP. don't use waitpid because it blocks SIGHUP.
 		my $pid = open2(my $child_out, my $child_in,
-			'mplayer', '-slave', '-quiet', $data{path})
+			'mplayer', '-slave', '-quiet', '-softvol',
+			'-af' => 'volnorm',
+			'-volume' => $player->{volume},
+			$data{path})
 			or LOGDIE "couldn't open mplayer: $!";
 
 		# when we get SIGHUP, ask mplayer to quit
 		local $SIG{HUP} = sub {
 			WARN "skipping song: $data{path}!";
 			print $child_in "quit\n";
+			return;
 		};
 
-		local $SIG{TERM} = $SIG{INT} = sub {
+		local $SIG{USR1} = sub {
+			WARN "changing volume";
+			my($player) = $acoustics->get_player({
+				player_id => $acoustics->player_id,
+			});
+			print $child_in "volume $player->{volume} 1\n";
+			print $child_in "get_volume\n";
+		};
+
+		local $SIG{__DIE__} = local $SIG{TERM} = local $SIG{INT} = sub {
 			WARN "Exiting player $$";
 			print $child_in "quit\n";
 			$acoustics->remove_player;

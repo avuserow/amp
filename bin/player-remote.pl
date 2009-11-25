@@ -11,5 +11,5 @@ my $acoustics = Acoustics->new({
 	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
 });
 
-print "command: $command\n";
-$acoustics->player($command);
+print "command: $command @ARGV\n";
+$acoustics->player($command, @ARGV);

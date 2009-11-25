@@ -37,6 +37,9 @@ elsif($mode eq 'search' && $q->param('field') ~~ [qw(artist album title path)]) 
 	my $value = $q->param('value');
 	$data = [$acoustics->get_song({$field => {-like => "%$value%"}}, [qw(artist album track title)])];
 }
+elsif ($mode eq 'volume') {
+	$acoustics->rpc('volume', $q->param('value'));
+}
 elsif ($mode ~~ [qw(start stop skip)]) {
 	$acoustics->rpc($mode);
 	sleep 0.25;

@@ -9,6 +9,41 @@
 			.goog-tablesorter-header {cursor: pointer}
 			th.goog-tablesorter-sorted {background-color: #ddf;}
 			th.goog-tablesorter-sorted-reverse {background-color: #dfd;}
+			.goog-slider-vertical,
+			.goog-slider-horizontal {
+				background-color: ThreeDFace;
+				position: relative;
+				overflow: hidden;
+			}
+
+			.goog-slider-thumb {
+				position: absolute;
+				background-color: ThreeDShadow;
+				overflow: hidden;
+			}
+
+			.goog-slider-vertical .goog-slider-thumb {
+				left: 0;
+				height: 20px;
+				width: 100%;
+			}
+
+			.goog-slider-horizontal .goog-slider-thumb {
+				top: 0;
+				width: 20px;
+				height: 100%;
+			}
+			#s-h {
+				margin-bottom: 2em;
+			}
+			strong {
+				display: block;
+				margin-bottom: 3px;
+			}
+			#out1, #out2 {
+				color: #999;
+				margin-left: 1em;
+			}
 		</style>
 	</head>
 	<body>
@@ -40,11 +75,19 @@
 					<li><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
 					<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
 				</ul>
+				<div id="volume" class="goog-slider" style="width: 200px;
+					height: 20px">
+				</div>
+				<ul>
+					<li style="display: inline"><a href="javascript:setVolume('10')">|</a></li><li style="display: inline"><a href="javascript:setVolume('20')">|</a></li><li style="display: inline"><a href="javascript:setVolume('30')">|</a></li><li style="display: inline"><a href="javascript:setVolume('40')">|</a></li><li style="display: inline"><a href="javascript:setVolume('50')">|</a></li><li style="display: inline"><a href="javascript:setVolume('60')">|</a></li><li style="display: inline"><a href="javascript:setVolume('70')">|</a></li><li style="display: inline"><a href="javascript:setVolume('80')">|</a></li><li style="display: inline"><a href="javascript:setVolume('90')">|</a></li>
+				</ul>
+
 				<div id="playlist">
 				</div>
 			</div>
 		</div>
 		<script>
+			makeVolumeSlider(document.getElementById('volume'));
 			nowPlayingRequest();
 			loadRandomSongs();
 			getPlaylistRequest();

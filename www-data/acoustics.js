@@ -1,11 +1,21 @@
 goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
 goog.require('goog.ui.TableSorter');
+goog.require('goog.ui.Slider');
+goog.require('goog.ui.Component');
+goog.require('goog.Throttle');
+goog.require('goog.async.Delay');
 
 function sendPlayerCommand(mode) {
 	goog.net.XhrIo.send(
 			'/acoustics/json.pl?mode=' + mode,
 			function () {updateNowPlaying(this.getResponseJson());}
+	);
+}
+
+function setVolume(value) {
+	goog.net.XhrIo.send(
+			'/acoustics/json.pl?mode=volume;value=' + value
 	);
 }
 
@@ -103,4 +113,24 @@ function voteSong(song_id) {
 		// XXX: make this more useful
 		function () {alert('vote succeeded');}
 	);
+}
+
+function makeVolumeSlider(elm) {
+	var s = new goog.ui.Slider;
+	s.decorate(elm);
+
+	// Throttle the slider, so we don't spam the server with requests
+	// Delay each setVolume call slightly, so that the changes are smoother.
+	var throttle = new goog.Throttle(
+			function () {
+				var delay = new goog.async.Delay(function() {
+					setVolume(s.getValue());
+					}, 500);
+				delay.start();
+			},
+			1000
+	);
+	s.addEventListener(goog.ui.Component.EventType.CHANGE, function() {
+			throttle.fire();
+	});
 }

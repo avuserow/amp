@@ -310,7 +310,7 @@ sub player {
 	my $player_class = $self->config->{player}{module};
 	load $player_class;
 
-	$player_class->$act($self);
+	$player_class->$act($self, @_);
 }
 
 sub rpc {
@@ -320,7 +320,7 @@ sub rpc {
 	my $rpc_class = $self->config->{rpc}{module};
 	load $rpc_class;
 
-	$rpc_class->$act($self);
+	$rpc_class->$act($self, @_);
 }
 
 sub reinit {
