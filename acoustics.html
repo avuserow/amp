@@ -51,6 +51,7 @@
 		<form action="" onSubmit="javascript:searchRequest(this.field.value, this.search_value.value); return false;">
 			<input type="text" id="search_value" />
 			<select id="field">
+				<option value="any">Any</option>
 				<option value="artist">Artist</option>
 				<option value="album">Album</option>
 				<option value="title">Title</option>
@@ -75,12 +76,11 @@
 					<li><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
 					<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
 				</ul>
-				<div id="volume" class="goog-slider" style="width: 200px;
+
+				volume
+				<div id="volume" class="goog-slider" style="width: 100%;
 					height: 20px">
 				</div>
-				<ul>
-					<li style="display: inline"><a href="javascript:setVolume('10')">|</a></li><li style="display: inline"><a href="javascript:setVolume('20')">|</a></li><li style="display: inline"><a href="javascript:setVolume('30')">|</a></li><li style="display: inline"><a href="javascript:setVolume('40')">|</a></li><li style="display: inline"><a href="javascript:setVolume('50')">|</a></li><li style="display: inline"><a href="javascript:setVolume('60')">|</a></li><li style="display: inline"><a href="javascript:setVolume('70')">|</a></li><li style="display: inline"><a href="javascript:setVolume('80')">|</a></li><li style="display: inline"><a href="javascript:setVolume('90')">|</a></li>
-				</ul>
 
 				<div id="playlist">
 				</div>

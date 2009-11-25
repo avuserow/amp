@@ -28,6 +28,14 @@ function searchRequest(field, value)
 	);
 }
 
+function selectRequest(field, value)
+{
+	goog.net.XhrIo.send(
+			'/acoustics/json.pl?mode=select;field='+field+';value='+value,
+			function () {fillResultTable(this.getResponseJson());}
+	);
+}
+
 function startPlayerStateTimer () {
 	nowPlayingRequest();
 	var timer = new goog.Timer(15000);
@@ -101,10 +109,14 @@ function fillResultTable(json) {
 		+  '<th>Artist</th></tr></thead><tbody>';
 	for (var item in json) {
 		table += '<tr>'
-		+ '<td><a href="javascript:voteSong(' + json[item].song_id + ')">vote</a></td>'
-		+ '<td>' + json[item].title + '</td>'
-		+ '<td>' + json[item].album + '</td>'
-		+ '<td>' + json[item].artist + '</td>'
+		+ '<td><a href="javascript:voteSong(' + json[item].song_id
+		+ ')">vote</a></td>'
+		+ '<td><a href="javascript:selectRequest(\'title\', \''
+		+ json[item].title + '\')">' + json[item].title + '</a></td>'
+		+ '<td><a href="javascript:selectRequest(\'album\', \''
+		+ json[item].album + '\')">' + json[item].album + '</a></td>'
+		+ '<td><a href="javascript:selectRequest(\'artist\', \''
+		+ json[item].artist + '\')">' + json[item].artist + '</a></td>'
 		+ '</tr>';
 	};
 	table += '</tbody></table>';
@@ -126,6 +138,7 @@ function voteSong(song_id) {
 function makeVolumeSlider(elm) {
 	var s = new goog.ui.Slider;
 	s.decorate(elm);
+	s.setMoveToPointEnabled(true);
 
 	// Throttle the slider, so we don't spam the server with requests
 	// Delay each setVolume call slightly, so that the changes are smoother.

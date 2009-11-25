@@ -32,10 +32,22 @@ elsif($mode eq 'browse')
 	my $field = $q->param('field');
 	$data = [$acoustics->browse_songs_by_column($field, $field)];
 }
-elsif($mode eq 'search' && $q->param('field') ~~ [qw(artist album title path)]) {
+elsif($mode ~~ ['search', 'select']
+	&& $q->param('field') ~~ [qw(any artist album title path)]) {
+
 	my $field = $q->param('field');
 	my $value = $q->param('value');
-	$data = [$acoustics->get_song({$field => {-like => "%$value%"}}, [qw(artist album track title)])];
+
+	my $where;
+	my $value_clause = $value;
+	$value_clause    = {-like => "%$value%"} if $mode eq 'search';
+	if ($field eq 'any') {
+		$where = [map {{$_ => $value_clause}} qw(artist album title path)];
+	} else {
+		$where = {$field => $value_clause};
+	}
+
+	$data = [$acoustics->get_song($where, [qw(artist album track title)])];
 }
 elsif ($mode eq 'volume') {
 	$acoustics->rpc('volume', $q->param('value'));
