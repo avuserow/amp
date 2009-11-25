@@ -137,6 +137,7 @@ function fillResultList(json, field) {
 
 function fillResultTable(json) {
 	table = '<table id="result_table"><thead><tr><th>vote</th>'
+		+  '<th>Track</th>'
 		+  '<th>Title</th>'
 		+  '<th>Album</th>'
 		+  '<th>Artist</th></tr></thead><tbody>';
@@ -145,6 +146,7 @@ function fillResultTable(json) {
 		+ '<td style="text-align: center"><a href="javascript:voteSong('
 		+ json[item].song_id
 		+ ')"><img src="www-data/icons/add.png" alt="vote" /></a></td>'
+		+ '<td>' + json[item].track + '</td>'
 		+ '<td class="datacol"><a href="javascript:selectRequest(\'title\', \''
 		+ qsencode(json[item].title) + '\')">' + json[item].title + '</a></td>'
 		+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \''
@@ -159,6 +161,7 @@ function fillResultTable(json) {
 	var component = new goog.ui.TableSorter();
 	component.decorate(goog.dom.$('result_table'));
 	component.setDefaultSortFunction(goog.ui.TableSorter.alphaSort);
+	component.setSortFunction(1, goog.ui.TableSorter.numericSort);
 }
 
 function voteSong(song_id) {
