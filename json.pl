@@ -13,7 +13,7 @@ use Time::HiRes 'sleep';
 my $acoustics = Acoustics->new({config_file => 'lib/acoustics.ini'});
 my $q = CGI::Simple->new;
 
-my $mode = $q->param('mode');
+my $mode = $q->param('mode') || '';
 my $data;
 if ($mode eq 'random') {
 	$data = [$acoustics->get_song({}, 'RAND()', 10)];
@@ -35,10 +35,6 @@ elsif ($mode eq 'unvote') {
 			who => $ENV{REMOTE_USER} || "test",
 		});
 	}
-}
-elsif($mode eq 'playlist')
-{
-	$data = [$acoustics->get_playlist()];
 }
 elsif($mode eq 'browse')
 {
