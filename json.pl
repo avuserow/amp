@@ -5,6 +5,7 @@ use warnings;
 
 use lib 'lib';
 use Acoustics;
+use Acoustics::Web::Auth::RemoteUser;
 use CGI::Simple;
 use CGI::Carp 'fatalsToBrowser';
 use JSON::DWIW ();
@@ -79,7 +80,8 @@ sub generate_player_state {
 
 	my($song) = $acoustics->get_song({song_id => $player->{song_id}});
 	$data->{nowPlaying} = $song;
-	$data->{playlist}    = [$acoustics->get_playlist()];
+	$data->{playlist}   = [$acoustics->get_playlist()];
+	$data->{who}        = Acoustics::Web::Auth::RemoteUser->whoami;
 	return $data;
 }
 

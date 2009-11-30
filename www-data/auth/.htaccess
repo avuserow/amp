@@ -1,3 +1,4 @@
+DirectoryIndex index.pl
 Options +Includes
 
 AuthType Kerberos

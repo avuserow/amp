@@ -60,9 +60,15 @@ function playerStateRequest () {
 }
 
 function handlePlayerStateRequest (json) {
+	if (json.who) updateCurrentUser(json.who);
 	updateNowPlaying(json.nowPlaying);
-	updatePlaylist(json.playlist);
-	setVolumeSlider(json.player.volume);
+	if (json.playlist) updatePlaylist(json.playlist);
+	if (json.player) setVolumeSlider(json.player.volume);
+}
+
+function updateCurrentUser (who) {
+	if (who) goog.dom.$('loginbox').innerHTML = 'welcome ' + who;
+	else goog.dom.$('loginbox').innerHTML = '<a href="www-data/auth">Log in</a>';
 }
 
 function updatePlaylist(json)
