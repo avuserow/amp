@@ -186,7 +186,7 @@ sub get_playlist {
 
 		# find all songs matching this voter and sort by number of voters
 		my @candidates = grep {$_->{who} ~~ $voter} values %votes;
-		@candidates    = sort {$a->{who} <=> $b->{who}} @candidates;
+		@candidates    = reverse sort {$a->{who} <=> $b->{who}} @candidates;
 
 		# if this user has no more stored votes, ignore them
 		next unless @candidates;
@@ -254,10 +254,10 @@ sub vote {
 	my $who = shift;
 
 	my $sth = $self->db->prepare(
-		'INSERT INTO votes (song_id, time, player_id, who) VALUES (?, ?, ?, ?)'
+		'INSERT INTO votes (song_id, time, player_id, who) VALUES (?, now(), ?, ?)'
 	);
 
-	$sth->execute($song_id, time, $self->player_id, $who);
+	$sth->execute($song_id, $self->player_id, $who);
 }
 
 sub add_player {
@@ -288,8 +288,6 @@ sub remove_player {
 	my $sth  = $self->db->prepare('DELETE FROM players WHERE player_id = ?');
 
 	$sth->execute($self->player_id);
-
-	# XXX: Should this also remove all the votes for this player?
 }
 
 sub get_player {
