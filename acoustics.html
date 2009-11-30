@@ -5,26 +5,6 @@
 		<link title="Acoustics" rel="stylesheet" href="www-data/acoustics.css" />
 		<script src="closure-library-read-only/closure/goog/base.js"></script>
 		<script src="www-data/acoustics.js"></script>
-		<style type="text/css">
-			.goog-tablesorter-header {cursor: pointer}
-			.goog-slider-horizontal {
-				background-color: ThreeDFace;
-				position: relative;
-				overflow: hidden;
-			}
-
-			.goog-slider-thumb {
-				position: absolute;
-				background-color: ThreeDShadow;
-				overflow: hidden;
-			}
-
-			.goog-slider-horizontal .goog-slider-thumb {
-				top: 0;
-				width: 10%;
-				height: 100%;
-			}
-		</style>
 	</head>
 	<body>
 		<div id="container">
@@ -42,6 +22,9 @@
 					</select>
 					<input type="submit" />
 				</form>
+			</div>
+			<div id="loginbox">
+				<a href="www-data/auth">Log in</a>
 			</div>
 			<div id="center" class="column">
 				<span id="result_title">10 Random Songs</span>
@@ -77,7 +60,6 @@
 			makeVolumeSlider(document.getElementById('volume'));
 			startPlayerStateTimer();
 			loadRandomSongs();
-			getPlaylistRequest();
 		</script>
 	</body>
 </html>

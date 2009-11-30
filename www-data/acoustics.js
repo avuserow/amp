@@ -7,16 +7,19 @@ goog.require('goog.Throttle');
 goog.require('goog.Timer');
 goog.require('goog.async.Delay');
 
+vc_modifiable = false;
+
 function sendPlayerCommand(mode) {
 	goog.net.XhrIo.send(
 			'/acoustics/json.pl?mode=' + mode,
-			function () {updateNowPlaying(this.getResponseJson());}
+			function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
 
 function setVolume(value) {
 	goog.net.XhrIo.send(
-			'/acoustics/json.pl?mode=volume;value=' + value
+			'/acoustics/json.pl?mode=volume;value=' + value,
+			function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
 
@@ -43,28 +46,26 @@ function selectRequest(field, value)
 }
 
 function startPlayerStateTimer () {
-	nowPlayingRequest();
+	playerStateRequest();
 	var timer = new goog.Timer(15000);
 	timer.start();
-	goog.events.listen(timer, goog.Timer.TICK, function () {nowPlayingRequest()});
+	goog.events.listen(timer, goog.Timer.TICK, function () {playerStateRequest()});
 }
 
-function nowPlayingRequest () {
+function playerStateRequest () {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl',
-		function () {updateNowPlaying(this.getResponseJson());}
+		function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
 
-function getPlaylistRequest()
-{
-	goog.net.XhrIo.send(
-			'/acoustics/json.pl?mode=playlist',
-			function () {getPlaylist(this.getResponseJson());}
-	);
+function handlePlayerStateRequest (json) {
+	updateNowPlaying(json.nowPlaying);
+	updatePlaylist(json.playlist);
+	setVolumeSlider(json.player.volume);
 }
 
-function getPlaylist(json)
+function updatePlaylist(json)
 {
 	list = '<ul>';
 	for (var item in json)
@@ -89,7 +90,7 @@ function getPlaylist(json)
 
 function updateNowPlaying(json) {
 	if (json) {
-		nowPlaying = '<a href="javascript:selectRequest(\'title\', '
+		nowPlaying = '<a href="javascript:selectRequest(\'title\', \''
 			+ json.title + '\')">' + json.title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ json.artist + '\')">' + json.artist + '</a>';
@@ -167,36 +168,42 @@ function fillResultTable(json) {
 function voteSong(song_id) {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=vote;song_id=' + song_id,
-		function () {getPlaylistRequest();}
+		function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
 
 function unvoteSong(song_id) {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=unvote;song_id=' + song_id,
-		function () {getPlaylistRequest();}
+		function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
 
 function makeVolumeSlider(elm) {
-	var s = new goog.ui.Slider;
-	s.decorate(elm);
-	s.setMoveToPointEnabled(true);
+	vc_slider = new goog.ui.Slider;
+	vc_slider.decorate(elm);
+	vc_slider.setMoveToPointEnabled(true);
 
 	// Throttle the slider, so we don't spam the server with requests
 	// Delay each setVolume call slightly, so that the changes are smoother.
 	var throttle = new goog.Throttle(
 			function () {
 				var delay = new goog.async.Delay(function() {
-					setVolume(s.getValue());
+					setVolume(vc_slider.getValue());
 					}, 500);
 				delay.start();
 			},
 			1000
 	);
-	s.addEventListener(goog.ui.Component.EventType.CHANGE, function() {
-			throttle.fire();
+	vc_slider.addEventListener(goog.ui.Component.EventType.CHANGE, function() {
+			if (vc_modifiable) throttle.fire();
 	});
+}
+
+function setVolumeSlider (volume) {
+	vc_modifiable = false;
+	vc_slider.animatedSetValue_(volume);
+	vc_modifiable = true;
 }
 
 function qsencode(str) {

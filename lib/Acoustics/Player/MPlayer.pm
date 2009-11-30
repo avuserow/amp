@@ -79,6 +79,7 @@ sub send_signal {
 sub start_player {
 	my $acoustics = shift;
 
+	$acoustics->remove_player;
 	$acoustics->add_player({
 		local_id => $$,
 		volume   => 50,
@@ -101,11 +102,9 @@ sub start_player {
 
 sub player_loop {
 	my $acoustics = shift;
-	my @songs = $acoustics->get_playlist;
-	@songs    = $acoustics->get_song({}, 'RAND()', 1) unless @songs;
-	my %data  = %{$songs[0]};
-
-	$acoustics->delete_vote({song_id => $data{song_id}});
+	my $song = $acoustics->get_current_song;
+	($song)  = $acoustics->get_song({}, 'RAND()', 1) unless $song;
+	my %data = %$song;
 
 	if(-e $data{path})
 	{
@@ -161,6 +160,8 @@ sub player_loop {
 		ERROR "Song '$data{path}' is invalid, deleting";
 		$acoustics->delete_song({song_id => $data{song_id}});
 	}
+
+	$acoustics->delete_vote({song_id => $data{song_id}});
 }
 
 1;

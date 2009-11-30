@@ -171,7 +171,7 @@ sub get_songs_by_votes {
 	return %votes;
 }
 
-sub get_playlist {
+sub build_playlist {
 	my $self = shift;
 
 	my %votes = $self->get_songs_by_votes;
@@ -204,6 +204,27 @@ sub get_playlist {
 	}
 
 	return @songs;
+}
+
+sub get_playlist {
+	my $self = shift;
+	my @playlist = $self->build_playlist;
+
+	my($player) = $self->get_player({player_id => $self->player_id});
+	if ($playlist[0] && $player->{song_id} == $playlist[0]{song_id}) {
+		return @playlist[1 .. $#playlist];
+	} else {
+		return @playlist;
+	}
+}
+
+sub get_current_song {
+	my $self = shift;
+	my @playlist = $self->build_playlist;
+	if (@playlist) {
+		return $playlist[0];
+	}
+	return;
 }
 
 sub delete_vote {

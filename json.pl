@@ -64,16 +64,27 @@ elsif($mode ~~ ['search', 'select']
 }
 elsif ($mode eq 'volume') {
 	$acoustics->rpc('volume', $q->param('value'));
+	$data = generate_player_state($acoustics);
 }
 elsif ($mode ~~ [qw(start stop skip)]) {
 	$acoustics->rpc($mode);
 	sleep 0.25;
 
-	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
-	($data)     = $acoustics->get_song({song_id => $player->{song_id}});
+	$data = generate_player_state($acoustics);
 } else {
+	$data = generate_player_state($acoustics);
+}
+
+sub generate_player_state {
+	my $acoustics = shift;
+	my $data = {};
 	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
-	($data)     = $acoustics->get_song({song_id => $player->{song_id}});
+	$data->{player} = $player;
+
+	my($song) = $acoustics->get_song({song_id => $player->{song_id}});
+	$data->{nowPlaying} = $song;
+	$data->{playlist}    = [$acoustics->get_playlist()];
+	return $data;
 }
 
 binmode STDOUT, ':utf8';

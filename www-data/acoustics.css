@@ -7,6 +7,25 @@ img {
     border: none
 }
 
+.goog-tablesorter-header {cursor: pointer}
+.goog-slider-horizontal {
+    background-color: ThreeDFace;
+    position: relative;
+    overflow: hidden;
+}
+
+.goog-slider-thumb {
+    position: absolute;
+    background-color: ThreeDShadow;
+    overflow: hidden;
+}
+
+.goog-slider-horizontal .goog-slider-thumb {
+    top: 0;
+    width: 10%;
+    height: 100%;
+}
+
 th.goog-tablesorter-sorted {
     background-color: #ffcccc;
 }
@@ -16,7 +35,6 @@ th.goog-tablesorter-sorted-reverse {
 
 #container
 {
-    background: #f0f0ff;
 }
 #container .column
 {
