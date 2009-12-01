@@ -9,21 +9,21 @@ sub start {
 	my $self      = shift;
 	my $acoustics = shift;
 
-	$acoustics->player->start;
+	$acoustics->player('start');
 }
 
 sub skip {
 	my $self      = shift;
 	my $acoustics = shift;
 
-	$acoustics->player->skip;
+	$acoustics->player('skip');
 }
 
 sub stop {
 	my $self      = shift;
 	my $acoustics = shift;
 
-	$acoustics->player->stop;
+	$acoustics->player('stop');
 }
 
 sub volume {
@@ -31,7 +31,7 @@ sub volume {
 	my $acoustics = shift;
 	my $volume    = shift;
 
-	$acoustics->player->volume($volume);
+	$acoustics->player('volume', $volume);
 }
 
 1;

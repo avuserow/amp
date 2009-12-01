@@ -34,7 +34,7 @@ log4perl.filter.MatchInfo.AcceptOnMatch = true
 
 # Error messages
 log4perl.filter.MatchError = Log::Log4perl::Filter::LevelRange
-log4perl.filter.MatchError.LevelMin      = ERROR
+log4perl.filter.MatchError.LevelMin      = INFO
 log4perl.filter.MatchError.AcceptOnMatch = true
 
 # INFO to Screen

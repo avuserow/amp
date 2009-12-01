@@ -10,12 +10,13 @@ sub start {
 	my $class     = shift;
 	my $acoustics = shift;
 
+
 	my $pid = fork;
 	if ($pid) {
 		return;
 	} elsif ($pid == 0) {
-		daemonize();
 		$acoustics = $acoustics->reinit;
+		daemonize();
 		start_player($acoustics);
 	} else {
 		ERROR "fork failed: $!";
@@ -79,6 +80,7 @@ sub send_signal {
 sub start_player {
 	my $acoustics = shift;
 
+	WARN "got here";
 	$acoustics->remove_player;
 	$acoustics->add_player({
 		local_id => $$,
