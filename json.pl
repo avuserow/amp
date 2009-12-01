@@ -17,7 +17,11 @@ my $q = CGI::Simple->new;
 my $mode = $q->param('mode') || '';
 my $data;
 if ($mode eq 'random') {
-	$data = [$acoustics->get_song({}, 'RAND()', 10)];
+	my $amount = $q->param('amount') || 20;
+	$data = [$acoustics->get_song({}, 'RAND()', $amount)];
+} elsif ($mode eq 'recent') {
+	my $amount = $q->param('amount') || 50;
+	$data = [$acoustics->get_song({}, {'-DESC' => 'song_id'}, $amount)];
 } elsif ($mode eq 'vote') {
 	my $song_id = $q->param('song_id');
 	if ($song_id) {

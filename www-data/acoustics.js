@@ -110,11 +110,21 @@ function updateNowPlaying(json) {
 	goog.dom.$('nowplaying').innerHTML = nowPlaying;
 }
 
-function loadRandomSongs() {
+function loadRecentSongs(amount) {
 	goog.net.XhrIo.send(
-		'/acoustics/json.pl?mode=random',
+		'/acoustics/json.pl?mode=recent;amount=' + amount,
 		function () {
-			goog.dom.$('result_title').innerHTML = '10 Random Songs';
+			goog.dom.$('result_title').innerHTML = amount + ' Recently Added Songs';
+			fillResultTable(this.getResponseJson());
+		}
+	);
+}
+
+function loadRandomSongs(amount) {
+	goog.net.XhrIo.send(
+		'/acoustics/json.pl?mode=random;amount=' + amount,
+		function () {
+			goog.dom.$('result_title').innerHTML = amount + ' Random Songs';
 			fillResultTable(this.getResponseJson());
 		}
 	);
