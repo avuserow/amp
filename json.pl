@@ -14,8 +14,11 @@ use Time::HiRes 'sleep';
 my $acoustics = Acoustics->new({config_file => 'lib/acoustics.ini'});
 my $q = CGI::Simple->new;
 
+my $who = Acoustics::Web::Auth::RemoteUser->whoami;
+
 my $mode = $q->param('mode') || '';
 my $data;
+
 if ($mode eq 'random') {
 	my $amount = $q->param('amount') || 20;
 	$data = [$acoustics->get_song({}, 'RAND()', $amount)];
@@ -24,21 +27,19 @@ if ($mode eq 'random') {
 	$data = [$acoustics->get_song({}, {'-DESC' => 'song_id'}, $amount)];
 } elsif ($mode eq 'vote') {
 	my $song_id = $q->param('song_id');
-	if ($song_id) {
-		$acoustics->vote($song_id, $ENV{REMOTE_USER} || "test");
+	if ($song_id && $who) {
+		$acoustics->vote($song_id, $who);
 	}
 }
 elsif ($mode eq 'unvote') {
 	my $song_id = $q->param('song_id');
-	if ($song_id) {
+	if ($song_id && $who) {
 		$acoustics->delete_vote({
 			song_id => $song_id,
-			who     => $ENV{REMOTE_USER} || "test",
+			who     => $who,
 		});
-	} else {
-		$acoustics->delete_vote({
-			who => $ENV{REMOTE_USER} || "test",
-		});
+	} elsif($who) {
+		$acoustics->delete_vote({who => $who});
 	}
 }
 elsif($mode eq 'browse')
