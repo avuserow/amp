@@ -1,13 +1,18 @@
 #!/usr/bin/perl
 
-use CGI;
+use FCGI;
+use CGI::Simple;
 use CGI::Carp 'fatalsToBrowser';
 use CGI::Session;
 
-my($user) = $ENV{REMOTE_USER} =~ /([^@]+)\@/;
+my $req = FCGI::Request();
 
-my $session = CGI::Session->new;
-$session->param(who => $user);
-$session->flush;
+while ($req->Accept() >= 0) {
+	my($user) = $ENV{REMOTE_USER} =~ /([^@]+)\@/;
 
-print $session->header(-status => 302, -location => '/acoustics/acoustics.html');
+	my $session = CGI::Session->new;
+	$session->param(who => $user);
+	$session->flush;
+
+	print $session->header(-status => 302, -location => '/acoustics');
+}

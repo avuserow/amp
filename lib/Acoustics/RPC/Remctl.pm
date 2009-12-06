@@ -31,17 +31,27 @@ sub do_call {
 	my $acoustics = shift;
 	my $action    = shift;
 
-	for (qw(user host)) {
+	for (qw(host)) {
 		die "Config entry {rpc}{$_} not defined"
 			unless $acoustics->config->{rpc}{$_};
 	}
 
+	system('kinit', '-kt', '/etc/www.keytab', 'websvc') == 0 or die "bleh";
 	system(
-		'remctl',
+		'remctl', '-p', 4373,
 		$acoustics->config->{rpc}{host},
 		'acoustics',
 		$action,
-	) == 0 or die "couldn't run ssh: $!,$?,@{[$? >> 8]}";
+	) == 0 or die "couldn't run remctl: $!,$?,@{[$? >> 8]}";
+
+#	system(
+#		'/usr/bin/k5start', '-t', '-f', '/etc/krb5.keytab', '-K', 120,
+#		'akreher2',
+#		'/usr/bin/remctl',
+#		$acoustics->config->{rpc}{host},
+#		'acoustics',
+#		$action,
+#	) == 0 or die "couldn't run remctl: $!,$?,@{[$? >> 8]}";
 }
 
 1;
