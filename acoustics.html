@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<title>Acoustics</title>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" >
+		<link title="Acoustics" rel="stylesheet" href="www-data/acoustics.css" />
+		<script src="closure-library-read-only/closure/goog/base.js"></script>
+		<script src="www-data/acoustics.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="top">
+				<h1>Acoustics</h1>
+				<form action="" onSubmit="javascript:searchRequest(this.field.value, this.search_value.value); return false;">
+					search:
+					<input type="text" id="search_value" />
+					<select id="field">
+						<option value="any">Any</option>
+						<option value="artist">Artist</option>
+						<option value="album">Album</option>
+						<option value="title">Title</option>
+						<option value="path">Path</option>
+					</select>
+					<input type="submit" />
+				</form>
+			</div>
+			<div id="loginbox">
+				<a href="www-data/auth">Log in</a>
+			</div>
+			<div id="center" class="column">
+				<span id="result_title"></span>
+				(browse by:
+				<a href="javascript:loadRandomSongs(20)"><img src="www-data/icons/sport_8ball.png" alt="" /> random</a>
+				<a href="javascript:loadRecentSongs(50)"><img src="www-data/icons/new.png" alt="" /> recently added</a>
+				<a href="javascript:browseSongs('album')"><img src="www-data/icons/cd.png" alt="" /> album</a>
+				<a href="javascript:browseSongs('artist')"><img src="www-data/icons/user.png" alt="" /> artist</a>
+				)
+				<div id="songresults"></div>
+			</div>
+			<div id="right" class="column">
+				<span id="nowplaying"></span>
+				<ul>
+					<li><a href="javascript:sendPlayerCommand('start')">start</a></li>
+					<li><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
+					<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
+				</ul>
+
+				<img src="www-data/icons/sound.png" alt="" /> volume
+				<div id="volume" class="goog-slider" style="width: 97%;
+					height: 20px; margin: 0 2%">
+				</div>
+
+				<br />
+				<img src="www-data/icons/music.png" alt="" /> playlist
+				(<a href="javascript:unvoteSong(0)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>)
+				<div id="playlist">
+				</div>
+			</div>
+			<div id="footer"></div>
+		</div>
+		<script>
+			makeVolumeSlider(document.getElementById('volume'));
+			startPlayerStateTimer();
+			loadRandomSongs(20);
+		</script>
+	</body>
+</html>
