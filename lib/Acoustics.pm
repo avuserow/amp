@@ -9,6 +9,7 @@ use DBI;
 use SQL::Abstract::Limit;
 use Log::Log4perl;
 use Time::Format qw(%time);
+use Date::Parse 'str2time';
 use Config::Tiny;
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
@@ -155,7 +156,7 @@ sub get_songs_by_votes {
 
 	# Make a hash mapping voters to all the songs they have voted for
 	my $select_votes = $self->db->prepare('
-		SELECT votes.song_id, votes.who, songs.artist, songs.album,
+		SELECT votes.song_id, votes.time, votes.who, songs.artist, songs.album,
 		songs.title, songs.length, songs.path FROM votes INNER JOIN songs ON
 		votes.song_id = songs.song_id WHERE votes.player_id = ?
 	');
@@ -164,6 +165,7 @@ sub get_songs_by_votes {
 	my %votes;
 	while (my $row = $select_votes->fetchrow_hashref()) {
 		my $who = delete $row->{who}; # remove the who, save it
+		$row->{time} = str2time($row->{time});
 		$votes{$row->{song_id}} ||= $row;
 		push @{$votes{$row->{song_id}}{who}}, $who; # re-add the voter
 	}
@@ -188,7 +190,7 @@ sub build_playlist {
 		my @candidates = grep {
 			grep {$_ eq $voter} @{$_->{who}}
 		} values %votes;
-		@candidates    = reverse sort {$a->{who} <=> $b->{who}} @candidates;
+		@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{time} <=> $b->{time}} @candidates;
 
 		# if this user has no more stored votes, ignore them
 		next unless @candidates;
@@ -213,11 +215,7 @@ sub get_playlist {
 	my @playlist = $self->build_playlist;
 
 	my($player) = $self->get_player({player_id => $self->player_id});
-	if ($playlist[0] && $player->{song_id} == $playlist[0]{song_id}) {
-		return @playlist[1 .. $#playlist];
-	} else {
-		return @playlist;
-	}
+	return grep {$player->{song_id} != $_->{song_id}} @playlist;
 }
 
 sub get_current_song {

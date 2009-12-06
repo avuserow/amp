@@ -161,6 +161,7 @@ sub player_loop {
 		$acoustics->delete_song({song_id => $data{song_id}});
 	}
 
+	push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};
 	$acoustics->delete_vote({song_id => $data{song_id}});
 }
 

@@ -12,4 +12,12 @@ my $acoustics = Acoustics->new({
 });
 
 print "command: $command @ARGV\n";
-$acoustics->player($command, @ARGV);
+if($command eq 'update')
+{
+ my ($path) = $0 =~ m{(.+)/};
+	system("$path/scanner.pl", @ARGV);
+}
+else
+{
+ $acoustics->player($command, @ARGV);
+}

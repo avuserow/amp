@@ -26,6 +26,14 @@ sub stop {
 	$class->do_call($acoustics, 'stop');
 }
 
+sub volume {
+	my $class = shift;
+	my $acoustics = shift;
+	my $volume = shift;
+
+	$class->do_call($acoustics, 'volume', $volume);
+}
+
 sub do_call {
 	my $class     = shift;
 	my $acoustics = shift;
@@ -41,7 +49,7 @@ sub do_call {
 		'remctl', '-p', 4373,
 		$acoustics->config->{rpc}{host},
 		'acoustics',
-		$action,
+		$action, @_,
 	) == 0 or die "couldn't run remctl: $!,$?,@{[$? >> 8]}";
 
 #	system(

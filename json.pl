@@ -100,5 +100,5 @@ while ($req->Accept() >= 0) {
 	print $q->header(
 		-type     => 'application/json',
 	);
-	print JSON::DWIW->to_json($data);
+	print JSON::DWIW->new({pretty => 1})->to_json($data);
 }
