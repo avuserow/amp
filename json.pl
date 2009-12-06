@@ -96,6 +96,7 @@ while ($req->Accept() >= 0) {
 	}
 
 	binmode STDOUT, ':utf8';
+	$q->no_cache(1);
 	print $q->header(
 		-type     => 'application/json',
 	);
