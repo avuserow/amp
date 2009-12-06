@@ -3,7 +3,7 @@ package Acoustics;
 use strict;
 use warnings;
 
-use Moose;
+use Mouse;
 use Module::Load 'load';
 use DBI;
 use SQL::Abstract::Limit;
@@ -150,7 +150,7 @@ sub get_songs_by_votes {
 
 	# add any voters that we don't have listed to the end of the queue
 	for my $who (@voter_list) {
-		push @{$self->voter_order}, $who unless $who ~~ $self->voter_order;
+		push @{$self->voter_order}, $who unless grep {$_ eq $who} @{$self->voter_order};
 	}
 
 	# Make a hash mapping voters to all the songs they have voted for
@@ -185,7 +185,9 @@ sub build_playlist {
 		my $voter = shift @voter_order;
 
 		# find all songs matching this voter and sort by number of voters
-		my @candidates = grep {$_->{who} ~~ $voter} values %votes;
+		my @candidates = grep {
+			grep {$_ eq $voter} @{$_->{who}}
+		} values %votes;
 		@candidates    = reverse sort {$a->{who} <=> $b->{who}} @candidates;
 
 		# if this user has no more stored votes, ignore them
