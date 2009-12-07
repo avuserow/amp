@@ -18,9 +18,13 @@ sub generate_player_state {
 	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
 	$data->{player} = $player;
 
-	my($song) = $acoustics->get_song({song_id => $player->{song_id}});
-	$data->{nowPlaying} = $song;
+	# FIXME: there should be a better way to do this
 	$data->{playlist}   = [$acoustics->get_playlist()];
+	$data->{nowPlaying} = $acoustics->get_current_song;
+	unless ($data->{nowPlaying}) {
+		($data->{nowPlaying}) = $acoustics->get_song({song_id => $player->{song_id}});
+	}
+
 	$data->{who}        = Acoustics::Web::Auth::RemoteUser->whoami;
 	return $data;
 }
@@ -48,6 +52,7 @@ while ($req->Accept() >= 0) {
 		if ($song_id && $who) {
 			$acoustics->vote($song_id, $who);
 		}
+		$data = generate_player_state($acoustics);
 	}
 	elsif ($mode eq 'unvote') {
 		my $song_id = $q->param('song_id');
@@ -59,6 +64,7 @@ while ($req->Accept() >= 0) {
 		} elsif($who) {
 			$acoustics->delete_vote({who => $who});
 		}
+		$data = generate_player_state($acoustics);
 	}
 	elsif($mode eq 'browse')
 	{
@@ -82,8 +88,21 @@ while ($req->Accept() >= 0) {
 
 		$data = [$acoustics->get_song($where, [qw(artist album track title)])];
 	}
+	elsif ($mode eq 'votes')
+	{
+		my $song_id = $q->param('song_id');
+		if($song_id)
+		{
+			$data = [$acoustics->get_votes_for_song($song_id)];
+		}
+		else
+		{
+			$data = generate_player_state($acoustics);
+		}
+	}
 	elsif ($mode eq 'volume') {
-		$acoustics->rpc('volume', $q->param('value'));
+		my $vol = $q->param('value');
+		$acoustics->rpc('volume', $vol);
 		$data = generate_player_state($acoustics);
 	}
 	elsif ($mode =~ /^(start|stop|skip)$/) {

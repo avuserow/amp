@@ -45,10 +45,7 @@
 				</ul>
 
 				<img src="www-data/icons/sound.png" alt="" /> volume
-				<div id="volume" class="goog-slider" style="width: 97%;
-					height: 20px; margin: 0 2%">
-				</div>
-
+				<div id="volume"></div>
 				<br />
 				<img src="www-data/icons/music.png" alt="" /> playlist
 				(<a href="javascript:unvoteSong(0)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>)
@@ -58,7 +55,7 @@
 			<div id="footer"></div>
 		</div>
 		<script>
-			makeVolumeSlider(document.getElementById('volume'));
+			//makeVolumeSlider(document.getElementById('volume'));
 			startPlayerStateTimer();
 			loadRandomSongs(20);
 		</script>

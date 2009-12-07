@@ -55,6 +55,13 @@ sub volume {
 		return;
 	}
 
+	if($volume > 100)
+	{
+		$volume = 100;
+	}
+
+	$volume *= .7;
+
 	$acoustics->update_player({volume => $volume});
 	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
 	$class->send_signal($acoustics, 'USR1');
@@ -123,7 +130,6 @@ sub player_loop {
 		# and handle SIGHUP. don't use waitpid because it blocks SIGHUP.
 		my $pid = open2(my $child_out, my $child_in,
 			'mplayer', '-slave', '-quiet', '-af' => 'volnorm=2:0.25', # volnorm=2:0.25 does multipass volume normalization with 0.25 amplitude adjustment
-			#'-volume' => $player->{volume},
 			$data{path})
 			or LOGDIE "couldn't open mplayer: $!";
 

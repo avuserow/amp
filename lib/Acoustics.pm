@@ -139,6 +139,18 @@ sub browse_songs_by_column {
 	return @{$sth->fetchall_arrayref({})};
 }
 
+sub get_votes_for_song {
+	my $self = shift;
+	my $song_id = shift;
+
+	my $select_votes = $self->db->prepare(
+			'SELECT who FROM votes WHERE song_id=?');
+	
+	$select_votes->execute($song_id);
+
+	return @{$select_votes->fetchall_arrayref({})};;
+}
+
 sub get_songs_by_votes {
 	my $self = shift;
 

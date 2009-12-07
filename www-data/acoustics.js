@@ -8,8 +8,13 @@ goog.require('goog.Timer');
 goog.require('goog.async.Delay');
 
 vc_modifiable = false;
+currentUser = '';
 
 function sendPlayerCommand(mode) {
+	if (!currentUser) {
+		alert("You must log in first.");
+		return;
+	}
 	goog.net.XhrIo.send(
 			'/acoustics/json.pl?mode=' + mode,
 			function () {handlePlayerStateRequest(this.getResponseJson());}
@@ -17,6 +22,10 @@ function sendPlayerCommand(mode) {
 }
 
 function setVolume(value) {
+	if (!currentUser) {
+		alert("You must log in first.");
+		return;
+	}
 	goog.net.XhrIo.send(
 			'/acoustics/json.pl?mode=volume;value=' + value,
 			function () {handlePlayerStateRequest(this.getResponseJson());}
@@ -63,12 +72,14 @@ function handlePlayerStateRequest (json) {
 	if (json.who) updateCurrentUser(json.who);
 	updateNowPlaying(json.nowPlaying);
 	if (json.playlist) updatePlaylist(json.playlist);
-	if (json.player) setVolumeSlider(json.player.volume);
+	if (json.player) updateVolumeScale(json.player.volume);
 }
 
 function updateCurrentUser (who) {
-	if (who) goog.dom.$('loginbox').innerHTML = 'welcome ' + who;
-	else goog.dom.$('loginbox').innerHTML = '<a href="www-data/auth">Log in</a>';
+	if (who) {
+		currentUser = who;
+		goog.dom.$('loginbox').innerHTML = 'welcome ' + who;
+	} else goog.dom.$('loginbox').innerHTML = '<a href="www-data/auth">Log in</a>';
 }
 
 function updatePlaylist(json)
@@ -77,18 +88,18 @@ function updatePlaylist(json)
 	for (var item in json)
 	{
 		list += '<li>';
-		if (json[item].who && json[item].who.indexOf('test') != -1) {
+		if (json[item].who && json[item].who.indexOf(currentUser) != -1) {
 			list += '<a href="javascript:unvoteSong(' + json[item].song_id
 				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> ';
 		} else {
 			list += '<a href="javascript:voteSong(' + json[item].song_id
 				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
 		}
-		list += '<a href="javascript:selectRequest(\'title\', \''
-			+ qsencode(json[item].title) + '\')">' + json[item].title
+		list += '<a href="javascript:getSongDetails('+json[item].song_id+')">' + json[item].title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ qsencode(json[item].artist) + '\')">' + json[item].artist
-			+ '</a></li>';
+			+ '</a>'
+			+ '&nbsp;(' + json[item].length +')</li>';
 	}
 	list += '</ui>';
 	goog.dom.$('playlist').innerHTML = list;
@@ -141,6 +152,22 @@ function browseSongs(field)
 	);
 }
 
+function getSongDetails(song_id) {
+	goog.net.XhrIo.send(
+		'/acoustics/json.pl?mode=select;field=song_id;value='+song_id,
+		function () {
+			var json = this.getResponseJson();
+		var table = '<table id="result_table">'
+		+	'<thead><tr><th>Track #</th><th>Artist</th><th>Title</th><th>Album</th></tr></thead>'
+		+	'<tr><td>'+json[0].track+'</td><td>'+json[0].artist+'</td><td>'+json[0].title+'</td><td>'+json[0].album+'</td></tr>'
+		+	'<tr>'+json[0].path+'</tr>'
+		+	'</table>';
+		goog.dom.$('songresults').innerHTML = table;
+		}
+		);
+}
+
+
 function fillResultList(json, field) {
 	list = '<ul>';
 	for (var item in json) {
@@ -182,6 +209,10 @@ function fillResultTable(json) {
 }
 
 function voteSong(song_id) {
+	if (!currentUser) {
+		alert("You must log in first.");
+		return;
+	}
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=vote;song_id=' + song_id,
 		function () {handlePlayerStateRequest(this.getResponseJson());}
@@ -189,37 +220,24 @@ function voteSong(song_id) {
 }
 
 function unvoteSong(song_id) {
+	if (!currentUser) {
+		alert("You must log in first.");
+		return;
+	}
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=unvote;song_id=' + song_id,
 		function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
 
-function makeVolumeSlider(elm) {
-	vc_slider = new goog.ui.Slider;
-	vc_slider.decorate(elm);
-	vc_slider.setMoveToPointEnabled(true);
-
-	// Throttle the slider, so we don't spam the server with requests
-	// Delay each setVolume call slightly, so that the changes are smoother.
-	var throttle = new goog.Throttle(
-			function () {
-				var delay = new goog.async.Delay(function() {
-					setVolume(vc_slider.getValue());
-					}, 500);
-				delay.start();
-			},
-			1000
-	);
-	vc_slider.addEventListener(goog.ui.Component.EventType.CHANGE, function() {
-			if (vc_modifiable) throttle.fire();
-	});
-}
-
-function setVolumeSlider (volume) {
-	vc_modifiable = false;
-	vc_slider.animatedSetValue_(volume);
-	vc_modifiable = true;
+function updateVolumeScale(volume) {
+	scale = '';
+	for (var i = 1; i <= 11; i++) {
+		scale += '<a ';
+		if (((Math.round(volume / 7))+1) == i) scale += 'style="color: red" ';
+		scale += 'href="javascript:setVolume(' + ((i * 10) - 10) + ')">' + i + '</a> ';
+	}
+	goog.dom.$('volume').innerHTML = scale;
 }
 
 function qsencode(str) {

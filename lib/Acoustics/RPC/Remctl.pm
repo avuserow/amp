@@ -29,7 +29,7 @@ sub stop {
 sub volume {
 	my $class = shift;
 	my $acoustics = shift;
-	my $volume = shift;
+	my $volume = int(shift);
 
 	$class->do_call($acoustics, 'volume', $volume);
 }
