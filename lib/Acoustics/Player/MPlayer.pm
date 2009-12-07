@@ -122,7 +122,7 @@ sub player_loop {
 		# then continually read from input so we know it's still running
 		# and handle SIGHUP. don't use waitpid because it blocks SIGHUP.
 		my $pid = open2(my $child_out, my $child_in,
-			'mplayer', '-slave', '-quiet', '-af' => 'volnorm',
+			'mplayer', '-slave', '-quiet', '-af' => 'volnorm=2:0.25', # volnorm=2:0.25 does multipass volume normalization with 0.25 amplitude adjustment
 			#'-volume' => $player->{volume},
 			$data{path})
 			or LOGDIE "couldn't open mplayer: $!";
