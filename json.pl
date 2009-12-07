@@ -21,7 +21,7 @@ sub generate_player_state {
 	# FIXME: there should be a better way to do this
 	$data->{playlist}   = [$acoustics->get_playlist()];
 	$data->{nowPlaying} = $acoustics->get_current_song;
-	unless ($data->{nowPlaying}) {
+	unless ($data->{nowPlaying}{song_id} == $player->{song_id}) {
 		($data->{nowPlaying}) = $acoustics->get_song({song_id => $player->{song_id}});
 	}
 

@@ -87,7 +87,7 @@ sub send_signal {
 sub start_player {
 	my $acoustics = shift;
 
-	$acoustics->remove_player;
+#	$acoustics->remove_player;
 	$acoustics->add_player({
 		local_id => $$,
 		volume   => 50,
@@ -137,6 +137,8 @@ sub player_loop {
 		local $SIG{HUP} = sub {
 			WARN "skipping song: $data{path}!";
 			print $child_in "quit\n";
+			$acoustics->delete_vote({song_id => $data{song_id}});
+			push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};
 			return;
 		};
 
