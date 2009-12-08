@@ -17,6 +17,11 @@ if($command eq 'update')
  my ($path) = $0 =~ m{(.+)/};
 	system("$path/scanner.pl", @ARGV);
 }
+elsif ($command eq 'prune')
+{
+ my ($path) = $0 =~ m{(.+)/};
+ system("$path/garbage-collect.pl", @ARGV);
+}
 else
 {
  $acoustics->player($command, @ARGV);

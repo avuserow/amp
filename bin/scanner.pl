@@ -24,7 +24,6 @@ close $pipe;
 #split apart data, insert to database
 my @datas = split /---/, $data;
 
-$acoustics->begin_work;
 for my $item (@datas) {
 	my %hash = map {(split /:/, $_, 2)} split /\n/, $item;
 	delete $hash{bitrate}; # no bitrate field in the database yet
@@ -45,4 +44,3 @@ for my $item (@datas) {
 		$acoustics->add_song(\%hash);
 	}
 }
-$acoustics->commit;
