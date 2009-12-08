@@ -45,10 +45,13 @@ th.goog-tablesorter-sorted-reverse {
     float: left;
     width: 75%;
 }
-#right
-{
-    width: 22%;
+#right {
     float: right;
+    height: 98%;
+    position: fixed;
+    right: 1%;
+    top: 1%;
+    width: 22%;
 }
 
 #footer {
