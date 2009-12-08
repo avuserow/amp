@@ -169,8 +169,8 @@ sub get_songs_by_votes {
 	# Make a hash mapping voters to all the songs they have voted for
 	my $select_votes = $self->db->prepare('
 		SELECT votes.song_id, votes.time, votes.who, songs.artist, songs.album,
-		songs.title, songs.length, songs.path FROM votes INNER JOIN songs ON
-		votes.song_id = songs.song_id WHERE votes.player_id = ?
+		songs.title, songs.length, songs.path, songs.track FROM votes INNER
+		JOIN songs ON votes.song_id = songs.song_id WHERE votes.player_id = ?
 	');
 	$select_votes->execute($self->player_id);
 
@@ -212,11 +212,6 @@ sub build_playlist {
 
 		# re-add the voter to the list since they probably have more songs
 		push @voter_order, $voter;
-	}
-
-	foreach my $song (@songs)
-	{
-		$song->{length} = $time{'mm:ss', $song->{length}};
 	}
 
 	return @songs;

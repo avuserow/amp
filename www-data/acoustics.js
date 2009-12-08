@@ -10,6 +10,29 @@ goog.require('goog.async.Delay');
 vc_modifiable = false;
 currentUser = '';
 
+function readableTime(length)
+{
+	seconds = length % 60;
+	minutes = Math.round(length / 60);
+	hours = Math.round(length / 3600);
+
+	result = "";
+	if(hours > 0)
+		result += hours+':';
+	if(minutes >= 10)
+		result += minutes+':';
+	if(minutes < 10 && hours > 0)
+		result += '0'+minutes+':';
+	else if(minutes < 10)
+		result += minutes+':';
+	if(seconds < 10)
+		result += '0'+seconds;
+	else
+		result += seconds;
+		return result;
+	
+}
+
 function sendPlayerCommand(mode) {
 	if (!currentUser) {
 		alert("You must log in first.");
@@ -99,7 +122,7 @@ function updatePlaylist(json)
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ qsencode(json[item].artist) + '\')">' + json[item].artist
 			+ '</a>'
-			+ '&nbsp;(' + json[item].length +')</li>';
+			+ '&nbsp;(' + readableTime(json[item].length) +')</li>';
 	}
 	list += '</ui>';
 	goog.dom.$('playlist').innerHTML = list;
@@ -107,14 +130,14 @@ function updatePlaylist(json)
 
 function updateNowPlaying(json) {
 	if (json) {
-		nowPlaying = '<a href="javascript:selectRequest(\'title\', \''
-			+ json.title + '\')">' + json.title
+		nowPlaying = '<a href="javascript:getSongDetails('+json.song_id+')">' + json.title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ json.artist + '\')">' + json.artist + '</a>';
 		if (json.album) {
 			nowPlaying += ' (from <a href="javascript:selectRequest(\'album\', \''
 				+ json.album + '\')">' + json.album + '</a>)';
 		}
+		nowPlaying += '&nbsp;('+readableTime(json.length)+')';
 	} else {
 		nowPlaying = 'nothing playing';
 	}
@@ -154,14 +177,26 @@ function browseSongs(field)
 
 function getSongDetails(song_id) {
 	goog.net.XhrIo.send(
-		'/acoustics/json.pl?mode=select;field=song_id;value='+song_id,
-		function () {
+		'/acoustics/json.pl',
+		function() {
+			var table = '<table id="result_table"><thead><tr><th>Track</th><th>Artist</th><th>Title</th><th>Album</th><th>Length</th></tr></thead>';
 			var json = this.getResponseJson();
-		var table = '<table id="result_table">'
-		+	'<thead><tr><th>Track #</th><th>Artist</th><th>Title</th><th>Album</th></tr></thead>'
-		+	'<tr><td>'+json[0].track+'</td><td>'+json[0].artist+'</td><td>'+json[0].title+'</td><td>'+json[0].album+'</td></tr>'
-		+	'<tr>'+json[0].path+'</tr>'
-		+	'</table>';
+			json.playlist.push(json.nowPlaying);
+			for(var item in json.playlist)
+			{
+				if(song_id == json.playlist[item].song_id)
+				{
+					var file = json.playlist[item];
+					table += "<tr><td>"+file.track+"</td><td>"+file.artist+"</td><td>"+file.title+"</td><td>"+file.album+"</td><td>"+readableTime(file.length)+"</td></tr>";
+					table += "<tr>"+file.path+"</tr>";
+					table += "<tr>Who voted for this?</tr>";
+					table += "<tr>"
+					for(var who in file.who)
+						table += file.who[who]+" ";
+					table += "</tr>";
+				}
+			}
+			table += "</table>";
 		goog.dom.$('songresults').innerHTML = table;
 		}
 		);

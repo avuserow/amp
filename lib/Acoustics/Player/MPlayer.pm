@@ -138,7 +138,7 @@ sub player_loop {
 			WARN "skipping song: $data{path}!";
 			print $child_in "quit\n";
 			$acoustics->delete_vote({song_id => $data{song_id}});
-			push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};
+			#push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};
 			return;
 		};
 

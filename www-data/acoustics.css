@@ -52,6 +52,7 @@ th.goog-tablesorter-sorted-reverse {
     right: 1%;
     top: 1%;
     width: 22%;
+    overflow: scroll;
 }
 
 #footer {
