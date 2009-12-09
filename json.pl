@@ -46,7 +46,13 @@ while ($req->Accept() >= 0) {
 	} elsif ($mode eq 'recent') {
 		my $amount = $q->param('amount') || 50;
 		$data = [$acoustics->get_song({}, {'-DESC' => 'song_id'}, $amount)];
-	} elsif ($mode eq 'vote') {
+	} 
+	elsif($mode eq 'history')
+	{
+		my $amount = $q->param('amount') || 25;
+		$data = [$acoustics->get_history($amount)];
+	}
+	elsif ($mode eq 'vote') {
 
 		my $song_id = $q->param('song_id');
 		if ($song_id && $who) {

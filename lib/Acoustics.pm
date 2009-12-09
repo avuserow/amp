@@ -148,7 +148,7 @@ sub get_votes_for_song {
 	
 	$select_votes->execute($song_id);
 
-	return @{$select_votes->fetchall_arrayref({})};;
+	return @{$select_votes->fetchall_arrayref({})};
 }
 
 sub get_songs_by_votes {
@@ -183,6 +183,17 @@ sub get_songs_by_votes {
 	}
 
 	return %votes;
+}
+
+sub get_history
+{
+	my $self = shift;
+	my $amount = shift;
+
+	my $select_history = $self->db->prepare('select * from history order by time desc limit ?');
+	$select_history->execute($amount);
+
+	return @{$select_history->fetchall_arrayref({})};
 }
 
 sub build_playlist {
@@ -255,10 +266,10 @@ sub add_playhistory {
 
 	my $sth = $self->db->prepare(
 		'INSERT INTO history(song_id, who, time, pretty_name, player_id)
-		values(?, ?, ?, ?, ?)'
+		values(?, ?, now(), ?, ?)'
 	);
 	$sth->execute(
-		$data->{song_id}, '', time, "$data->{artist} - $data->{title}",
+		$data->{song_id}, '', "$data->{artist} - $data->{title}",
 		$self->player_id,
 	);
 }

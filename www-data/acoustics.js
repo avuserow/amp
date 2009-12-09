@@ -12,16 +12,16 @@ currentUser = '';
 
 function readableTime(length)
 {
-	seconds = length % 60;
-	minutes = Math.round(length / 60);
-	hours = Math.round(length / 3600);
+	var seconds = length % 60;
+	var minutes = Math.round(length / 60) % 60;
+	var hours = Math.round(length / 3600);
 
-	result = "";
+	var result = "";
 	if(hours > 0)
 		result += hours+':';
 	if(minutes >= 10)
 		result += minutes+':';
-	if(minutes < 10 && hours > 0)
+	else if(minutes < 10 && hours > 0)
 		result += '0'+minutes+':';
 	else if(minutes < 10)
 		result += minutes+':';
@@ -107,6 +107,7 @@ function updateCurrentUser (who) {
 
 function updatePlaylist(json)
 {
+	var totalTime = 0;
 	list = '<ul>';
 	for (var item in json)
 	{
@@ -122,9 +123,11 @@ function updatePlaylist(json)
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ qsencode(json[item].artist) + '\')">' + json[item].artist
 			+ '</a>'
-			+ '&nbsp;(' + readableTime(json[item].length) +')</li>';
+			+ '&nbsp;(' + readableTime(json[item].length) +') ('+json[item].who.length+')</li>';
+		totalTime = totalTime + parseInt(json[item].length);
 	}
 	list += '</ui>';
+	list += 'Total Time: '+readableTime(totalTime);
 	goog.dom.$('playlist').innerHTML = list;
 }
 
@@ -142,6 +145,16 @@ function updateNowPlaying(json) {
 		nowPlaying = 'nothing playing';
 	}
 	goog.dom.$('nowplaying').innerHTML = nowPlaying;
+}
+
+function loadPlayHistory(amount) {
+	goog.net.XhrIo.send(
+		'/acoustics/json.pl?mode=history;amount='+amount,
+		function() {
+			goog.dom.$('result_title').innerHTML = amount + ' previously played song';
+			fillHistoryTable(this.getResponseJson());
+		}
+	);
 }
 
 function loadRecentSongs(amount) {
@@ -212,6 +225,18 @@ function fillResultList(json, field) {
 	}
 	list += '</ul>';
 	goog.dom.$('songresults').innerHTML = list;
+}
+
+function fillHistoryTable(json) {
+	var table = '<table id="result_table"><thead><tr><th>Vote</th><th>Name</th><th>Played at</th></tr></thead>';
+	for (var item in json)
+	{
+		table += '<tr><td>'
+		+		 '<a href="javascript:voteSong('+json[item].song_id+')"><img src="www-data/icons/add.png" alt=""/></a>'
+		+		 '</td><td><a href="javascript:getSongDetails('+json[item].song_id+')">'+json[item].pretty_name+'</a></td><td>'+json[item].time+'</td></tr>';
+	}
+	table += '</table>';
+	goog.dom.$('songresults').innerHTML = table;
 }
 
 function fillResultTable(json) {
