@@ -231,7 +231,7 @@ function fillHistoryTable(json) {
 	var table = '<table id="result_table"><thead><tr><th>Vote</th><th>Name</th><th>Played at</th></tr></thead>';
 	for (var item in json)
 	{
-		table += '<tr><td>'
+		table += '<tr><td style="text-align: center">'
 		+		 '<a href="javascript:voteSong('+json[item].song_id+')"><img src="www-data/icons/add.png" alt=""/></a>'
 		+		 '</td><td><a href="javascript:getSongDetails('+json[item].song_id+')">'+json[item].pretty_name+'</a></td><td>'+json[item].time+'</td></tr>';
 	}
