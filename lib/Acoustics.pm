@@ -167,6 +167,10 @@ sub get_songs_by_votes {
 		push @{$self->voter_order}, $who unless $lookup{$who};
 	}
 
+	# remove extra voters from the list
+	my %lookup = map {$_ => 1} @voter_list;
+	@{$self->voter_order} = grep {$lookup{$_}} @{$self->voter_order};
+
 	# Make a hash mapping voters to all the songs they have voted for
 	my $select_votes = $self->db->prepare('
 		SELECT votes.song_id, votes.time, votes.who, songs.artist, songs.album,

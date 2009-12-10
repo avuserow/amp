@@ -2,51 +2,45 @@
 
 use strict;
 use warnings;
+use utf8;
 use lib ($0 =~ m{(.+)/})[0] . '/../lib';
 use Acoustics;
 use File::Find::Rule ();
 use List::MoreUtils qw(uniq);
 use Log::Log4perl ':easy';
 use Cwd qw(abs_path);
+use Unicode::Normalize;
+use Asdf;
 
 my $acoustics = Acoustics->new({
 	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
 });
 
-for my $filename (@ARGV) {
-	unless ($filename =~ m{^/afs/acm\.uiuc\.edu/media/music/}) {
-		LOGDIE "Your path ($filename) must begin with /afs/acm.uiuc.edu/media/music/";
-	}
-}
-
 #get list of unique filenames from paths passed on command line
 my @files = uniq(map {abs_path($_)} File::Find::Rule->file()->in(@ARGV));
 
 #pass filenames through tagreader
-open my $pipe, '-|', ($0 =~ m{(.+)/})[0] . '/tagreader', @files or die "couldn't open tagreader: $!";
+open my $pipe, '-|:encoding(UTF-8)', ($0 =~ m{(.+)/})[0] . '/tagreader', @files or die "couldn't open tagreader: $!";
 my $data = join '', <$pipe>;
 close $pipe;
 
 #split apart data, insert to database
 my @datas = split /---/, $data;
 
+binmode STDOUT, ':utf8';
 for my $item (@datas) {
 	my %hash = map {(split /:/, $_, 2)} split /\n/, $item;
-	delete $hash{bitrate}; # no bitrate field in the database yet
-	unless($hash{length})
-	{
-		WARN "file $hash{path} not music";
-		next;
-	}
-	if($acoustics->check_if_song_exists($hash{path}))
-	{
-		INFO "file $hash{path} updated";
-		my $path = delete $hash{path};
-		$acoustics->update_song(\%hash, {path => $path});
-	}
-	else
-	{
-		INFO "file $hash{path} added";
-		$acoustics->add_song(\%hash);
+
+	next unless $hash{length};
+
+	my $title = $hash{title};
+	my $title_casefolded = NFKD(to_casefold(NFKD(to_casefold(NFD($title)))));
+	if ($title ne $title_casefolded) {
+		printf("%x ", $_) for map ord, split //, $title;
+		print "\n";
+		printf("%x ", $_) for map ord, split //, $title_casefolded;
+		print "\n";
+		print "$title -> $title_casefolded\n";
+		last;
 	}
 }
