@@ -30,11 +30,12 @@ sub generate_player_state {
 
 sub can_skip {
 	my $acoustics = shift;
-
+	my $who = Acoustics::Web::Auth::RemoteUser->whoami;
 	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
-	my $player_count = scalar $acoustics->get_votes_for_song($player->{song_id});
-
-	return Acoustics::Web::Auth::RemoteUser->whoami && $player_count == 0;
+	my @voters = map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id});
+	my $voter_count = scalar @voters;
+	my $voted = grep {$who eq $_} @voters;
+	return ((($voted && $voter_count == 1) || ($voter_count == 0)) && $who)
 }
 
 my $req = FCGI::Request();
