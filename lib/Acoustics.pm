@@ -186,17 +186,6 @@ sub get_songs_by_votes {
 	return %votes;
 }
 
-sub get_history
-{
-	my $self = shift;
-	my $amount = shift;
-
-	my $select_history = $self->db->prepare('select * from history order by time desc limit ?');
-	$select_history->execute($amount);
-
-	return @{$select_history->fetchall_arrayref({})};
-}
-
 sub build_playlist {
 	my $self = shift;
 
@@ -273,6 +262,17 @@ sub add_playhistory {
 		$data->{song_id}, '', "$data->{artist} - $data->{title}",
 		$self->player_id,
 	);
+}
+
+sub get_history
+{
+	my $self = shift;
+	my $amount = shift;
+
+	my $select_history = $self->db->prepare('select * from history order by time desc limit ?');
+	$select_history->execute($amount);
+
+	return @{$select_history->fetchall_arrayref({})};
 }
 
 sub delete_song {

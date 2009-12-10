@@ -61,20 +61,19 @@ while ($req->Accept() >= 0) {
 		$data = [$acoustics->get_history($amount)];
 	}
 	elsif ($mode eq 'vote') {
-
-		my $song_id = $q->param('song_id');
-		if ($song_id && $who) {
-			$acoustics->vote($song_id, $who);
+		my(@song_ids) = $q->param('song_id');
+		if (@song_ids && $who) {
+			$acoustics->vote($_, $who) for @song_ids;
 		}
 		$data = generate_player_state($acoustics);
 	}
 	elsif ($mode eq 'unvote') {
-		my $song_id = $q->param('song_id');
-		if ($song_id && $who) {
+		my(@song_ids) = $q->param('song_id');
+		if (@song_ids && $song_ids[0] && $who) {
 			$acoustics->delete_vote({
-				song_id => $song_id,
+				song_id => $_,
 				who     => $who,
-			});
+			}) for @song_ids;
 		} elsif($who) {
 			$acoustics->delete_vote({who => $who});
 		}
@@ -101,18 +100,6 @@ while ($req->Accept() >= 0) {
 		}
 
 		$data = [$acoustics->get_song($where, [qw(artist album track title)])];
-	}
-	elsif ($mode eq 'votes')
-	{
-		my $song_id = $q->param('song_id');
-		if($song_id)
-		{
-			$data = [$acoustics->get_votes_for_song($song_id)];
-		}
-		else
-		{
-			$data = generate_player_state($acoustics);
-		}
 	}
 	elsif ($mode eq 'volume') {
 		my $vol = $q->param('value');
