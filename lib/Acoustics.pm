@@ -163,7 +163,8 @@ sub get_songs_by_votes {
 
 	# add any voters that we don't have listed to the end of the queue
 	for my $who (@voter_list) {
-		push @{$self->voter_order}, $who unless grep {$_ eq $who} @{$self->voter_order};
+		my %lookup = map {$_ => 1} @{$self->voter_order};
+		push @{$self->voter_order}, $who unless $lookup{$who};
 	}
 
 	# Make a hash mapping voters to all the songs they have voted for

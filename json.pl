@@ -19,14 +19,22 @@ sub generate_player_state {
 	$data->{player} = $player;
 
 	# FIXME: there should be a better way to do this
-	$data->{playlist}   = [$acoustics->get_playlist()];
-	$data->{nowPlaying} = $acoustics->get_current_song;
-	unless ($data->{nowPlaying}{song_id} == $player->{song_id}) {
-		($data->{nowPlaying}) = $acoustics->get_song({song_id => $player->{song_id}});
-	}
+	$data->{playlist}     = [$acoustics->get_playlist()];
+	($data->{nowPlaying}) = $acoustics->get_song({song_id => $player->{song_id}});
+	$data->{nowPlaying}{who} = [map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id})];
 
-	$data->{who}        = Acoustics::Web::Auth::RemoteUser->whoami;
+	$data->{who} = Acoustics::Web::Auth::RemoteUser->whoami;
+	$data->{canSkip} = can_skip($acoustics) ? JSON::DWIW::true : JSON::DWIW::false;
 	return $data;
+}
+
+sub can_skip {
+	my $acoustics = shift;
+
+	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	my $player_count = scalar $acoustics->get_votes_for_song($player->{song_id});
+
+	return Acoustics::Web::Auth::RemoteUser->whoami && $player_count == 0;
 }
 
 my $req = FCGI::Request();
@@ -114,9 +122,7 @@ while ($req->Accept() >= 0) {
 	elsif ($mode =~ /^(start|stop|skip)$/) {
 		# FIXME: there should be a better way to do this
 		if ($mode eq 'skip') {
-			my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
-			my $playerCount = scalar $acoustics->get_votes_for_song($player->{song_id});
-			if ($playerCount == 0)
+			if (can_skip($acoustics))
 			{
 				$acoustics->rpc($mode) if $who;
 			}

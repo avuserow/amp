@@ -13,8 +13,8 @@ currentUser = '';
 function readableTime(length)
 {
 	var seconds = length % 60;
-	var minutes = Math.round(length / 60) % 60;
-	var hours = Math.round(length / 3600);
+	var minutes = Math.floor(length / 60) % 60;
+	var hours = Math.floor(length / 3600);
 
 	var result = "";
 	if(hours > 0)
@@ -93,6 +93,11 @@ function playerStateRequest () {
 
 function handlePlayerStateRequest (json) {
 	if (json.who) updateCurrentUser(json.who);
+
+	// skip link
+	if (json.canSkip) goog.dom.$('skip_link').style.visibility = 'visible';
+	else goog.dom.$('skip_link').style.visibility = 'hidden';
+
 	updateNowPlaying(json.nowPlaying);
 	if (json.playlist) updatePlaylist(json.playlist);
 	if (json.player) updateVolumeScale(json.player.volume);
@@ -133,7 +138,15 @@ function updatePlaylist(json)
 
 function updateNowPlaying(json) {
 	if (json) {
-		nowPlaying = '<a href="javascript:getSongDetails('+json.song_id+')">' + json.title
+		nowPlaying = '';
+		if (json.who && json.who.indexOf(currentUser) != -1) {
+			nowPlaying += '<a href="javascript:unvoteSong(' + json.song_id
+				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> ';
+		} else {
+			nowPlaying += '<a href="javascript:voteSong(' + json.song_id
+				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
+		}
+		nowPlaying += '<a href="javascript:getSongDetails('+json.song_id+')">' + json.title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ json.artist + '\')">' + json.artist + '</a>';
 		if (json.album) {
@@ -201,12 +214,15 @@ function getSongDetails(song_id) {
 				{
 					var file = json.playlist[item];
 					table += "<tr><td>"+file.track+"</td><td>"+file.artist+"</td><td>"+file.title+"</td><td>"+file.album+"</td><td>"+readableTime(file.length)+"</td></tr>";
-					table += "<tr>"+file.path+"</tr>";
-					table += "<tr>Who voted for this?</tr>";
-					table += "<tr>"
-					for(var who in file.who)
-						table += file.who[who]+" ";
-					table += "</tr>";
+					table += "<tr><td colspan=5>"+file.path+"</td></tr>";
+					table += "<tr><td colspan=5>Who voted for this?</td></tr>";
+					table += "<tr><td colspan=5>";
+					if (file.who.length) {
+						for(var who in file.who) table += file.who[who]+" ";
+					} else {
+						table += 'Acoustics';
+					}
+					table += "</td></tr>";
 				}
 			}
 			table += "</table>";
@@ -214,7 +230,6 @@ function getSongDetails(song_id) {
 		}
 		);
 }
-
 
 function fillResultList(json, field) {
 	list = '<ul>';
@@ -244,7 +259,7 @@ function fillResultTable(json) {
 		+  '<th>Track</th>'
 		+  '<th>Title</th>'
 		+  '<th>Album</th>'
-		+  '<th>Artist</th></tr></thead><tbody>';
+		+  '<th>Artist</th><th>Length</th></tr></thead><tbody>';
 	for (var item in json) {
 		table += '<tr>'
 		+ '<td style="text-align: center"><a href="javascript:voteSong('
@@ -257,6 +272,7 @@ function fillResultTable(json) {
 		+ qsencode(json[item].album) + '\')">' + json[item].album + '</a></td>'
 		+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \''
 		+ qsencode(json[item].artist) + '\')">' + json[item].artist + '</a></td>'
+		+ '<td>'+readableTime(json[item].length)+'</td>'
 		+ '</tr>';
 	};
 	table += '</tbody></table>';

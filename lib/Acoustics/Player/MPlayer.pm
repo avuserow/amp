@@ -16,7 +16,7 @@ sub start {
 		return;
 	} elsif ($pid == 0) {
 		$acoustics = $acoustics->reinit;
-		daemonize();
+		#daemonize();
 		start_player($acoustics);
 	} else {
 		ERROR "fork failed: $!";
@@ -103,7 +103,11 @@ sub start_player {
 	$SIG{USR1} = 'IGNORE';
 	$SIG{USR2} = 'IGNORE';
 
+	$acoustics->get_current_song; # populate the playlist
+
 	while (1) {
+		use Data::Dumper;
+		print Dumper ($acoustics->voter_order);
 		player_loop($acoustics);
 	}
 }
@@ -117,7 +121,10 @@ sub player_loop {
 	if(-e $data{path})
 	{
 		$acoustics->add_playhistory(\%data);
-		$acoustics->update_player({song_id => $data{song_id}});
+		$acoustics->update_player({
+			song_id    => $data{song_id},
+			song_start => time,
+		});
 		INFO "Playing '$data{path}'";
 		INFO "$data{title} by $data{artist} from $data{album}";
 
@@ -165,8 +172,8 @@ sub player_loop {
 	}
 	else
 	{
-		ERROR "Song '$data{path}' is invalid, deleting";
-		$acoustics->delete_song({song_id => $data{song_id}});
+		ERROR "Song '$data{path}' is invalid, (not yet) deleting";
+		#$acoustics->delete_song({song_id => $data{song_id}});
 	}
 
 	push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};

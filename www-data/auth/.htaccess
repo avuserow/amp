@@ -5,7 +5,7 @@ AuthType Kerberos
 AuthName "ACM.UIUC.EDU Kerberos (your ACM linux password)"
 
 KrbMethodNegotiate on
-KrbAuthRealms ACM.UIUC.EDU AD.UIUC.EDU
+KrbAuthRealms ACM.UIUC.EDU
 Krb5Keytab /etc/www.keytab
 KrbSaveCredentials on
 

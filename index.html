@@ -41,7 +41,7 @@
 				<span id="nowplaying"></span>
 				<ul>
 					<li><a href="javascript:sendPlayerCommand('start')">start</a></li>
-					<li><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
+					<li id="skip_link"><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
 					<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
 				</ul>
 
@@ -56,7 +56,6 @@
 			<div id="footer"></div>
 		</div>
 		<script>
-			//makeVolumeSlider(document.getElementById('volume'));
 			startPlayerStateTimer();
 			loadRandomSongs(20);
 		</script>
