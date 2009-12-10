@@ -58,7 +58,16 @@ while ($req->Accept() >= 0) {
 	elsif($mode eq 'history')
 	{
 		my $amount = $q->param('amount') || 25;
-		$data = [$acoustics->get_history($amount)];
+		my @history;
+		for my $song ($acoustics->get_history($amount)) {
+			if ($history[-1] && $history[-1]{time} == $song->{time}) {
+				push @{$history[-1]{who}}, $song->{who};
+			} else {
+				$song->{who} = [$song->{who}];
+				push @history, $song;
+			}
+		}
+		$data = \@history;
 	}
 	elsif ($mode eq 'vote') {
 		my(@song_ids) = $q->param('song_id');

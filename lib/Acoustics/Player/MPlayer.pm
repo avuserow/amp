@@ -118,12 +118,12 @@ sub player_loop {
 	($song)  = $acoustics->get_song({}, 'RAND()', 1) unless $song;
 	my %data = %$song;
 
+	my $song_start_time = time;
 	if(-e $data{path})
 	{
-		$acoustics->add_playhistory(\%data);
 		$acoustics->update_player({
 			song_id    => $data{song_id},
-			song_start => time,
+			song_start => $song_start_time,
 		});
 		INFO "Playing '$data{path}'";
 		INFO "$data{title} by $data{artist} from $data{album}";
@@ -176,6 +176,16 @@ sub player_loop {
 		#$acoustics->delete_song({song_id => $data{song_id}});
 	}
 
+	my @votes = $acoustics->get_votes_for_song($data{song_id});
+	@votes    = (undef) unless @votes;
+	for my $vote ($acoustics->get_votes_for_song($data{song_id})) {
+		$acoustics->add_playhistory({
+			song_id   => $data{song_id},
+			who       => $vote->{who},
+			time      => $song_start_time,
+			player_id => $acoustics->player_id,
+		});
+	}
 	push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};
 	$acoustics->delete_vote({song_id => $data{song_id}});
 }

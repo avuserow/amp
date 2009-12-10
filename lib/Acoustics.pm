@@ -254,14 +254,9 @@ sub add_playhistory {
 	my $self = shift;
 	my $data = shift;
 
-	my $sth = $self->db->prepare(
-		'INSERT INTO history(song_id, who, time, pretty_name, player_id)
-		values(?, ?, now(), ?, ?)'
-	);
-	$sth->execute(
-		$data->{song_id}, '', "$data->{artist} - $data->{title}",
-		$self->player_id,
-	);
+	my($sql, @values) = $self->abstract->insert('history', $data);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
 }
 
 sub get_history
@@ -269,8 +264,15 @@ sub get_history
 	my $self = shift;
 	my $amount = shift;
 
-	my $select_history = $self->db->prepare('select * from history order by time desc limit ?');
-	$select_history->execute($amount);
+	my $sth = $self->db->prepare('SELECT time FROM history GROUP BY time LIMIT ?');
+	$sth->execute($amount);
+	my $real_amount = scalar @{$sth->fetchall_arrayref()};
+	$sth->finish;
+
+	my $select_history = $self->db->prepare('SELECT history.who, history.time,
+		songs.* FROM history INNER JOIN songs ON history.song_id =
+		songs.song_id ORDER BY history.time DESC LIMIT ?');
+	$select_history->execute($real_amount);
 
 	return @{$select_history->fetchall_arrayref({})};
 }
@@ -294,7 +296,7 @@ sub vote {
 	my $who = shift;
 
 	my $sth = $self->db->prepare(
-		'INSERT INTO votes (song_id, time, player_id, who) VALUES (?, now(), ?, ?)'
+		'INSERT IGNORE INTO votes (song_id, time, player_id, who) VALUES (?, now(), ?, ?)'
 	);
 
 	$sth->execute($song_id, $self->player_id, $who);

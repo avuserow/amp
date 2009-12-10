@@ -164,8 +164,9 @@ function loadPlayHistory(amount) {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=history;amount='+amount,
 		function() {
-			goog.dom.$('result_title').innerHTML = amount + ' previously played song';
-			fillHistoryTable(this.getResponseJson());
+			goog.dom.$('result_title').innerHTML = amount + ' previously played songs';
+			// TODO: make me mighty
+			fillResultTable(this.getResponseJson());
 		}
 	);
 }
