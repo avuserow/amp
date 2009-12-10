@@ -108,11 +108,21 @@ while ($req->Accept() >= 0) {
 	}
 	elsif ($mode eq 'volume') {
 		my $vol = $q->param('value');
-		$acoustics->rpc('volume', $vol);
+		$acoustics->rpc('volume', $vol) if $who;
 		$data = generate_player_state($acoustics);
 	}
 	elsif ($mode =~ /^(start|stop|skip)$/) {
-		$acoustics->rpc($mode);
+		# FIXME: there should be a better way to do this
+		if ($mode eq 'skip') {
+			my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+			my $playerCount = scalar $acoustics->get_votes_for_song($player->{song_id});
+			if ($playerCount == 0)
+			{
+				$acoustics->rpc($mode) if $who;
+			}
+		} else {
+			$acoustics->rpc($mode) if $who;
+		}
 		sleep 0.25;
 
 		$data = generate_player_state($acoustics);
@@ -130,4 +140,7 @@ while ($req->Accept() >= 0) {
 		escape_multi_byte => 1,
 		bad_char_policy   => 'convert',
 	})->to_json($data);
+
+	$req->Finish();
+	exit if -M $ENV{SCRIPT_FILENAME} < 0; # Autorestart
 }
