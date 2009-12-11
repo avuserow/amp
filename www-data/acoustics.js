@@ -124,7 +124,8 @@ function updatePlaylist(json)
 			list += '<a href="javascript:voteSong(' + json[item].song_id
 				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
 		}
-		list += '<a href="javascript:getSongDetails('+json[item].song_id+')">' + json[item].title
+		title = titleOrPath(json[item]);
+		list += '<a href="javascript:getSongDetails('+json[item].song_id+')">' + title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ qsencode(json[item].artist) + '\')">' + json[item].artist
 			+ '</a>'
@@ -146,7 +147,8 @@ function updateNowPlaying(json) {
 			nowPlaying += '<a href="javascript:voteSong(' + json.song_id
 				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
 		}
-		nowPlaying += '<a href="javascript:getSongDetails('+json.song_id+')">' + json.title
+		title = titleOrPath(json);
+		nowPlaying += '<a href="javascript:getSongDetails('+json.song_id+')">' + title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ json.artist + '\')">' + json.artist + '</a>';
 		if (json.album) {
@@ -221,7 +223,7 @@ function getSongDetails(song_id) {
 					if (file.who.length) {
 						for(var who in file.who) table += file.who[who]+" ";
 					} else {
-						table += 'Acoustics';
+						table += 'no one';
 					}
 					table += "</td></tr>";
 				}
@@ -262,8 +264,7 @@ function fillResultTable(json) {
 		+  '<th>Album</th>'
 		+  '<th>Artist</th><th>Length</th></tr></thead><tbody>';
 	for (var item in json) {
-		title = json[item].title;
-		if (!title) title = json[item].path;
+		title = titleOrPath(json[item]);
 		table += '<tr>'
 		+ '<td style="text-align: center"><a href="javascript:voteSong('
 		+ json[item].song_id
@@ -325,4 +326,19 @@ function updateVolumeScale(volume) {
 
 function qsencode(str) {
 	return escape(escape(str));
+}
+
+function titleOrPath(json) {
+	if (json.title) {
+		return json.title;
+	}
+	else {
+		var shortname = /^.*\/(.*)$/.exec(json.path);
+		if (shortname) {
+			return shortname[1];
+		}
+		else {
+			return json.path;
+		}
+	}
 }

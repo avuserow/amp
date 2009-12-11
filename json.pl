@@ -21,7 +21,10 @@ sub generate_player_state {
 	# FIXME: there should be a better way to do this
 	$data->{playlist}     = [$acoustics->get_playlist()];
 	($data->{nowPlaying}) = $acoustics->get_song({song_id => $player->{song_id}});
-	$data->{nowPlaying}{who} = [map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id})];
+
+	if ($data->{nowPlaying}) {
+		$data->{nowPlaying}{who} = [map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id})];
+	}
 
 	$data->{who} = Acoustics::Web::Auth::RemoteUser->whoami;
 	$data->{canSkip} = can_skip($acoustics) ? JSON::DWIW::true : JSON::DWIW::false;
@@ -72,6 +75,7 @@ while ($req->Accept() >= 0) {
 	}
 	elsif ($mode eq 'vote') {
 		my(@song_ids) = $q->param('song_id');
+		@song_ids = @song_ids[0 .. 20] if @song_ids > 20;
 		if (@song_ids && $who) {
 			$acoustics->vote($_, $who) for @song_ids;
 		}
