@@ -268,15 +268,16 @@ sub get_history
 	my $self = shift;
 	my $amount = shift;
 
-	my $sth = $self->db->prepare('SELECT time FROM history GROUP BY time LIMIT ?');
+	my $sth = $self->db->prepare('SELECT time FROM history GROUP BY time ORDER BY time DESC LIMIT ?');
 	$sth->execute($amount);
-	my $real_amount = scalar @{$sth->fetchall_arrayref()};
+	my $final_time = (@{$sth->fetchall_arrayref({})})[-1]->{time};
 	$sth->finish;
 
 	my $select_history = $self->db->prepare('SELECT history.who, history.time,
 		songs.* FROM history INNER JOIN songs ON history.song_id =
-		songs.song_id ORDER BY history.time DESC LIMIT ?');
-	$select_history->execute($real_amount);
+		songs.song_id WHERE history.time > ? AND history.player_id = ? ORDER BY
+		history.time DESC');
+	$select_history->execute($final_time, $self->player_id);
 
 	return @{$select_history->fetchall_arrayref({})};
 }
