@@ -275,7 +275,7 @@ sub get_history
 
 	my $select_history = $self->db->prepare('SELECT history.who, history.time,
 		songs.* FROM history INNER JOIN songs ON history.song_id =
-		songs.song_id WHERE history.time > ? AND history.player_id = ? ORDER BY
+		songs.song_id WHERE history.time >= ? AND history.player_id = ? ORDER BY
 		history.time DESC');
 	$select_history->execute($final_time, $self->player_id);
 

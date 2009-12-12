@@ -41,10 +41,31 @@ sub can_skip {
 	return ((($voted && $voter_count == 1) || ($voter_count == 0)) && $who)
 }
 
+sub access_denied {
+	my $q   = shift;
+	my $msg = shift;
+
+	print $q->header(-status => '403 Forbidden');
+	print $msg;
+	next REQUEST_LOOP;
+}
+
+sub bad_request {
+	my $q   = shift;
+	my $msg = shift;
+
+	print $q->header(-status => '400 Bad Request');
+	print $msg;
+	next REQUEST_LOOP;
+}
+
 my $req = FCGI::Request();
 
-while ($req->Accept() >= 0) {
+REQUEST_LOOP: while ($req->Accept() >= 0) {
 	my $q = CGI::Simple->new;
+	$q->no_cache(1);
+	binmode STDOUT, ':utf8';
+
 	my $acoustics = Acoustics->new({config_file => 'conf/acoustics.ini'});
 
 	my $who = Acoustics::Web::Auth::RemoteUser->whoami;
@@ -58,7 +79,7 @@ while ($req->Accept() >= 0) {
 	} elsif ($mode eq 'recent') {
 		my $amount = $q->param('amount') || 50;
 		$data = [$acoustics->get_song({}, {'-DESC' => 'song_id'}, $amount)];
-	} 
+	}
 	elsif($mode eq 'history')
 	{
 		my $amount = $q->param('amount') || 25;
@@ -74,21 +95,24 @@ while ($req->Accept() >= 0) {
 		$data = \@history;
 	}
 	elsif ($mode eq 'vote') {
+		access_denied($q, 'You must log in.') unless $who;
+
 		my(@song_ids) = $q->param('song_id');
-		@song_ids = @song_ids[0 .. 20] if @song_ids > 20;
-		if (@song_ids && $who) {
-			$acoustics->vote($_, $who) for @song_ids;
-		}
+		bad_request($q, 'No songs specified.') unless @song_ids;
+
+		$acoustics->vote($_, $who) for @song_ids;
 		$data = generate_player_state($acoustics);
 	}
 	elsif ($mode eq 'unvote') {
+		access_denied($q, 'You must log in.') unless $who;
+
 		my(@song_ids) = $q->param('song_id');
-		if (@song_ids && $song_ids[0] && $who) {
+		if (@song_ids && $song_ids[0]) {
 			$acoustics->delete_vote({
 				song_id => $_,
 				who     => $who,
 			}) for @song_ids;
-		} elsif($who) {
+		} else {
 			$acoustics->delete_vote({who => $who});
 		}
 		$data = generate_player_state($acoustics);
@@ -116,19 +140,20 @@ while ($req->Accept() >= 0) {
 		$data = [$acoustics->get_song($where, [qw(artist album track title)])];
 	}
 	elsif ($mode eq 'volume') {
+		access_denied($q, 'You must log in.') unless $who;
 		my $vol = $q->param('value');
-		$acoustics->rpc('volume', $vol) if $who;
+		bad_request($q, 'No songs specified.') unless $vol;
+		$acoustics->rpc('volume', $vol);
 		$data = generate_player_state($acoustics);
 	}
 	elsif ($mode =~ /^(start|stop|skip)$/) {
+		access_denied($q, 'You must log in.') unless $who;
+
 		# FIXME: there should be a better way to do this
 		if ($mode eq 'skip') {
-			if (can_skip($acoustics))
-			{
-				$acoustics->rpc($mode) if $who;
-			}
+			$acoustics->rpc($mode) if can_skip($acoustics);
 		} else {
-			$acoustics->rpc($mode) if $who;
+			$acoustics->rpc($mode);
 		}
 		sleep 0.25;
 
@@ -137,8 +162,6 @@ while ($req->Accept() >= 0) {
 		$data = generate_player_state($acoustics);
 	}
 
-	binmode STDOUT, ':utf8';
-	$q->no_cache(1);
 	print $q->header(
 		-type     => 'application/json',
 	);
@@ -147,7 +170,7 @@ while ($req->Accept() >= 0) {
 		escape_multi_byte => 1,
 		bad_char_policy   => 'convert',
 	})->to_json($data);
-
+} continue {
 	$req->Finish();
 	exit if -M $ENV{SCRIPT_FILENAME} < 0; # Autorestart
 }
