@@ -95,10 +95,10 @@ function handlePlayerStateRequest (json) {
 	if (json.who) updateCurrentUser(json.who);
 
 	// skip link
-	if (json.canSkip) goog.dom.$('skip_link').style.visibility = 'visible';
+	if (json.can_skip) goog.dom.$('skip_link').style.visibility = 'visible';
 	else goog.dom.$('skip_link').style.visibility = 'hidden';
 
-	updateNowPlaying(json.nowPlaying);
+	updateNowPlaying(json.now_playing);
 	if (json.playlist) updatePlaylist(json.playlist);
 	if (json.player) updateVolumeScale(json.player.volume);
 }
@@ -210,7 +210,7 @@ function getSongDetails(song_id) {
 		function() {
 			var table = '<table id="result_table"><thead><tr><th>Track</th><th>Artist</th><th>Title</th><th>Album</th><th>Length</th></tr></thead>';
 			var json = this.getResponseJson();
-			json.playlist.push(json.nowPlaying);
+			json.playlist.push(json.now_playing);
 			for(var item in json.playlist)
 			{
 				if(song_id == json.playlist[item].song_id)
