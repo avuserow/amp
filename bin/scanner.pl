@@ -10,7 +10,7 @@ use Log::Log4perl ':easy';
 use Cwd qw(abs_path);
 
 my $acoustics = Acoustics->new({
-	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
+	config_file => ($0 =~ m{(.+)/})[0] . '/../conf/acoustics.ini',
 });
 
 for my $filename (@ARGV) {

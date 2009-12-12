@@ -6,7 +6,7 @@ use lib 'lib';
 use lib '../lib';
 use Acoustics;
 
-my $ac = Acoustics->new({config_file => 'lib/acoustics.ini'});
+my $ac = Acoustics->new({config_file => 'conf/acoustics.ini'});
 my $db = $ac->db;
 
 $db->do("DROP TABLE IF EXISTS songs");

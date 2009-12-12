@@ -45,7 +45,7 @@ my $req = FCGI::Request();
 
 while ($req->Accept() >= 0) {
 	my $q = CGI::Simple->new;
-	my $acoustics = Acoustics->new({config_file => 'lib/acoustics.ini'});
+	my $acoustics = Acoustics->new({config_file => 'conf/acoustics.ini'});
 
 	my $who = Acoustics::Web::Auth::RemoteUser->whoami;
 

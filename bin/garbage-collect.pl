@@ -7,7 +7,7 @@ use Log::Log4perl ':easy';
 use Acoustics;
 
 my $acoustics = Acoustics->new({
-	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
+	config_file => ($0 =~ m{(.+)/})[0] . '/../conf/acoustics.ini',
 });
 
 die "re-implement me to mark songs as gone instead of delete them";

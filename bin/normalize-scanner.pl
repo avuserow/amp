@@ -13,7 +13,7 @@ use Unicode::Normalize;
 use Asdf;
 
 my $acoustics = Acoustics->new({
-	config_file => ($0 =~ m{(.+)/})[0] . '/../lib/acoustics.ini',
+	config_file => ($0 =~ m{(.+)/})[0] . '/../conf/acoustics.ini',
 });
 
 #get list of unique filenames from paths passed on command line
