@@ -149,7 +149,6 @@ REQUEST_LOOP: while ($req->Accept() >= 0) {
 	elsif ($mode =~ /^(start|stop|skip)$/) {
 		access_denied($q, 'You must log in.') unless $who;
 
-		# FIXME: there should be a better way to do this
 		if ($mode eq 'skip') {
 			$acoustics->rpc($mode) if can_skip($acoustics);
 		} else {

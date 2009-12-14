@@ -136,7 +136,7 @@ sub browse_songs_by_column {
 	my $sth = $self->db->prepare($sql);
 	$sth->execute(@values);
 
-	return @{$sth->fetchall_arrayref({})};
+	return map {$_->[0]} @{$sth->fetchall_arrayref([$col])};
 }
 
 sub get_votes_for_song {

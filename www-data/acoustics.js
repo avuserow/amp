@@ -217,9 +217,9 @@ function getSongDetails(song_id) {
 				{
 					var file = json.playlist[item];
 					table += "<tr><td>"+file.track+"</td><td>"+file.artist+"</td><td>"+file.title+"</td><td>"+file.album+"</td><td>"+readableTime(file.length)+"</td></tr>";
-					table += "<tr><td colspan=5>"+file.path+"</td></tr>";
-					table += "<tr><td colspan=5>Who voted for this?</td></tr>";
-					table += "<tr><td colspan=5>";
+					table += "<tr><th>Path:</th><td colspan=4>"+file.path+"</td></tr>";
+					table += "<tr><th>Who voted for this?</th>";
+					table += "<td colspan=4>";
 					if (file.who.length) {
 						for(var who in file.who) table += file.who[who]+" ";
 					} else {
@@ -238,8 +238,8 @@ function fillResultList(json, field) {
 	list = '<ul>';
 	for (var item in json) {
 		list += '<li><a href="javascript:selectRequest(\'' + field
-			+ '\',\'' + qsencode(json[item][field]) + '\')">'
-			+ json[item][field] + '</a></li>';
+			+ '\',\'' + qsencode(json[item]) + '\')">'
+			+ json[item] + '</a></li>';
 	}
 	list += '</ul>';
 	goog.dom.$('songresults').innerHTML = list;
