@@ -150,7 +150,7 @@ sub player_loop {
 		};
 
 		local $SIG{USR1} = sub {
-			WARN "changing volume";
+			WARN "changing volume to $player->{volume}";
 			my($player) = $acoustics->get_player({
 				player_id => $acoustics->player_id,
 			});

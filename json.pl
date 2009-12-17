@@ -28,6 +28,7 @@ sub generate_player_state {
 
 	$data->{who} = Acoustics::Web::Auth::RemoteUser->whoami;
 	$data->{can_skip} = can_skip($acoustics) ? JSON::DWIW::true : JSON::DWIW::false;
+	$data->{is_admin} = Acoustics::Web::Auth::RemoteUser->is_admin ? JSON::DWIW::true : JSON::DWIW::false;
 	return $data;
 }
 
@@ -38,7 +39,11 @@ sub can_skip {
 	my @voters = map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id});
 	my $voter_count = scalar @voters;
 	my $voted = grep {$who eq $_} @voters;
-	return ((($voted && $voter_count == 1) || ($voter_count == 0)) && $who)
+	return 0 unless ($who);
+	return 1 if (Acoustics::Web::Auth::RemoteUser->is_admin);
+	return 1 if ($voted && $voter_count == 1);
+	return 1 if ($voter_count == 0);
+	return 0;
 }
 
 sub access_denied {
@@ -105,13 +110,15 @@ REQUEST_LOOP: while ($req->Accept() >= 0) {
 	}
 	elsif ($mode eq 'unvote') {
 		access_denied($q, 'You must log in.') unless $who;
-
 		my(@song_ids) = $q->param('song_id');
+		my $purge_user = $q->param('purge');
 		if (@song_ids && $song_ids[0]) {
 			$acoustics->delete_vote({
 				song_id => $_,
 				who     => $who,
 			}) for @song_ids;
+		} elsif (Acoustics::Web::Auth::RemoteUser->is_admin && $purge_user) {
+			$acoustics->delete_vote({who => $purge_user});
 		} else {
 			$acoustics->delete_vote({who => $who});
 		}

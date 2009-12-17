@@ -51,6 +51,15 @@
 				(<a href="javascript:unvoteSong(0)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>)
 				<div id="playlist">
 				</div>
+				<br />
+				<br />
+				<div id="purgeuser">
+					<form action="" onSubmit="javascript:purgeSongs(this.user.value); return false;">
+						Purge User:
+						<input type="text" size="8" id="user" value="" />
+						<input type="submit" value="Purge" />
+					</form>
+				</div>
 			</div>
 			<div id="footer"></div>
 		</div>

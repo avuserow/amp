@@ -97,6 +97,9 @@ function handlePlayerStateRequest (json) {
 	// skip link
 	if (json.can_skip) goog.dom.$('skip_link').style.visibility = 'visible';
 	else goog.dom.$('skip_link').style.visibility = 'hidden';
+	// Admin Dequeue
+	if (json.is_admin) goog.dom.$('purgeuser').style.visibility = 'visible';
+	else goog.dom.$('purgeuser').style.visibility = 'hidden';
 
 	updateNowPlaying(json.now_playing);
 	if (json.playlist) updatePlaylist(json.playlist);
@@ -311,6 +314,16 @@ function unvoteSong(song_id) {
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=unvote;song_id=' + song_id,
 		function () {handlePlayerStateRequest(this.getResponseJson());}
+	);
+}
+
+function purgeSongs(user) {
+	goog.net.XhrIo.send(
+		'/acoustics/json.pl?mode=unvote;purge=' + user,
+		function () {
+			goog.dom.$('user').value="";
+			handlePlayerStateRequest(this.getResponseJson());
+		}
 	);
 }
 

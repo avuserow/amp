@@ -14,4 +14,12 @@ sub whoami {
 	}
 }
 
+sub is_admin {
+	my $username = whoami();
+	my @admins = qx(pts mem proj.acoustics -noauth);
+	shift @admins;
+	s{\s+}{}g for @admins;
+	return grep {$_ eq $username} @admins;
+}
+
 1;
