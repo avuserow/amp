@@ -117,6 +117,7 @@ function updatePlaylist(json)
 {
 	var totalTime = 0;
 	list = '<ul>';
+	var dropdown = new Array();
 	for (var item in json)
 	{
 		list += '<li>';
@@ -134,10 +135,31 @@ function updatePlaylist(json)
 			+ '</a>'
 			+ '&nbsp;(' + readableTime(json[item].length) +') ('+json[item].who.length+')</li>';
 		totalTime = totalTime + parseInt(json[item].length);
+		var voters = new Array();
+		for (var voter in json[item].who)
+		{
+			var index = json[item].who[voter];
+			if (dropdown.indexOf(index) == -1)
+			{
+				dropdown.push(index);
+			}
+		}
 	}
 	list += '</ui>';
 	list += 'Total Time: '+readableTime(totalTime);
 	goog.dom.$('playlist').innerHTML = list;
+	fillPurgeDropDown(dropdown);
+}
+
+function fillPurgeDropDown(options)
+{
+	var purgelist = goog.dom.$('user');
+	purgelist.options.length = 0;
+	purgelist.add(new Option("Pick one",''));
+	for (var i in options)
+	{
+		purgelist.add(new Option(options[i],options[i]));
+	}
 }
 
 function updateNowPlaying(json) {
@@ -317,11 +339,13 @@ function unvoteSong(song_id) {
 	);
 }
 
-function purgeSongs(user) {
+function purgeSongs() {
+	var userList = goog.dom.$('user');
+	var user = userList.options[userList.selectedIndex].value;
 	goog.net.XhrIo.send(
 		'/acoustics/json.pl?mode=unvote;purge=' + user,
 		function () {
-			goog.dom.$('user').value="";
+			userList.selectedIndex=0;
 			handlePlayerStateRequest(this.getResponseJson());
 		}
 	);
