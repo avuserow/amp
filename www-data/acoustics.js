@@ -9,8 +9,7 @@ goog.require('goog.async.Delay');
 
 vc_modifiable = false;
 currentUser = '';
-directory = '/acoustics/';
-
+jsonSource = '/acoustics/json.pl';
 
 function readableTime(length)
 {
@@ -41,7 +40,7 @@ function sendPlayerCommand(mode) {
 		return;
 	}
 	goog.net.XhrIo.send(
-			directory+'json.pl?mode=' + mode,
+			jsonSource + '?mode=' + mode,
 			function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
@@ -52,7 +51,7 @@ function setVolume(value) {
 		return;
 	}
 	goog.net.XhrIo.send(
-			directory+'json.pl?mode=volume;value=' + value,
+			jsonSource + '?mode=volume;value=' + value,
 			function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
@@ -60,7 +59,7 @@ function setVolume(value) {
 function searchRequest(field, value)
 {
 	goog.net.XhrIo.send(
-			directory+'json.pl?mode=search;field='+field+';value='+value,
+			jsonSource + '?mode=search;field='+field+';value='+value,
 			function () {
 				goog.dom.$('result_title').innerHTML = 'Search on ' + field;
 				fillResultTable(this.getResponseJson());
@@ -71,7 +70,7 @@ function searchRequest(field, value)
 function selectRequest(field, value)
 {
 	goog.net.XhrIo.send(
-			directory+'json.pl?mode=select;field='+field+';value='+value,
+			jsonSource + '?mode=select;field='+field+';value='+value,
 			function () {
 				goog.dom.$('result_title').innerHTML = 'Select on ' + field;
 				fillResultTable(this.getResponseJson());
@@ -88,7 +87,7 @@ function startPlayerStateTimer () {
 
 function playerStateRequest () {
 	goog.net.XhrIo.send(
-		directory+'json.pl',
+		jsonSource + '',
 		function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
@@ -191,7 +190,7 @@ function updateNowPlaying(json) {
 
 function loadPlayHistory(amount) {
 	goog.net.XhrIo.send(
-		directory+'json.pl?mode=history;amount='+amount,
+		jsonSource + '?mode=history;amount='+amount,
 		function() {
 			goog.dom.$('result_title').innerHTML = amount + ' previously played songs';
 			// TODO: make me mighty
@@ -202,7 +201,7 @@ function loadPlayHistory(amount) {
 
 function loadRecentSongs(amount) {
 	goog.net.XhrIo.send(
-		directory+'json.pl?mode=recent;amount=' + amount,
+		jsonSource + '?mode=recent;amount=' + amount,
 		function () {
 			goog.dom.$('result_title').innerHTML = amount + ' Recently Added Songs';
 			fillResultTable(this.getResponseJson());
@@ -212,7 +211,7 @@ function loadRecentSongs(amount) {
 
 function loadRandomSongs(amount) {
 	goog.net.XhrIo.send(
-		directory+'json.pl?mode=random;amount=' + amount,
+		jsonSource + '?mode=random;amount=' + amount,
 		function () {
 			goog.dom.$('result_title').innerHTML = amount + ' Random Songs';
 			fillResultTable(this.getResponseJson());
@@ -223,7 +222,7 @@ function loadRandomSongs(amount) {
 function browseSongs(field)
 {
 	goog.net.XhrIo.send(
-			directory+'json.pl?mode=browse;field=' + field,
+			jsonSource + '?mode=browse;field=' + field,
 			function () {
 				goog.dom.$('result_title').innerHTML = 'Browse by ' + field;
 				fillResultList(this.getResponseJson(), field);
@@ -233,7 +232,7 @@ function browseSongs(field)
 
 function getSongDetails(song_id) {
 	goog.net.XhrIo.send(
-		directory+'json.pl',
+		jsonSource + '',
 		function() {
 			var table = '<table id="result_table"><thead><tr><th>Track</th><th>Artist</th><th>Title</th><th>Album</th><th>Length</th></tr></thead>';
 			var json = this.getResponseJson();
@@ -325,7 +324,7 @@ function voteSong(song_id) {
 		return;
 	}
 	goog.net.XhrIo.send(
-		directory+'json.pl?mode=vote;song_id=' + song_id,
+		jsonSource + '?mode=vote;song_id=' + song_id,
 		function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
@@ -336,7 +335,7 @@ function unvoteSong(song_id) {
 		return;
 	}
 	goog.net.XhrIo.send(
-		directory+'json.pl?mode=unvote;song_id=' + song_id,
+		jsonSource + '?mode=unvote;song_id=' + song_id,
 		function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
@@ -345,7 +344,7 @@ function purgeSongs() {
 	var userList = goog.dom.$('user');
 	var user = userList.options[userList.selectedIndex].value;
 	goog.net.XhrIo.send(
-		directory+'json.pl?mode=unvote;purge=' + user,
+		jsonSource + '?mode=unvote;purge=' + user,
 		function () {
 			userList.selectedIndex=0;
 			handlePlayerStateRequest(this.getResponseJson());
