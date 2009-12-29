@@ -171,7 +171,7 @@ REQUEST_LOOP: while ($req->Accept() >= 0) {
 	print $q->header(
 		-type     => 'application/json',
 	);
-	print JSON::DWIW->new({
+	print scalar JSON::DWIW->new({
 		pretty            => 1,
 		escape_multi_byte => 1,
 		bad_char_policy   => 'convert',
