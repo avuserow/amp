@@ -242,28 +242,31 @@ sub build_drr_playlist {
 			my $weighted_length = $candidates[0]{length}/$candidates[0]{who};
 			$quantum = $weighted_length if ($quantum > $weighted_length);
 		}
-		# pick first voter;
-		my $voter = shift @voter_order;
-		# find all songs matching this voter and sort by number of voters
-		my @candidates = grep {
-			grep {$_ eq $voter} @{$_->{who}}
-		} values %votes;
-		@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{time} <=> $b->{time}} @candidates;
-		# if this user has no more stored votes, ignore them
-		next unless @candidates;
-		# weight length based on # of voters
-		my $weighted_length = $candidates[0]{length}/$candidates[0]{who};
-		# if first candidate's length is >= debt, push onto songs
-		if ($voter_debts{$voter} >= $weighted_length) {
-			$voter_debts{$voter} -= $weighted_length;
-			push @songs, delete $votes{$candidates[0]{song_id}};
+		my @temp_order = @voter_order;
+		foreach my $voter (@temp_order) {
+			# find all songs matching this voter and sort by number of voters
+			my @candidates = grep {
+				grep {$_ eq $voter} @{$_->{who}}
+			} values %votes;
+			@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{time} <=> $b->{time}} @candidates;
+			# if this user has no more stored votes, remove them from voter pool
+			unless @candidates {
+				@voter_order = grep { ! $_ eq $voter } @voter_order;
+				delete $voter_debts{$voter};
+				next;
+			}
+			# weight length based on # of voters
+			my $weighted_length = $candidates[0]{length}/$candidates[0]{who};
+			# if first candidate's length is >= debt, push onto songs
+			if ($voter_debts{$voter} >= $weighted_length) {
+				$voter_debts{$voter} -= $weighted_length;
+				push @songs, delete $votes{$candidates[0]{song_id}};
+			}
+			# otherwise, add the quantum
+			else {
+				$voter_debts{$voter} += $quantum;
+			}
 		}
-		# otherwise, add the quantum
-		else {
-			$voter_debts{$voter} += $quantum;
-		}
-		# re-add the voter to the list since they probably have more songs
-		push @voter_order, $voter;
 	}
 	return @songs;
 }
