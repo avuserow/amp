@@ -16,6 +16,7 @@ sub whoami {
 
 sub is_admin {
 	my $username = whoami();
+	return unless $username;
 	my @admins = qx(pts mem proj.acoustics -noauth);
 	shift @admins;
 	s{\s+}{}g for @admins;
