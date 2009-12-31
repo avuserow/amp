@@ -1,7 +1,29 @@
 [database]
-data_source=dbi:SQLite:acoustics.db
-user=
+data_source=dbi:mysql:host=localhost;database=acoustics
+user=acoustics
 pass=
 
 [player]
 module=Acoustics::Player::MPlayer
+
+[rpc]
+# pick one:
+# module=Acoustics::RPC::SSH_PrivateKey
+# host=musicalbox
+# user=aparsons
+# private_key=conf/id_rsa
+# player_remote=/home/aparsons/projects/acoustics/bin/player-remote.pl
+
+# module=Acoustics::RPC::Remctl
+# host=musicalbox
+
+[webauth]
+# pick one:
+# module=Acoustics::Web::Auth::Simple
+# field=REMOTE_ADDR # pick something in %ENV
+# or... field=random # random integer
+# or... field=time # the Unix timestamp
+
+# module=Acoustics::Web::Auth::Kerberos
+# use_pts_for_admin=0 # only useful if you have AFS
+# pts_admin_group=proj.acoustics

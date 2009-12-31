@@ -1,5 +1,6 @@
 closure-library-read-only
 conf/acoustics.ini
+conf/id_rsa*
 bin/tagreader
 *.swp
 .backup
