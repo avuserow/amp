@@ -40,12 +40,11 @@ do {
 	print $q->header(
 		-type     => 'application/json',
 	);
-	my $json = JSON::DWIW->new({
+	print scalar JSON::DWIW->new({
 		pretty            => 1,
 		escape_multi_byte => 1,
 		bad_char_policy   => 'convert',
 	})->to_json($data);
-	print $json;
 
 	# finish FastCGI if needed and auto-reload ourselves if we were modified
 	$req->Finish if $running_under_fastcgi;

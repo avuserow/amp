@@ -1,6 +1,7 @@
 closure-library-read-only
 conf/acoustics.ini
 conf/id_rsa*
+conf/lastfm
 bin/tagreader
 *.swp
 .backup

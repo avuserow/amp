@@ -222,6 +222,55 @@ sub build_playlist {
 	return @songs;
 }
 
+sub build_drr_playlist {
+	my $self = shift;
+	my %votes = $self->get_songs_by_votes;
+	my @voter_order = @{$self->voter_order};
+	# map voter to deficit count
+	my %voter_debts = map {$_ => 0} @voter_order;
+	# deficit round robin voters
+	my @songs;
+	# quantum starts huge, so a real quantum can be found
+	my $quantum = 2**32;
+	while (@voter_order) {
+		# find the smallest song length, call it the quantum
+		foreach(@voter_order) {
+			my $voter = $_;
+			my @candidates = grep { grep { $_ eq $voter } @{$_->{who} } } values %votes;
+			@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{time} <=> $b->{time}} @candidates;
+			next unless @candidates;
+			my $weighted_length = $candidates[0]{length}/$candidates[0]{who};
+			$quantum = $weighted_length if ($quantum > $weighted_length);
+		}
+		my @temp_order = @voter_order;
+		foreach my $voter (@temp_order) {
+			# find all songs matching this voter and sort by number of voters
+			my @candidates = grep {
+				grep {$_ eq $voter} @{$_->{who}}
+			} values %votes;
+			@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{time} <=> $b->{time}} @candidates;
+			# if this user has no more stored votes, remove them from voter pool
+			unless (@candidates) {
+				@voter_order = grep { ! $_ eq $voter } @voter_order;
+				delete $voter_debts{$voter};
+				next;
+			}
+			# weight length based on # of voters
+			my $weighted_length = $candidates[0]{length}/$candidates[0]{who};
+			# if first candidate's length is >= debt, push onto songs
+			if ($voter_debts{$voter} >= $weighted_length) {
+				$voter_debts{$voter} -= $weighted_length;
+				push @songs, delete $votes{$candidates[0]{song_id}};
+			}
+			# otherwise, add the quantum
+			else {
+				$voter_debts{$voter} += $quantum;
+			}
+		}
+	}
+	return @songs;
+}
+
 sub get_playlist {
 	my $self = shift;
 	my @playlist = $self->build_playlist;
