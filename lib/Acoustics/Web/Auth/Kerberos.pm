@@ -19,6 +19,7 @@ sub authenticate {
 	my $self = shift;
 
 	my $user = $ENV{REMOTE_USER};
+	($user, undef) = split /\@/, $user;
 
 	my $session = CGI::Session->new;
 	$session->param(who => $user);
