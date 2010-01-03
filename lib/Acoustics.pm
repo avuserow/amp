@@ -255,12 +255,16 @@ sub build_drr_playlist {
 				delete $voter_debts{$voter};
 				next;
 			}
+			my %first = %{shift @candidates};
 			# weight length based on # of voters
-			my $weighted_length = $candidates[0]{length}/$candidates[0]{who};
+			my $weighted_length = $first{length}/$first{who};
 			# if first candidate's length is >= debt, push onto songs
 			if ($voter_debts{$voter} >= $weighted_length) {
-				$voter_debts{$voter} -= $weighted_length;
-				push @songs, delete $votes{$candidates[0]{song_id}};
+				# Collect the debt from each voter
+				foreach my $partner (@{$first{who}}) {
+					$voter_debts{$partner} -= $weighted_length;
+				}
+				push @songs, delete $votes{$first{song_id}};
 			}
 			# otherwise, add the quantum
 			else {
