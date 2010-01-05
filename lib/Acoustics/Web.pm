@@ -29,8 +29,7 @@ has 'boolean_callback' => (
 	# I heard you liked subs, so I put a sub in your sub
 	# so you can execute while you execute.
 	default => sub {sub {
-		my $bool = shift;
-		return !!$bool;
+		return $_[0] ? 1 : 0;
 	}},
 );
 
@@ -142,10 +141,10 @@ Votes for all the songs specified by the C<song_id> parameter(s).
 
 sub vote {
 	my $self = shift;
-	access_denied('You must log in.') unless $self->who;
+	return access_denied('You must log in.') unless $self->who;
 
 	my(@song_ids) = $self->cgi->param('song_id');
-	bad_request('No songs specified.') unless @song_ids;
+	return bad_request('No songs specified.') unless @song_ids;
 
 	$self->acoustics->vote(0+$_, $self->who) for @song_ids;
 	$self->status;
@@ -159,7 +158,7 @@ Removes votes for the song or songs specified by the C<song_id> parameter.
 
 sub unvote {
 	my $self = shift;
-	access_denied('You must log in.') unless $self->who;
+	return access_denied('You must log in.') unless $self->who;
 
 	my(@song_ids) = $self->cgi->param('song_id');
 	my $purge_user = $self->cgi->param('purge');
@@ -186,7 +185,7 @@ state.
 
 sub start {
 	my $self = shift;
-	access_denied('You must log in.') unless $self->who;
+	return access_denied('You must log in.') unless $self->who;
 
 	$self->acoustics->rpc('start');
 
@@ -204,7 +203,7 @@ state.
 
 sub stop {
 	my $self = shift;
-	access_denied('You must log in.') unless $self->who;
+	return access_denied('You must log in.') unless $self->who;
 
 	$self->acoustics->rpc('stop');
 
@@ -222,8 +221,8 @@ the player state.
 
 sub skip {
 	my $self = shift;
-	access_denied('You must log in.') unless $self->who;
-	access_denied('You cannot skip this song.') unless $self->can_skip;
+	return access_denied('You must log in.') unless $self->who;
+	return access_denied('You cannot skip this song.') unless $self->can_skip;
 
 	$self->acoustics->rpc('skip');
 
@@ -241,10 +240,10 @@ percentage.
 
 sub volume {
 	my $self = shift;
-	access_denied('You must log in.') unless $self->who;
+	return access_denied('You must log in.') unless $self->who;
 
 	my $vol = $self->cgi->param('value');
-	bad_request('No volume specified.') unless $vol;
+	return bad_request('No volume specified.') unless $vol;
 	$self->acoustics->rpc('volume', $vol);
 	$self->status;
 }
