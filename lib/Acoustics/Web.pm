@@ -168,7 +168,7 @@ sub unvote {
 			song_id => 0+$_,
 			who     => $self->who,
 		}) for @song_ids;
-	} elsif (Acoustics::Web::Auth::RemoteUser->is_admin && $purge_user) {
+	} elsif ($self->is_admin && $purge_user) {
 		$self->acoustics->delete_vote({who => $purge_user});
 	} else {
 		$self->acoustics->delete_vote({who => $self->who});
