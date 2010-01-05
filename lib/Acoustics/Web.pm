@@ -351,6 +351,34 @@ sub browse {
 	return [], [$self->acoustics->browse_songs_by_column($field, $field)];
 }
 
+=head1 ERROR FUNCTIONS
+
+These are to be called as functions, not methods, for internal use only.
+
+=head2 access_denied($msg)
+
+Returns a 403 error with the text in C<$msg>. For use when a given action
+requires the user to be logged in or to be an admin.
+
+=cut
+
+sub access_denied {
+	my $msg = shift;
+	return [-status => '403 Forbidden'], $msg;
+}
+
+=head2 bad_request($msg)
+
+Returns a 400 error with the text in C<$msg>. Indicates that the given command
+is nonsensical (for example, a required argument was missing).
+
+=cut
+
+sub bad_request {
+	my $msg = shift;
+	return [-status => '400 Bad Request'], $msg;
+}
+
 =head1 SEE ALSO
 
 L<Acoustics>
