@@ -156,10 +156,10 @@ function fillPurgeDropDown(options)
 {
 	var purgelist = goog.dom.$('user');
 	purgelist.options.length = 0;
-	purgelist.add(new Option("Pick one",''));
+	purgelist.options.add(new Option("Pick one",''));
 	for (var i in options)
 	{
-		purgelist.add(new Option(options[i],options[i]));
+		purgelist.options.add(new Option(options[i],options[i]));
 	}
 }
 
