@@ -38,6 +38,7 @@ do {
 	$q->no_cache(1);
 	binmode STDOUT, ':utf8';
 	print $q->header(
+		@$headers,
 		-type     => 'application/json',
 	);
 	print scalar JSON::DWIW->new({

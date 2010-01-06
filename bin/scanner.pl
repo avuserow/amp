@@ -13,9 +13,10 @@ my $acoustics = Acoustics->new({
 	config_file => ($0 =~ m{(.+)/})[0] . '/../conf/acoustics.ini',
 });
 
-for my $filename (@ARGV) {
-	unless ($filename =~ m{^/afs/acm\.uiuc\.edu/media/music/}) {
-		LOGDIE "Your path ($filename) must begin with /afs/acm.uiuc.edu/media/music/";
+my $prefix = $acoustics->config->{scanner}{require_prefix};
+for my $filename (map {abs_path($_)} @ARGV) {
+	if ($prefix && index($filename, $prefix) != 0) {
+		LOGDIE "Your path ($filename) must begin with $prefix";
 	}
 }
 

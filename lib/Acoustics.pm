@@ -8,7 +8,6 @@ use Module::Load 'load';
 use DBI;
 use SQL::Abstract::Limit;
 use Log::Log4perl;
-use Time::Format qw(%time);
 use Date::Parse 'str2time';
 use Config::Tiny;
 

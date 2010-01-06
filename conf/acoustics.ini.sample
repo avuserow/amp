@@ -3,6 +3,11 @@ data_source=dbi:mysql:host=localhost;database=acoustics
 user=acoustics
 pass=
 
+[scanner]
+# you can restrict the scanner to a single part of your filesystem
+# leave blank if you don't care
+require_prefix=/path/to/my/music
+
 [player]
 module=Acoustics::Player::MPlayer
 
