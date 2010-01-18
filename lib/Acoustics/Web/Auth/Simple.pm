@@ -36,7 +36,6 @@ sub authenticate {
 	print $session->header(-status => 302, -location => '/acoustics');
 }
 
-memoize('whoami');
 sub whoami {
 	my $session = CGI::Session->load;
 	if ($session->param('who')) {

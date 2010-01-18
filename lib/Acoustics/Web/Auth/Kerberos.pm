@@ -28,8 +28,6 @@ sub authenticate {
 	print $session->header(-status => 302, -location => '/acoustics');
 }
 
-# memoized to prevent multiple session loads (disk accesses)
-memoize('whoami');
 sub whoami {
 	my $session = CGI::Session->load;
 	if ($session->param('who')) {
@@ -39,8 +37,6 @@ sub whoami {
 	}
 }
 
-# FIXME: This is only useful if you have AFS too.
-memoize('is_admin');
 sub is_admin {
 	my $self = shift;
 	return 1 if $self->acoustics->config->{webauth}{use_pts_admin};
