@@ -10,6 +10,7 @@ use SQL::Abstract::Limit;
 use Log::Log4perl;
 use Date::Parse 'str2time';
 use Config::Tiny;
+use Try::Tiny;
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'config' => (is => 'ro', isa => 'Config::Tiny');
@@ -420,6 +421,32 @@ sub rpc {
 	load $rpc_class;
 
 	$rpc_class->$act($self, @_);
+}
+
+sub plugin_call {
+	my $self      = shift;
+	my $component = shift;
+	my $message   = shift;
+	my @args      = @_;
+
+	die 'component must be "player" currently!' if $component ne 'player';
+	die 'no message sent' unless $message;
+
+	my @plugins = split /\s*,\s*/, $self->config->{$component}{plugins};
+	for my $plugin (@plugins) {
+		next if !$plugin || $plugin =~ /[^\w:]/; # ignore invalid string
+		$component = ucfirst $component;
+		my $class  = "Acoustics::$component\::Plugin::$plugin";
+		try {
+			load $class;
+			my $method = $class->can($message);
+			$method->($self, @args) if $method;
+		} catch {
+			$logger->error("Plugin '$class' is broken: $_");
+			# remove the plugin to supress a large number of errors
+			$self->config->{$component}{plugins} =~ s/$plugin//;
+		};
+	}
 }
 
 sub reinit {

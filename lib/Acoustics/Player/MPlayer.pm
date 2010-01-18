@@ -5,11 +5,11 @@ use warnings;
 
 use Log::Log4perl ':easy';
 use IPC::Open2 'open2';
+use Module::Load 'load';
 
 sub start {
 	my $class     = shift;
 	my $acoustics = shift;
-
 
 	my $pid = fork;
 	if ($pid) {
@@ -90,18 +90,20 @@ sub start_player {
 #	$acoustics->remove_player;
 	$acoustics->add_player({
 		local_id => $$,
-		volume   => 50,
+		volume   => -1,
 	});
 
-	$SIG{TERM} = $SIG{INT} = sub {
+	local $SIG{TERM} = local $SIG{INT} = sub {
 		WARN "Exiting player $$";
 		$acoustics->remove_player;
 		exit;
 	};
-	$SIG{HUP}  = 'IGNORE';
-	$SIG{CHLD} = 'IGNORE';
-	$SIG{USR1} = 'IGNORE';
-	$SIG{USR2} = 'IGNORE';
+	local $SIG{HUP}  = 'IGNORE';
+	local $SIG{CHLD} = 'IGNORE';
+	local $SIG{USR1} = 'IGNORE';
+	local $SIG{USR2} = 'IGNORE';
+
+	$acoustics->plugin_call('player', 'start_player'); # load the plugins
 
 	$acoustics->get_current_song; # populate the playlist
 
@@ -116,36 +118,39 @@ sub player_loop {
 	my $acoustics = shift;
 	my $song = $acoustics->get_current_song;
 	($song)  = $acoustics->get_song({}, 'RAND()', 1) unless $song;
-	my %data = %$song;
 
 	my $song_start_time = time;
-	if(-e $data{path})
+	my $skipped         = 0;
+	if(-e $song->{path})
 	{
 		$acoustics->update_player({
-			song_id    => $data{song_id},
+			song_id    => $song->{song_id},
 			song_start => $song_start_time,
 		});
-		INFO "Playing '$data{path}'";
-		INFO "$data{title} by $data{artist} from $data{album}";
+		INFO "Playing '$song->{path}'";
+		INFO "$song->{title} by $song->{artist} from $song->{album}";
 
 		my($player) = $acoustics->get_player({
 			player_id => $acoustics->player_id,
 		});
+		$player->{volume} ||= -1;
 
 		# General plan: open both input and output of the mplayer process
 		# then continually read from input so we know it's still running
 		# and handle SIGHUP. don't use waitpid because it blocks SIGHUP.
 		my $pid = open2(my $child_out, my $child_in,
-			'mplayer', '-slave', '-quiet', '-af' => 'volnorm=2:0.10', # volnorm=2:0.25 does multipass volume normalization with 10% amplitude adjustment
-			$data{path})
+			'mplayer', '-slave', '-quiet',
+			'-af' => 'volnorm=2:0.10',
+			'-volume' => $player->{volume},
+			$song->{path})
 			or LOGDIE "couldn't open mplayer: $!";
 
 		# when we get SIGHUP, ask mplayer to quit
 		local $SIG{HUP} = sub {
-			WARN "skipping song: $data{path}!";
+			WARN "skipping song: $song->{path}!";
 			print $child_in "quit\n";
-			$acoustics->delete_vote({song_id => $data{song_id}});
-			#push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};
+			$acoustics->delete_vote({song_id => $song->{song_id}});
+			$skipped = 1;
 			return;
 		};
 
@@ -165,29 +170,37 @@ sub player_loop {
 			exit;
 		};
 
+		$acoustics->plugin_call('player', 'start_song', $player, $song);
+
 		# loop until mplayer ends
 		while (<$child_out>) {}
 
 		close $child_out; close $child_in;
+
+		my $event = $skipped ? 'skip_song' : 'stop_song';
+		$acoustics->plugin_call('player', $event, $player, $song);
 	}
 	else
 	{
-		ERROR "Song '$data{path}' is invalid, (not yet) deleting";
-		#$acoustics->delete_song({song_id => $data{song_id}});
+		ERROR "Song '$song->{path}' is invalid, (not yet) deleting";
+		#$acoustics->delete_song({song_id => $song->{song_id}});
 	}
 
-	my @votes = $acoustics->get_votes_for_song($data{song_id});
+	# Get the votes and log them. Use undef if Acoustics itself chose it.
+	my @votes = $acoustics->get_votes_for_song($song->{song_id});
 	@votes    = (undef) unless @votes;
-	for my $vote ($acoustics->get_votes_for_song($data{song_id})) {
+	for my $vote ($acoustics->get_votes_for_song($song->{song_id})) {
 		$acoustics->add_playhistory({
-			song_id   => $data{song_id},
+			song_id   => $song->{song_id},
 			who       => $vote->{who},
 			time      => $song_start_time,
 			player_id => $acoustics->player_id,
 		});
 	}
+
+	# Go to the next voter, and remove votes for this song
 	push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};
-	$acoustics->delete_vote({song_id => $data{song_id}});
+	$acoustics->delete_vote({song_id => $song->{song_id}});
 }
 
 1;
