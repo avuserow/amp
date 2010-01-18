@@ -356,7 +356,7 @@ function updateVolumeScale(volume) {
 	scale = '';
 	for (var i = 1; i <= 11; i++) {
 		scale += '<a ';
-		if (((Math.round(volume / 7))+1) == i) scale += 'style="color: red" ';
+		if (Math.round(volume / 10)+1 == i) scale += 'style="color: red" ';
 		scale += 'href="javascript:setVolume(' + ((i * 10) - 10) + ')">' + i + '</a> ';
 	}
 	goog.dom.$('volume').innerHTML = scale;

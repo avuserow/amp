@@ -16,7 +16,7 @@ sub start {
 		return;
 	} elsif ($pid == 0) {
 		$acoustics = $acoustics->reinit;
-		#daemonize();
+		daemonize();
 		start_player($acoustics);
 	} else {
 		ERROR "fork failed: $!";
@@ -54,13 +54,6 @@ sub volume {
 		ERROR "volume must be a number, not something like '$volume'";
 		return;
 	}
-
-	if($volume > 100)
-	{
-		$volume = 100;
-	}
-
-	$volume *= .7;
 
 	$acoustics->update_player({volume => $volume});
 	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
@@ -141,7 +134,7 @@ sub player_loop {
 		my $pid = open2(my $child_out, my $child_in,
 			'mplayer', '-slave', '-quiet',
 			'-af' => 'volnorm=2:0.10',
-			'-volume' => $player->{volume},
+			#'-volume' => $player->{volume},
 			$song->{path})
 			or LOGDIE "couldn't open mplayer: $!";
 
@@ -159,6 +152,8 @@ sub player_loop {
 			my($player) = $acoustics->get_player({
 				player_id => $acoustics->player_id,
 			});
+			$player->{volume}  = 100 if $player->{volume} > 100;
+			$player->{volume} *= .7;
 			print $child_in "volume $player->{volume} 1\n";
 			print $child_in "get_volume\n";
 		};
