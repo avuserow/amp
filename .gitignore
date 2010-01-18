@@ -5,3 +5,4 @@ conf/lastfm
 bin/tagreader
 *.swp
 .backup
+www-data/auth/.htaccess

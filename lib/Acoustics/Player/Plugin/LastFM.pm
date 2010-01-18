@@ -5,6 +5,7 @@ use warnings;
 
 use Net::LastFM::Submission;
 use Data::Dumper;
+use LWP::UserAgent;
 use Log::Log4perl ':easy';
 
 my $submit;
@@ -12,9 +13,14 @@ my $submit;
 sub start_player {
 	my $acoustics = shift;
 
+	my $ua = LWP::UserAgent->new;
+	my $proxy = $acoustics->config->{proxy}{http};
+	$ua->proxy('http' => $proxy) if $proxy;
+
 	$submit = Net::LastFM::Submission->new(
 		user     => $acoustics->config->{lastfm}{user},
 		password => $acoustics->config->{lastfm}{pass},
+		ua       => $ua,
 	);
 	my $status = $submit->handshake;
 	ERROR Dumper($status) unless $status->{status} eq 'OK';
