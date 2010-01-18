@@ -282,6 +282,7 @@ sub get_playlist {
 	my @playlist = $self->build_playlist;
 
 	my($player) = $self->get_player({player_id => $self->player_id});
+	$player->{song_id} ||= 0;
 	return grep {$player->{song_id} != $_->{song_id}} @playlist;
 }
 
