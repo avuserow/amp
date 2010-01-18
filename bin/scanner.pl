@@ -34,6 +34,7 @@ my @datas = split /---/, $data;
 for my $item (@datas) {
 	my %hash = map {(split /:/, $_, 2)} split /\n/, $item;
 	delete $hash{bitrate}; # no bitrate field in the database yet
+	$hash{online} = 1; # set the online bit
 	unless($hash{length})
 	{
 		WARN "file $hash{path} not music";

@@ -325,10 +325,12 @@ sub _search_or_select {
 	my $value_clause = $value;
 	$value_clause    = {-like => "%$value%"} if $mode eq 'search';
 	if ($field eq 'any') {
-		$where = [map {{$_ => $value_clause}} qw(artist album title path)];
+		$where = {-or => [map {$_ => $value_clause} qw(artist album title path)]};
 	} else {
 		$where = {$field => $value_clause};
 	}
+
+	$where->{online} = 1;
 
 	return [], [$self->acoustics->get_song($where, [qw(artist album track title)])];
 }

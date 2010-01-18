@@ -10,15 +10,16 @@ my $acoustics = Acoustics->new({
 	config_file => ($0 =~ m{(.+)/})[0] . '/../conf/acoustics.ini',
 });
 
-die "re-implement me to mark songs as gone instead of delete them";
-
-die "Usage: $0 dir1 dir2 ..." unless @ARGV;
+die "Usage: $0 path1 path2 ..." unless @ARGV;
 
 for my $path (@ARGV) {
 	for my $song ($acoustics->get_song({path => {-like => "$path%"}})) {
-		unless (-e $song->{path}) {
-			WARN "Removing $song->{path} from the database";
-			#$acoustics->delete_song({path => $song->{path}});
+		$song->{online} = -e $song->{path} ? 1 : 0;
+		if ($song->{online}) {
+			INFO "Setting $song->{path} online";
+		} else {
+			WARN "Setting $song->{path} offline";
 		}
+		$acoustics->update_song($song, {path => $song->{path}});
 	}
 }

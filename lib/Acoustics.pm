@@ -131,7 +131,7 @@ sub browse_songs_by_column {
 	}
 
 	my($sql, @values) = $self->abstract->select(
-		'songs', "DISTINCT $col", {}, $order, $limit, $offset,
+		'songs', "DISTINCT $col", {online => 1}, $order, $limit, $offset,
 	);
 	my $sth = $self->db->prepare($sql);
 	$sth->execute(@values);
