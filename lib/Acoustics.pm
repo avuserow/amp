@@ -235,21 +235,19 @@ sub build_drr_playlist {
 		# quantum starts huge, so a real quantum can be found
 		my $quantum = 2**32;
 		# find the smallest song length, call it the quantum
-		foreach(@voter_order) {
-			my $voter = $_;
+		foreach my $voter (@voter_order) {
 			my @candidates = grep { grep { $_ eq $voter } @{$_->{who} } } values %votes;
 			@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{time} <=> $b->{time}} @candidates;
 			next unless @candidates;
-			my $weighted_length = $candidates[0]{length}/(scalar @{$candidates[0]{who}});
+			my %first = %{shift @candidates};
+			my $weighted_length = $first{length}/(scalar @{$first{who}});
 			$quantum = $weighted_length if ($quantum > $weighted_length);
 		}
 		# Make a temporary voter order, separate so quantum is fixed for all voters each round
 		my @temp_order = @voter_order;
 		foreach my $voter (@temp_order) {
 			# find all songs matching this voter and sort by number of voters
-			my @candidates = grep {
-				grep {$_ eq $voter} @{$_->{who}}
-			} values %votes;
+			my @candidates = grep { grep {$_ eq $voter} @{$_->{who}} } values %votes;
 			@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{time} <=> $b->{time}} @candidates;
 			# if this user has no more stored votes, remove them from voter pool
 			unless (@candidates) {
