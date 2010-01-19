@@ -173,9 +173,10 @@ sub get_songs_by_votes {
 
 	# Make a hash mapping voters to all the songs they have voted for
 	my $select_votes = $self->db->prepare('
-		SELECT votes.song_id, votes.time, votes.who, songs.artist, songs.album,
-		songs.title, songs.length, songs.path, songs.track FROM votes INNER
-		JOIN songs ON votes.song_id = songs.song_id WHERE votes.player_id = ?
+		SELECT votes.song_id, votes.time, votes.who, votes.priority,
+		songs.artist, songs.album, songs.title, songs.length, songs.path,
+		songs.track FROM votes INNER JOIN songs ON votes.song_id =
+		songs.song_id WHERE votes.player_id = ?
 	');
 	$select_votes->execute($self->player_id);
 
@@ -207,7 +208,7 @@ sub build_playlist {
 		my @candidates = grep {
 			grep {$_ eq $voter} @{$_->{who}}
 		} values %votes;
-		@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{time} <=> $b->{time}} @candidates;
+		@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{priority} <=> $b->{priority}} @candidates;
 
 		# if this user has no more stored votes, ignore them
 		next unless @candidates;
@@ -354,11 +355,17 @@ sub vote {
 	my $song_id = shift;
 	my $who = shift;
 
-	my $sth = $self->db->prepare(
-		'INSERT IGNORE INTO votes (song_id, time, player_id, who) VALUES (?, now(), ?, ?)'
+	my $sth = $self->db->prepare('SELECT max(priority) FROM votes WHERE who = ?
+			AND player_id = ?');
+	$sth->execute($who, $self->player_id);
+	my($maxpri) = $sth->fetchrow_array() || 0;
+
+	$sth = $self->db->prepare(
+		'INSERT IGNORE INTO votes (song_id, time, player_id, who, priority)
+		VALUES (?, now(), ?, ?, ?)'
 	);
 
-	$sth->execute($song_id, $self->player_id, $who);
+	$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
 }
 
 sub add_player {

@@ -14,12 +14,17 @@ die "Usage: $0 path1 path2 ..." unless @ARGV;
 
 for my $path (@ARGV) {
 	for my $song ($acoustics->get_song({path => {-like => "$path%"}})) {
+		my $state = $song->{online};
 		$song->{online} = -e $song->{path} ? 1 : 0;
-		if ($song->{online}) {
-			INFO "Setting $song->{path} online";
+		if ($song->{online} != $state) {
+			if ($song->{online}) {
+				WARN "Setting $song->{path} online";
+			} else {
+				ERROR "Setting $song->{path} offline";
+			}
+			$acoustics->update_song($song, {path => $song->{path}});
 		} else {
-			WARN "Setting $song->{path} offline";
+			#INFO "Ignoring $song->{path}";
 		}
-		$acoustics->update_song($song, {path => $song->{path}});
 	}
 }
