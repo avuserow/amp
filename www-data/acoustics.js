@@ -9,6 +9,7 @@ goog.require('goog.async.Delay');
 
 vc_modifiable = false;
 currentUser = '';
+rem_time = 0;
 jsonSource = '/acoustics/json.pl';
 
 function readableTime(length)
@@ -78,6 +79,18 @@ function selectRequest(field, value)
 	);
 }
 
+function startPlayingTimer() {
+	var tim = new goog.Timer(1000);
+	tim.start();
+	goog.events.listen(tim, goog.Timer.TICK, function () {updatePlayingTime()});
+}
+
+function updatePlayingTime()
+{
+	if(rem_time > 0)
+	goog.dom.$('playingTime').innerHTML = readableTime(--rem_time);
+}
+
 function startPlayerStateTimer () {
 	playerStateRequest();
 	var timer = new goog.Timer(15000);
@@ -102,7 +115,7 @@ function handlePlayerStateRequest (json) {
 	if (json.is_admin) goog.dom.$('purgeuser').style.visibility = 'visible';
 	else goog.dom.$('purgeuser').style.visibility = 'hidden';
 
-	updateNowPlaying(json.now_playing);
+	updateNowPlaying(json.now_playing, json.player);
 	if (json.player) updateVolumeScale(json.player.volume);
 	if (json.playlist) updatePlaylist(json.playlist);
 }
@@ -163,7 +176,7 @@ function fillPurgeDropDown(options)
 	}
 }
 
-function updateNowPlaying(json) {
+function updateNowPlaying(json, player) {
 	if (json) {
 		nowPlaying = '';
 		if (json.who && json.who.indexOf(currentUser) != -1) {
@@ -182,6 +195,8 @@ function updateNowPlaying(json) {
 				+ json.album + '\')">' + json.album + '</a>)';
 		}
 		nowPlaying += '&nbsp;('+readableTime(json.length)+')';
+		rem_time = parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
+		nowPlaying += '&nbsp;(<span id="playingTime">'+readableTime(rem_time)+'</span> remaining)';
 	} else {
 		nowPlaying = 'nothing playing';
 	}
@@ -379,4 +394,5 @@ function titleOrPath(json) {
 			return json.path;
 		}
 	}
+	if(json.player) updateVolumeScale(json.player.volume);
 }
