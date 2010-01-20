@@ -246,6 +246,8 @@ sub build_drr_playlist {
 		}
 		# Make a temporary voter order, separate so quantum is fixed for all voters each round
 		my @temp_order = @voter_order;
+		# Remember who was charged for a song this round
+		my %debted = ();
 		foreach my $voter (@temp_order) {
 			# find all songs matching this voter and sort by number of voters
 			my @candidates = grep { grep {$_ eq $voter} @{$_->{who}} } values %votes;
@@ -264,12 +266,14 @@ sub build_drr_playlist {
 				# Collect the debt from each voter
 				foreach my $partner (@{$first{who}}) {
 					$voter_debts{$partner} -= $weighted_length;
+					$debted{$partner} = 1;
 				}
 				push @songs, delete $votes{$first{song_id}};
 			}
-			# otherwise, add the quantum
-			else {
+			# otherwise, add the quantum if they weren't a partner on a song previously in this round
+			unless ($debted{$voter}) {
 				$voter_debts{$voter} += $quantum;
+				$debted{$voter} = 1;
 			}
 		}
 	}
