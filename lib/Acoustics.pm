@@ -372,6 +372,34 @@ sub vote {
 	$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
 }
 
+sub get_vote {
+	my $self   = shift;
+	my $where  = shift;
+	my $order  = shift;
+	my $limit  = shift;
+	my $offset = shift;
+
+	my($sql, @values) = $self->abstract->select(
+		'votes', '*', $where, $order, $limit, $offset,
+	);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
+
+	return @{$sth->fetchall_arrayref({})};
+}
+
+sub update_vote {
+	my $self  = shift;
+	my $data  = shift;
+	my $where = shift;
+
+	my($sql, @values) = $self->abstract->update(
+		'votes', $data, $where,
+	);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
+}
+
 sub add_player {
 	my $self = shift;
 	my $data = shift;

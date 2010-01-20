@@ -355,6 +355,17 @@ function unvoteSong(song_id) {
 	);
 }
 
+function shuffleVotes() {
+	if (!currentUser) {
+		alert("You must log in first.");
+		return;
+	}
+	goog.net.XhrIo.send(
+			jsonSource + '?mode=shuffle_votes',
+			function () {handlePlayerStateRequest(this.getResponseJson());}
+	);
+}
+
 function purgeSongs() {
 	var userList = goog.dom.$('user');
 	var user = userList.options[userList.selectedIndex].value;

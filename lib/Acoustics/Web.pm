@@ -6,6 +6,7 @@ use strict;
 use Time::HiRes 'sleep';
 use Mouse;
 use Module::Load 'load';
+use List::Util 'shuffle';
 
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
 has 'cgi'       => (is => 'ro', isa => 'Object');
@@ -245,6 +246,29 @@ sub volume {
 	my $vol = $self->cgi->param('value');
 	return bad_request('No volume specified.') unless $vol;
 	$self->acoustics->rpc('volume', $vol);
+	$self->status;
+}
+
+=head2 shuffle_votes
+
+Shuffles all of your votes.
+
+=cut
+
+sub shuffle_votes {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+
+	my @votes = shuffle($self->acoustics->get_vote({who => $self->who}));
+	my $pri = 0;
+	for my $vote (@votes) {
+		$vote->{priority} = $pri;
+		$self->acoustics->update_vote($vote, {
+			who => $self->who, song_id => $vote->{song_id},
+		});
+		$pri++;
+	}
+
 	$self->status;
 }
 
