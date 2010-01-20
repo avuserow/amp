@@ -282,7 +282,7 @@ sub build_drr_playlist {
 
 sub get_playlist {
 	my $self = shift;
-	my @playlist = $self->build_playlist;
+	my @playlist = $self->build_drr_playlist;
 
 	my($player) = $self->get_player({player_id => $self->player_id});
 	$player->{song_id} ||= 0;
