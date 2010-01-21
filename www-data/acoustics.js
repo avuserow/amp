@@ -137,7 +137,10 @@ function updatePlaylist(json)
 		list += '<li>';
 		if (json[item].who && json[item].who.indexOf(currentUser) != -1) {
 			list += '<a href="javascript:unvoteSong(' + json[item].song_id
-				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> ';
+				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> '
+				+ ' <a href="javascript:voteToTop(' + json[item].song_id
+				+ ')"><img src="www-data/icons/lightning_go.png" '
+				+ 'alt="vote to top" /></a> ';
 		} else {
 			list += '<a href="javascript:voteSong(' + json[item].song_id
 				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
@@ -362,6 +365,17 @@ function shuffleVotes() {
 	}
 	goog.net.XhrIo.send(
 			jsonSource + '?mode=shuffle_votes',
+			function () {handlePlayerStateRequest(this.getResponseJson());}
+	);
+}
+
+function voteToTop(song_id) {
+	if (!currentUser) {
+		alert("You must log in first.");
+		return;
+	}
+	goog.net.XhrIo.send(
+			jsonSource + '?mode=vote_to_top;song_id=' + song_id,
 			function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }

@@ -272,6 +272,29 @@ sub shuffle_votes {
 	$self->status;
 }
 
+=head2 vote_to_top
+
+Brings a vote to the top of your queue.
+
+=cut
+
+sub vote_to_top {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+
+	my $song_id = $self->cgi->param('song_id');
+	return bad_request('No song specified.') unless $song_id;
+
+	my $vote_where = {who => $self->who, song_id => $song_id};
+
+	my($minvote) = $self->acoustics->get_vote({who => $self->who}, 'priority', 1);
+	my($vote)    = $self->acoustics->get_vote($vote_where);
+	$vote->{priority} = $minvote->{priority} - 1;
+	$self->acoustics->update_vote($vote, $vote_where);
+
+	$self->status;
+}
+
 =head1 METHODS THAT FIND SONGS
 
 Many methods find and return an array of songs.
