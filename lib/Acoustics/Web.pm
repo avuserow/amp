@@ -308,7 +308,7 @@ Returns C<amount> or 20 random songs.
 sub random {
 	my $self   = shift;
 	my $amount = $self->cgi->param('amount') || 20;
-	return [], [$self->acoustics->get_song({}, 'RAND()', $amount)];
+	return [], [$self->acoustics->get_random_song($amount)];
 }
 
 =head2 recent

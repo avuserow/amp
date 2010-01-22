@@ -117,6 +117,18 @@ sub get_song {
 	return @{$sth->fetchall_arrayref({})};
 }
 
+# MySQL fails hard on selecting a random song. see:
+# http://www.paperplanes.de/2008/4/24/mysql_nonos_order_by_rand.html
+sub get_random_song {
+	my $self  = shift;
+	my $count = shift;
+
+	my $sth = $self->db->prepare('SELECT * FROM (SELECT song_id FROM songs ORDER BY RAND() LIMIT ?) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id');
+	$sth->execute($count);
+
+	return @{$sth->fetchall_arrayref({})};
+}
+
 sub browse_songs_by_column {
 	my $self   = shift;
 	my $col    = shift;
