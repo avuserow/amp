@@ -1,4 +1,5 @@
 closure-library-read-only
+closure-compiler
 conf/acoustics.ini
 conf/id_rsa*
 conf/lastfm
