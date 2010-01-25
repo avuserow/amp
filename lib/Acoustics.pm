@@ -276,7 +276,7 @@ sub build_drr_playlist {
 			my %first = %{$candidates[0]};
 			# weight length based on # of voters
 			my $weighted_length = $first{length}/(scalar @{$first{who}});
-			# if first candidate's length is >= debt, push onto songs
+			# if first candidate's length is <= debt, push onto songs
 			if ($voter_debts{$voter} >= $weighted_length) {
 				# Collect the debt from each voter
 				foreach my $partner (@{$first{who}}) {
