@@ -117,6 +117,18 @@ sub get_song {
 	return @{$sth->fetchall_arrayref({})};
 }
 
+# MySQL fails hard on selecting a random song. see:
+# http://www.paperplanes.de/2008/4/24/mysql_nonos_order_by_rand.html
+sub get_random_song {
+	my $self  = shift;
+	my $count = shift;
+
+	my $sth = $self->db->prepare('SELECT * FROM (SELECT song_id FROM songs ORDER BY RAND() LIMIT ?) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id');
+	$sth->execute($count);
+
+	return @{$sth->fetchall_arrayref({})};
+}
+
 sub browse_songs_by_column {
 	my $self   = shift;
 	my $col    = shift;
@@ -246,6 +258,8 @@ sub build_drr_playlist {
 		}
 		# Make a temporary voter order, separate so quantum is fixed for all voters each round
 		my @temp_order = @voter_order;
+		# Remember who was charged for a song this round
+		my %debted = ();
 		foreach my $voter (@temp_order) {
 			# find all songs matching this voter and sort by number of voters
 			my @candidates = grep { grep {$_ eq $voter} @{$_->{who}} } values %votes;
@@ -264,12 +278,14 @@ sub build_drr_playlist {
 				# Collect the debt from each voter
 				foreach my $partner (@{$first{who}}) {
 					$voter_debts{$partner} -= $weighted_length;
+					$debted{$partner} = 1;
 				}
 				push @songs, delete $votes{$first{song_id}};
 			}
-			# otherwise, add the quantum
-			else {
+			# otherwise, add the quantum if they weren't a partner on a song previously in this round
+			unless ($debted{$voter}) {
 				$voter_debts{$voter} += $quantum;
+				$debted{$voter} = 1;
 			}
 		}
 	}
@@ -278,7 +294,7 @@ sub build_drr_playlist {
 
 sub get_playlist {
 	my $self = shift;
-	my @playlist = $self->build_playlist;
+	my @playlist = $self->build_drr_playlist;
 
 	my($player) = $self->get_player({player_id => $self->player_id});
 	$player->{song_id} ||= 0;
@@ -366,6 +382,34 @@ sub vote {
 	);
 
 	$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
+}
+
+sub get_vote {
+	my $self   = shift;
+	my $where  = shift;
+	my $order  = shift;
+	my $limit  = shift;
+	my $offset = shift;
+
+	my($sql, @values) = $self->abstract->select(
+		'votes', '*', $where, $order, $limit, $offset,
+	);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
+
+	return @{$sth->fetchall_arrayref({})};
+}
+
+sub update_vote {
+	my $self  = shift;
+	my $data  = shift;
+	my $where = shift;
+
+	my($sql, @values) = $self->abstract->update(
+		'votes', $data, $where,
+	);
+	my $sth = $self->db->prepare($sql);
+	$sth->execute(@values);
 }
 
 sub add_player {

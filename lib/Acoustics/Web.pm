@@ -6,6 +6,7 @@ use strict;
 use Time::HiRes 'sleep';
 use Mouse;
 use Module::Load 'load';
+use List::Util 'shuffle';
 
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
 has 'cgi'       => (is => 'ro', isa => 'Object');
@@ -248,6 +249,52 @@ sub volume {
 	$self->status;
 }
 
+=head2 shuffle_votes
+
+Shuffles all of your votes.
+
+=cut
+
+sub shuffle_votes {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+
+	my @votes = shuffle($self->acoustics->get_vote({who => $self->who}));
+	my $pri = 0;
+	for my $vote (@votes) {
+		$vote->{priority} = $pri;
+		$self->acoustics->update_vote($vote, {
+			who => $self->who, song_id => $vote->{song_id},
+		});
+		$pri++;
+	}
+
+	$self->status;
+}
+
+=head2 vote_to_top
+
+Brings a vote to the top of your queue.
+
+=cut
+
+sub vote_to_top {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+
+	my $song_id = $self->cgi->param('song_id');
+	return bad_request('No song specified.') unless $song_id;
+
+	my $vote_where = {who => $self->who, song_id => $song_id};
+
+	my($minvote) = $self->acoustics->get_vote({who => $self->who}, 'priority', 1);
+	my($vote)    = $self->acoustics->get_vote($vote_where);
+	$vote->{priority} = $minvote->{priority} - 1;
+	$self->acoustics->update_vote($vote, $vote_where);
+
+	$self->status;
+}
+
 =head1 METHODS THAT FIND SONGS
 
 Many methods find and return an array of songs.
@@ -261,7 +308,7 @@ Returns C<amount> or 20 random songs.
 sub random {
 	my $self   = shift;
 	my $amount = $self->cgi->param('amount') || 20;
-	return [], [$self->acoustics->get_song({}, 'RAND()', $amount)];
+	return [], [$self->acoustics->get_random_song($amount)];
 }
 
 =head2 recent

@@ -6,3 +6,5 @@ bin/tagreader
 *.swp
 .backup
 www-data/auth/.htaccess
+www-data/acoustics2.js
+*test.pl
