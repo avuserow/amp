@@ -35,6 +35,7 @@ sub start_song {
 		my $status = $submit->now_playing(
 			artist => $song->{artist},
 			title  => $song->{title},
+			length => $song->{length},
 		);
 		ERROR Dumper($status) unless $status->{status} eq 'OK';
 	}
