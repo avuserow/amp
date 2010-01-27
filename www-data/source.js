@@ -302,6 +302,7 @@ function fillHistoryTable(json) {
 }
 
 function fillResultTable(json) {
+	this.songIDs = new Array();
 	table = '<table id="result_table"><thead><tr><th>vote</th>'
 		+  '<th>Track</th>'
 		+  '<th>Title</th>'
@@ -326,6 +327,7 @@ function fillResultTable(json) {
 		+ qsencode(json[item].artist) + '\')">' + json[item].artist + '</a></td>'
 		+ '<td>'+readableTime(json[item].length)+'</td>'
 		+ '</tr>';
+		this.songIDs.push(json[item].song_id);
 	};
 	table += '</tbody></table>';
 	goog.dom.$('songresults').innerHTML = table;
@@ -420,4 +422,13 @@ function titleOrPath(json) {
 			return json.path;
 		}
 	}
+}
+
+function voteRandom() {
+	var possible = this.songIDs.length;
+	var randomSong = this.songIDs[Math.floor(Math.random()*possible)];
+	goog.net.XhrIo.send(
+		jsonSource + '?mode=vote;song_id=' + randomSong,
+		function() {handlePlayerStateRequest(this.getResponseJson());}
+	);
 }
