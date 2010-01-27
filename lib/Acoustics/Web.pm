@@ -134,6 +134,27 @@ sub can_skip {
 	return 0;
 }
 
+=head2 get_details
+
+Retrieve details for the song specified by the C<song_id> parameter.
+
+=cut
+
+sub get_details {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+	my(@song_ids) = $self->cgi->param('song_id');
+	return bad_request('No songs specified.') unless @song_ids;
+	my $song = 0+(shift @song_ids);
+	my $acoustics = $self->acoustics;
+	my $details = {};
+	($details->{song}) = $acoustics->get_song({song_id => $song});
+	if ($details->{song}) {
+		$details->{song}{who} = [map {$_->{who}} $acoustics->get_votes_for_song($song)];
+	}
+	return [], $details;
+}
+
 =head2 vote
 
 Votes for all the songs specified by the C<song_id> parameter(s).

@@ -192,7 +192,7 @@ function updateNowPlaying(json, player) {
 		title = titleOrPath(json);
 		nowPlaying += '<a href="javascript:getSongDetails('+json.song_id+')">' + title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
-			+ json.artist + '\')">' + json.artist + '</a>';
+			+ qsencode(json.artist) + '\')">' + json.artist + '</a>';
 		if (json.album) {
 			nowPlaying += ' (from <a href="javascript:selectRequest(\'album\', \''
 				+ json.album + '\')">' + json.album + '</a>)';
@@ -250,32 +250,24 @@ function browseSongs(field)
 
 function getSongDetails(song_id) {
 	goog.net.XhrIo.send(
-		jsonSource + '',
+		jsonSource + '?mode=get_details;song_id='+song_id,
 		function() {
 			var table = '<table id="result_table"><thead><tr><th>Track</th><th>Artist</th><th>Title</th><th>Album</th><th>Length</th></tr></thead>';
-			var json = this.getResponseJson();
-			json.playlist.push(json.now_playing);
-			for(var item in json.playlist)
-			{
-				if(song_id == json.playlist[item].song_id)
-				{
-					var file = json.playlist[item];
-					table += "<tr><td>"+file.track+"</td><td>"+file.artist+"</td><td>"+file.title+"</td><td>"+file.album+"</td><td>"+readableTime(file.length)+"</td></tr>";
-					table += "<tr><th>Path:</th><td colspan=4>"+file.path+"</td></tr>";
-					table += "<tr><th>Who voted for this?</th>";
-					table += "<td colspan=4>";
-					if (file.who.length) {
-						for(var who in file.who) table += file.who[who]+" ";
-					} else {
-						table += 'no one';
-					}
-					table += "</td></tr>";
-				}
+			var json = this.getResponseJson().song;
+			table += "<tr><td>"+json.track+"</td><td>"+json.artist+"</td><td>"+json.title+"</td><td>"+json.album+"</td><td>"+readableTime(json.length)+"</td></tr>";
+			table += "<tr><th>Path:</th><td colspan=4>"+json.path+"</td></tr>";
+			table += "<tr><th>Who voted for this?</th>";
+			table += "<td colspan=4>";
+			if (json.who.length) {
+				for(var who in json.who) table += json.who[who]+" ";
+			} else {
+				table += 'no one';
 			}
+			table += "</td></tr>";
 			table += "</table>";
-		goog.dom.$('songresults').innerHTML = table;
+			goog.dom.$('songresults').innerHTML = table;
 		}
-		);
+	);
 }
 
 function fillResultList(json, field) {
