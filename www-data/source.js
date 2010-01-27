@@ -418,6 +418,9 @@ function titleOrPath(json) {
 
 function voteRandom() {
 	var possible = this.songIDs.length;
+	if (possible <= 0) {
+		return;
+	}
 	var randomSong = this.songIDs[Math.floor(Math.random()*possible)];
 	goog.net.XhrIo.send(
 		jsonSource + '?mode=vote;song_id=' + randomSong,
