@@ -11,6 +11,7 @@ sub file_to_info {
 
 #split apart data, insert to database
 	my %hash = map {(split /:/, $_, 2)} @data;
+	$hash{$_} =~ s{^\s*?(.*?)\s*?$}{$1} for (keys %hash); # Remove any nasty whitespace
 	delete $hash{bitrate}; # no bitrate field in the database yet
 	$hash{online} = 1; # set the online bit
 	return %hash;
