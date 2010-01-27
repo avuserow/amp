@@ -2,8 +2,9 @@
 
 use strict;
 use warnings;
-use lib ($0 =~ m{(.+)/})[0] . '/../lib';
+use lib ($0 =~ m{(.+/)?})[0] . '../lib';
 use Acoustics;
+use Acoustics::Scanner qw(file_to_info);
 use File::Find::Rule ();
 use List::MoreUtils qw(uniq);
 use Log::Log4perl ':easy';
@@ -23,18 +24,8 @@ for my $filename (map {abs_path($_)} @ARGV) {
 #get list of unique filenames from paths passed on command line
 my @files = uniq(map {abs_path($_)} File::Find::Rule->file()->in(@ARGV));
 
-#pass filenames through tagreader
-open my $pipe, '-|', ($0 =~ m{(.+)/})[0] . '/tagreader', @files or die "couldn't open tagreader: $!";
-my $data = join '', <$pipe>;
-close $pipe;
-
-#split apart data, insert to database
-my @datas = split /---/, $data;
-
-for my $item (@datas) {
-	my %hash = map {(split /:/, $_, 2)} split /\n/, $item;
-	delete $hash{bitrate}; # no bitrate field in the database yet
-	$hash{online} = 1; # set the online bit
+for my $file (@files) {
+	my %hash = &file_to_info($file);
 	unless($hash{length})
 	{
 		WARN "file $hash{path} not music";

@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use lib ($0 =~ m{(.+)/})[0] . '/../lib';
+use lib ($0 =~ m{(.+/)?})[0] . '../lib';
 use Acoustics;
 
 my $ac = Acoustics->new({
