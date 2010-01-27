@@ -142,7 +142,6 @@ Retrieve details for the song specified by the C<song_id> parameter.
 
 sub get_details {
 	my $self = shift;
-	return access_denied('You must log in.') unless $self->who;
 	my(@song_ids) = $self->cgi->param('song_id');
 	return bad_request('No songs specified.') unless @song_ids;
 	my $song = 0+(shift @song_ids);
