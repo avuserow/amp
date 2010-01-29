@@ -427,3 +427,14 @@ function voteRandom() {
 		function() {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
+// ALL THE POWAR!
+function voteAll() {
+	var block = "";
+	for (var i in this.songIDs) {
+		block += "song_id=" + this.songIDs[i] + ";";
+	}
+	goog.net.XhrIo.send(
+			jsonSource + '?mode=vote;' + block,
+			function() {handlePlayerStateRequest(this.getResponseJson());}
+	);
+}
