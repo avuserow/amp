@@ -192,7 +192,7 @@ function updateNowPlaying(json, player) {
 		title = titleOrPath(json);
 		nowPlaying += '<a href="javascript:getSongDetails('+json.song_id+')">' + title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
-			+ qsencode(json.artist) + '\')">' + json.artist + '</a>';
+			+ json.artist + '\')">' + json.artist + '</a>';
 		if (json.album) {
 			nowPlaying += ' (from <a href="javascript:selectRequest(\'album\', \''
 				+ json.album + '\')">' + json.album + '</a>)';
