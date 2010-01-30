@@ -10,6 +10,8 @@ require_prefix=/path/to/my/music
 
 [player]
 module=Acoustics::Player::MPlayer
+# Cap votes per voter (optional)
+# max_votes = 50
 
 [rpc]
 # pick one:

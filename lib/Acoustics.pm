@@ -385,13 +385,17 @@ sub vote {
 			AND player_id = ?');
 	$sth->execute($who, $self->player_id);
 	my($maxpri) = $sth->fetchrow_array() || 0;
+	# Cap # of votes per voter
+	my $maxvotes = $self->config->{player}{max_votes} or 2**32;
+	$maxvotes = 0 if ($maxvotes < 0);
+	if ($maxpri < $maxvotes){
+		$sth = $self->db->prepare(
+			'INSERT IGNORE INTO votes (song_id, time, player_id, who, priority)
+			VALUES (?, now(), ?, ?, ?)'
+		);
 
-	$sth = $self->db->prepare(
-		'INSERT IGNORE INTO votes (song_id, time, player_id, who, priority)
-		VALUES (?, now(), ?, ?, ?)'
-	);
-
-	$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
+		$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
+	}
 }
 
 sub get_vote {
