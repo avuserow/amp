@@ -398,7 +398,7 @@ function updateVolumeScale(volume) {
 }
 
 function qsencode(str) {
-	return escapeURIComponent(str);
+	return escape(str);
 }
 
 function titleOrPath(json) {
