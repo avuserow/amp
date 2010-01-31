@@ -398,7 +398,10 @@ function updateVolumeScale(volume) {
 }
 
 function qsencode(str) {
-	return escape(escape(str));
+	str = str.replace("\\","\\\\");
+	str = str.replace("'", "\'");
+	str = str.replace('"','\"');
+	return str;
 }
 
 function titleOrPath(json) {
