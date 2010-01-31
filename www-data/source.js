@@ -146,7 +146,7 @@ function updatePlaylist(json)
 				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
 		}
 		title = titleOrPath(json[item]);
-		list += '<a href="javascript:getSongDetails('+json[item].song_id+')">' + title
+		list += '<a href="javascript:getSongDetails('+qsencode(json[item].song_id)+')">' + title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ qsencode(json[item].artist) + '\')">' + json[item].artist
 			+ '</a>'
@@ -192,10 +192,10 @@ function updateNowPlaying(json, player) {
 		title = titleOrPath(json);
 		nowPlaying += '<a href="javascript:getSongDetails('+json.song_id+')">' + title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
-			+ json.artist + '\')">' + json.artist + '</a>';
+			+ qsencode(json.artist) + '\')">' + json.artist + '</a>';
 		if (json.album) {
 			nowPlaying += ' (from <a href="javascript:selectRequest(\'album\', \''
-				+ json.album + '\')">' + json.album + '</a>)';
+				+ qsencode(json.album) + '\')">' + json.album + '</a>)';
 		}
 		nowPlaying += '&nbsp;('+readableTime(json.length)+')';
 		rem_time = parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
@@ -398,7 +398,9 @@ function updateVolumeScale(volume) {
 }
 
 function qsencode(str) {
-	return escape(escape(str));
+	str = str.replace("\\","\\\\");
+	str = str.replace("'","\'");
+	return str;
 }
 
 function titleOrPath(json) {
