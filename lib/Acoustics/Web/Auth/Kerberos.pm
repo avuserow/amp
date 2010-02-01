@@ -25,7 +25,7 @@ sub authenticate {
 	$session->param(who => $user);
 	$session->flush;
 
-	print $session->header(-status => 302, -location => '/acoustics');
+	print $session->header(-status => 302, -location => '/acoustics/');
 }
 
 sub whoami {
