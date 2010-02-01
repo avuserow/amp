@@ -120,8 +120,8 @@ sub get_song {
 sub get_random_song {
 	my $self  = shift;
 	my $count = shift;
-
-	my $sth = $self->db->prepare('SELECT * FROM (SELECT song_id FROM songs ORDER BY RANDOM() LIMIT ?) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id');
+	my $random = $self->rand;
+	my $sth = $self->db->prepare("SELECT * FROM (SELECT song_id FROM songs ORDER BY $random LIMIT ?) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id");
 	$sth->execute($count);
 
 	return @{$sth->fetchall_arrayref({})};
@@ -385,7 +385,7 @@ sub vote {
 			AND player_id = ?');
 	$sth->execute($who, $self->player_id);
 	my($maxpri) = $sth->fetchrow_array() || 0;
-	my $sth = $self->db->prepare('SELECT count(*) FROM votes WHERE who = ?
+	$sth = $self->db->prepare('SELECT count(*) FROM votes WHERE who = ?
 			AND player_id = ?');
 	$sth->execute($who, $self->player_id);
 	my($num_votes) = $sth->fetchrow_array() || 0;
@@ -521,5 +521,20 @@ sub reinit {
 
 	return Acoustics->new({config_file => $self->config_file});
 }
-
+# Mysql has RAND, everyone else has RANDOM
+# TODO: Make this a stored procedure
+sub rand {
+	my $self = shift;
+	my $db = $self->config->{database}{data_source};
+	if ($db =~ m{^dbi:mysql}i) {
+		return "RAND()";
+	}
+	elsif ($db =~ m{^dbi:(pg|sqlite)}i) {
+		return "RANDOM()";
+	}
+	# A propable default. Hack if yours is different
+	else {
+		return "RANDOM()";
+	}
+}
 1;
