@@ -110,7 +110,7 @@ sub start_player {
 sub player_loop {
 	my $acoustics = shift;
 	my $song = $acoustics->get_current_song;
-	($song)  = $acoustics->get_song({online => 1}, 'RAND()', 1) unless $song;
+	($song)  = $acoustics->get_song({online => 1}, 'RANDOM()', 1) unless $song;
 
 	my $song_start_time = time;
 	my $skipped         = 0;

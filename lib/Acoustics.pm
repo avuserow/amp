@@ -121,7 +121,7 @@ sub get_random_song {
 	my $self  = shift;
 	my $count = shift;
 
-	my $sth = $self->db->prepare('SELECT * FROM (SELECT song_id FROM songs ORDER BY RAND() LIMIT ?) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id');
+	my $sth = $self->db->prepare('SELECT * FROM (SELECT song_id FROM songs ORDER BY RANDOM() LIMIT ?) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id');
 	$sth->execute($count);
 
 	return @{$sth->fetchall_arrayref({})};
