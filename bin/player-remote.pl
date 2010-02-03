@@ -4,6 +4,10 @@ use strict;
 use warnings;
 use lib ($0 =~ m{(.+/)?})[0] . '../lib';
 use Acoustics;
+use Getopt::Long;
+
+my $daemonize = 1;
+GetOptions('daemonize!' => \$daemonize);
 
 my $command = shift;
 
@@ -24,5 +28,8 @@ elsif ($command eq 'prune')
 }
 else
 {
+	print 'I will ', ($daemonize ? '' : 'not '), "daemonize here\n";
+	# daemonize is only meaningful for starting the player
+	push @ARGV, $daemonize if $command eq 'start';
 	$acoustics->player($command, @ARGV);
 }

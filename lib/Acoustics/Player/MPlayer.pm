@@ -10,27 +10,36 @@ use Module::Load 'load';
 sub start {
 	my $class     = shift;
 	my $acoustics = shift;
+	my $daemonize = shift;
+
+	# FIXME: If you daemonize, you end up in / as the pwd
+	# and if you don't, your pwd does not change
+	# (as well as STD{IN,OUT,ERR} being closed/open)
+	if ($daemonize) {
+		$acoustics = daemonize($acoustics);
+	}
+	start_player($acoustics);
+}
+
+use POSIX 'setsid';
+sub daemonize {
+	my $acoustics = shift;
 
 	my $pid = fork;
 	if ($pid) {
-		return;
+		exit;
 	} elsif ($pid == 0) {
 		$acoustics = $acoustics->reinit;
-		daemonize();
-		start_player($acoustics);
+		chdir '/'               or die "Can't chdir to /: $!";
+		open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
+		open STDOUT, '>/dev/null'
+			or die "Can't write to /dev/null: $!";
+		setsid                  or die "Can't start a new session: $!";
+		open STDERR, '>&STDOUT' or die "Can't dup stdout: $!";
+		return $acoustics;
 	} else {
 		ERROR "fork failed: $!";
 	}
-}
-use POSIX 'setsid';
-
-sub daemonize {
-	chdir '/'               or die "Can't chdir to /: $!";
-	open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
-	open STDOUT, '>/dev/null'
-							or die "Can't write to /dev/null: $!";
-	setsid                  or die "Can't start a new session: $!";
-	open STDERR, '>&STDOUT' or die "Can't dup stdout: $!";
 }
 
 sub skip {
