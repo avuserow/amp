@@ -401,8 +401,9 @@ function qsencode(str) {
 	str = str.replace(/\\/, '\\\\');
 	str = str.replace(/\'/, '\\\'');
 	str = str.replace(/\"/, '\\\"');
-	// Have to double escape & for CGI :(
+	// Have to double escape & and + for CGI :(
 	str = str.replace('&','%2526');
+	str = str.replace('+','%252B');
 	return str;
 }
 
