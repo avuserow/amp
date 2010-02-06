@@ -106,6 +106,8 @@ sub status {
 	$data->{player} = $player;
 
 	# FIXME: there should be a better way to do this
+	my $hint = JSON::DWIW->new->from_json($player->{queue_hint});
+	$acoustics->queue->deserialize($hint);
 	$data->{playlist}      = [$acoustics->get_playlist()];
 	($data->{now_playing}) = $acoustics->get_song({song_id => $player->{song_id}});
 

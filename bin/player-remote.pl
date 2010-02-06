@@ -28,7 +28,7 @@ elsif ($command eq 'prune')
 }
 else
 {
-	print 'I will ', ($daemonize ? '' : 'not '), "daemonize here\n";
+	#print 'I will ', ($daemonize ? '' : 'not '), "daemonize here\n";
 	# daemonize is only meaningful for starting the player
 	push @ARGV, $daemonize if $command eq 'start';
 	$acoustics->player($command, @ARGV);

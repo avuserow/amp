@@ -10,6 +10,11 @@ require_prefix=/path/to/my/music
 
 [player]
 module=Acoustics::Player::MPlayer
+plugins= # optional, specify player plugins
+
+# queue ("playlist") module to use (defaults to RoundRobin)
+queue=RoundRobin
+# queue=TimeSlice
 # Cap votes per voter (optional)
 # max_votes = 50
 

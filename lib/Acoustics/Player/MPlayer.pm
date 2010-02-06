@@ -6,6 +6,7 @@ use warnings;
 use Log::Log4perl ':easy';
 use IPC::Open2 'open2';
 use Module::Load 'load';
+use JSON::DWIW ();
 
 sub start {
 	my $class     = shift;
@@ -30,12 +31,14 @@ sub daemonize {
 		exit;
 	} elsif ($pid == 0) {
 		$acoustics = $acoustics->reinit;
-		chdir '/'               or die "Can't chdir to /: $!";
+		# The below is probably not needed and makes things more complicated
+		# regarding paths
+		#chdir '/'               or die "Can't chdir to /: $!";
 		open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
 		open STDOUT, '>/dev/null'
 			or die "Can't write to /dev/null: $!";
 		setsid                  or die "Can't start a new session: $!";
-		open STDERR, '>&STDOUT' or die "Can't dup stdout: $!";
+		#open STDERR, '>&STDOUT' or die "Can't dup stdout: $!";
 		return $acoustics;
 	} else {
 		ERROR "fork failed: $!";
@@ -110,8 +113,6 @@ sub start_player {
 	$acoustics->get_current_song; # populate the playlist
 
 	while (1) {
-		use Data::Dumper;
-		print Dumper ($acoustics->voter_order);
 		player_loop($acoustics);
 	}
 }
@@ -125,9 +126,11 @@ sub player_loop {
 	my $skipped         = 0;
 	if(-e $song->{path})
 	{
+		my $queue_hint = $acoustics->queue->serialize;
 		$acoustics->update_player({
 			song_id    => $song->{song_id},
 			song_start => $song_start_time,
+			queue_hint => scalar JSON::DWIW->new->to_json($queue_hint),
 		});
 		INFO "Playing '$song->{path}'";
 		INFO "$song->{title} by $song->{artist} from $song->{album}";
@@ -203,7 +206,8 @@ sub player_loop {
 	}
 
 	# Go to the next voter, and remove votes for this song
-	push @{$acoustics->voter_order}, shift @{$acoustics->voter_order};
+	$acoustics->queue->song_stop($song);
+	$acoustics->queue->serialize;
 	$acoustics->delete_vote({song_id => $song->{song_id}});
 }
 

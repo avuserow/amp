@@ -16,8 +16,8 @@ has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'config' => (is => 'ro', isa => 'Config::Tiny');
 has 'abstract' => (is => 'ro', isa => 'SQL::Abstract');
 has 'config_file' => (is => 'ro', isa => 'Str');
-has 'voter_order' => (is => 'rw', isa => 'ArrayRef[Str]', default => sub{[]});
 has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
+has 'queue' => (is => 'ro', isa => 'Acoustics::Queue');
 
 # Logger configuration:
 # - Print out all INFO and above messages to the screen
@@ -66,6 +66,11 @@ sub BUILD {
 	$self->{abstract} = SQL::Abstract::Limit->new({
 		limit_dialect => $self->db,
 	});
+
+	my $queue_class = $self->config->{player}{queue} || 'RoundRobin';
+	$queue_class    = 'Acoustics::Queue::' . $queue_class;
+	load $queue_class;
+	$self->{queue} = $queue_class->new({acoustics => $self});
 }
 
 sub check_if_song_exists {
@@ -161,25 +166,17 @@ sub get_votes_for_song {
 	return @{$select_votes->fetchall_arrayref({})};
 }
 
-sub get_songs_by_votes {
+sub get_voters_by_time {
 	my $self = shift;
-
-	# Find all the voters, and add them to our ordering
-	my @voter_list = @{$self->db->selectcol_arrayref(
+	return @{$self->db->selectcol_arrayref(
 		'SELECT who FROM votes WHERE player_id = ?
 		GROUP BY who ORDER BY MIN(time)',
 		undef, $self->player_id,
 	)};
+}
 
-	# add any voters that we don't have listed to the end of the queue
-	for my $who (@voter_list) {
-		my %lookup = map {$_ => 1} @{$self->voter_order};
-		push @{$self->voter_order}, $who unless $lookup{$who};
-	}
-
-	# remove extra voters from the list
-	my %lookup = map {$_ => 1} @voter_list;
-	@{$self->voter_order} = grep {$lookup{$_}} @{$self->voter_order};
+sub get_songs_by_votes {
+	my $self = shift;
 
 	# Make a hash mapping voters to all the songs they have voted for
 	my $select_votes = $self->db->prepare('
@@ -201,110 +198,9 @@ sub get_songs_by_votes {
 	return %votes;
 }
 
-sub build_playlist {
-	my $self = shift;
-
-	my %votes = $self->get_songs_by_votes;
-	my @voter_order = @{$self->voter_order};
-
-	# round-robin between voters, removing them from the temporary voter list
-	# when all their songs are added to the playlist
-	my @songs;
-	while (@voter_order) {
-		# pick the first voter
-		my $voter = shift @voter_order;
-
-		# find all songs matching this voter and sort by number of voters
-		my @candidates = grep {
-			grep {$_ eq $voter} @{$_->{who}}
-		} values %votes;
-		@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{priority} <=> $b->{priority}} @candidates;
-
-		# if this user has no more stored votes, ignore them
-		next unless @candidates;
-
-		# grab the first candidate, remove it from the hash of votes
-		push @songs, delete $votes{$candidates[0]{song_id}};
-
-		# re-add the voter to the list since they probably have more songs
-		push @voter_order, $voter;
-	}
-
-	return @songs;
-}
-
-# A deficit round robin playlist
-sub build_drr_playlist {
-	my $self = shift;
-	# don't count the currently playing song
-	my($player) = $self->get_player({player_id => $self->player_id});
-	my $current = $player->{song_id}||=0;
-	my %votes = $self->get_songs_by_votes;
-	my @voter_order = @{$self->voter_order};
-	# map voter to deficit count
-	my %voter_debts = map {$_ => 0} @voter_order;
-	# deficit round robin voters
-	my %queues = ();
-	for my $voter (@voter_order) {
-		my @candidates = grep { grep { $_ eq $voter } @{$_->{who} } } values %votes;
-		@candidates = grep { $_->{song_id} ne $current } @candidates;
-		@candidates = reverse sort {scalar @{$a->{who}} <=> scalar @{$b->{who}}} reverse sort {$a->{priority} <=> $b->{priority}} @candidates;
-		$queues{$voter} = \@candidates;
-	}
-	my @songs;
-	while (%queues) {
-		# quantum starts huge, so a real quantum can be found
-		my $quantum = 2**32;
-		# find the smallest song length, call it the quantum
-		foreach my $voter (keys %queues) {
-			my @candidates = @{$queues{$voter}};
-			next unless @candidates;
-			my %first = %{$candidates[0]};
-			my $weighted_length = $first{length}/(scalar @{$first{who}});
-			$quantum = $weighted_length if ($quantum > $weighted_length);
-		}
-		# Remember who was charged for a song this round
-		my %debted = ();
-		foreach my $voter (keys %queues) {
-			# if this user has no more stored votes, remove them from voter pool
-			my @candidates = @{$queues{$voter}};
-			unless (@candidates) {
-				delete $queues{$voter};
-				delete $voter_debts{$voter};
-				next;
-			}
-			my %first = %{$candidates[0]};
-			# weight length based on # of voters
-			my $weighted_length = $first{length}/(scalar @{$first{who}});
-			# if first candidate's length is <= debt, push onto songs
-			if ($voter_debts{$voter} >= $weighted_length) {
-				# Collect the debt from each voter
-				foreach my $partner (@{$first{who}}) {
-					$voter_debts{$partner} -= $weighted_length;
-					$debted{$partner} = 1;
-				}
-				# save the winning song
-				my $winner = $first{song_id};
-				# filter winning song from the queues;
-				foreach my $guy (keys %queues) {
-					my @others = grep { $_->{song_id} ne $winner } @{$queues{$guy}};
-					$queues{$guy} = \@others;
-				}
-				push @songs, delete $votes{$winner};
-			}
-			# otherwise, add the quantum if they weren't a partner on a song previously in this round
-			unless ($debted{$voter}) {
-				$voter_debts{$voter} += $quantum;
-				$debted{$voter} = 1;
-			}
-		}
-	}
-	return @songs;
-}
-
 sub get_playlist {
 	my $self = shift;
-	my @playlist = $self->build_drr_playlist;
+	my @playlist = $self->queue->list;
 
 	my($player) = $self->get_player({player_id => $self->player_id});
 	$player->{song_id} ||= 0;
@@ -313,7 +209,7 @@ sub get_playlist {
 
 sub get_current_song {
 	my $self = shift;
-	my @playlist = $self->build_playlist;
+	my @playlist = $self->queue->list;
 	if (@playlist) {
 		return $playlist[0];
 	}

@@ -28,4 +28,4 @@ $db->do("CREATE TABLE history (song_id INT UNSIGNED, time TIMESTAMP, who
 
 $db->do("CREATE TABLE players (player_id VARCHAR(256), volume INT UNSIGNED,
     song_id INT UNSIGNED, song_start INT UNSIGNED, local_id VARCHAR(256),
-    remote_id VARCHAR(256), PRIMARY KEY(player_id))");
+    remote_id VARCHAR(256), queue_hint TEXT, PRIMARY KEY(player_id))");
