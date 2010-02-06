@@ -12,7 +12,6 @@ has 'acoustics' => (is => 'ro', isa => 'Acoustics');
 has 'debt'      => (is => 'rw', isa => 'HashRef[Item]', default => sub {{}});
 
 sub list {
-	use integer;
 	my $self      = shift;
 	my $acoustics = $self->acoustics;
 
@@ -51,13 +50,13 @@ sub list {
 		push @playlist, $song;
 
 		# give everyone else with remaining votes 1/nth of this song's length
-		$debt{$_} += ($song->{length} / @{$song->{who}}) for @{$song->{who}};
+		$debt{$_} += int($song->{length} / @{$song->{who}}) for @{$song->{who}};
 		@who = uniq map {@{$_->{who}}} values %votes;
 
-		my @payees = grep {$_ ~~ @{$song->{who}}} keys(%debt);
+		my @payees = grep {not $_ ~~ @{$song->{who}}} $acoustics->get_voters_by_time;
 		for (@payees)
 		{
-			$debt{$_} -= ($song->{length} / @payees);
+			$debt{$_} -= int($song->{length} / @payees);
 	}
 
 	}
@@ -66,7 +65,6 @@ sub list {
 }
 
 sub song_start {
-	use integer;
 	my $self = shift;
 	my $song = shift;
 
@@ -77,16 +75,15 @@ sub song_start {
 		$debt->{$_} += ($song->{length} / @{$song->{who}});
 	}
 	
-	my @who = grep {$_ ~~ @{$song->{who}}} keys(%{$debt});
+	my @who = grep {not $_ ~~ @{$song->{who}}} $self->acoustics->get_voters_by_time;
 	for (@who) {
-		$debt->{$_} -= ($song->{length} / @who);
+		$debt->{$_} -= int($song->{length} / @who);
 	}
 
 	$self->debt($debt);
 }
 
 sub song_stop {
-	use integer;
 	my $self = shift;
 	
 	my $debt = $self->debt;
