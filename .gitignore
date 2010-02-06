@@ -9,4 +9,3 @@ bin/tagreader
 www-data/auth/.htaccess
 www-data/acoustics2.js
 *test.pl
-faketrac
