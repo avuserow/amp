@@ -9,6 +9,7 @@ sub list {
 	die 'list method not implemented in ' . __PACKAGE__ . ' subclass!';
 }
 
+sub song_start {}
 sub song_stop {}
 
 sub serialize {}

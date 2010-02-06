@@ -9,7 +9,7 @@ use Mouse;
 
 extends 'Acoustics::Queue', 'Mouse::Object';
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
-has 'debt'      => (is => 'rw', isa => 'HashRef[Int]', default => sub {{}});
+has 'debt'      => (is => 'rw', isa => 'HashRef[Item]', default => sub {{}});
 
 sub list {
 	my $self      = shift;
@@ -22,6 +22,11 @@ sub list {
 
 	$debt{$_} ||= 0 for @who;
 
+	if ($0 =~ /player-remote\.pl/) {
+		use Data::Dumper;
+		print Dumper(\%debt);
+		print "\n";
+	}
 	my @playlist;
 	while (keys %votes) {
 		# find the next song for every voter by priority
@@ -31,6 +36,7 @@ sub list {
 				$a->{priority} < $b->{priority} ? $a : $b
 			} grep {$who ~~ $_->{who}} values %votes;
 		}
+
 
 		# now find the person that will have the most credit left over after
 		# we play their next song
@@ -51,7 +57,7 @@ sub list {
 	return @playlist;
 }
 
-sub song_stop {
+sub song_start {
 	my $self = shift;
 	my $song = shift;
 

@@ -126,6 +126,7 @@ sub player_loop {
 	my $skipped         = 0;
 	if(-e $song->{path})
 	{
+		$acoustics->queue->song_start($song);
 		my $queue_hint = $acoustics->queue->serialize;
 		$acoustics->update_player({
 			song_id    => $song->{song_id},
@@ -207,7 +208,6 @@ sub player_loop {
 
 	# Go to the next voter, and remove votes for this song
 	$acoustics->queue->song_stop($song);
-	$acoustics->queue->serialize;
 	$acoustics->delete_vote({song_id => $song->{song_id}});
 }
 
