@@ -41,23 +41,27 @@ sub list {
 		# now find the person that will have the most credit left over after
 		# we play their next song
 		my $best_choice = reduce {
-			$debt{$a} + $next_songs{$a}{length} <
-			$debt{$b} + $next_songs{$b}{length} ? $a : $b
+				$debt{$a} < $debt{$b} ? $a : $b
 		} @who;
+		
 
 		# use up this vote and remove it from the votes hash
 		my $song = delete $votes{$next_songs{$best_choice}{song_id}};
 		push @playlist, $song;
 
-		# give everyone else with remaining votes 1/nth of this song's length
-		$debt{$_} += int($song->{length} / @{$song->{who}}) for @{$song->{who}};
 		@who = uniq map {@{$_->{who}}} values %votes;
-
-		my @payees = grep {not $_ ~~ @{$song->{who}}} $acoustics->get_voters_by_time;
-		for (@payees)
+		# give everyone else with remaining votes 1/nth of this song's length
+		#
+		if(@{$song->{who}} != @who)
 		{
-			$debt{$_} -= int($song->{length} / @payees);
-	}
+			$debt{$_} += int($song->{length} / @{$song->{who}}) for @{$song->{who}};
+
+			my @payees = grep {not $_ ~~ @{$song->{who}}} @who;
+			for (@payees)
+			{
+				$debt{$_} -= int($song->{length} / @payees);
+			}
+		}
 
 	}
 
@@ -70,12 +74,16 @@ sub song_start {
 
 	my $debt = $self->debt;
 
+	my @voters = $self->acoustics->get_voters_by_time;
+
+	return if @voters == @{$song->{who}};
+
 	for (@{$song->{who}}) {
 		$debt->{$_} ||= 0;
 		$debt->{$_} += ($song->{length} / @{$song->{who}});
 	}
-	
-	my @who = grep {not $_ ~~ @{$song->{who}}} $self->acoustics->get_voters_by_time;
+
+	my @who = grep {not $_ ~~ @{$song->{who}}} @voters;
 	for (@who) {
 		$debt->{$_} -= int($song->{length} / @who);
 	}
