@@ -76,7 +76,7 @@ sub song_start {
 
 	my @voters = $self->acoustics->get_voters_by_time;
 
-	return if @voters == @{$song->{who}};
+	return if @voters == @{$song->{who} || []};
 
 	for (@{$song->{who}}) {
 		$debt->{$_} ||= 0;
