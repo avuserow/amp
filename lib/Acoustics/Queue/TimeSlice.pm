@@ -93,7 +93,7 @@ sub song_start {
 
 sub song_stop {
 	my $self = shift;
-	
+	my $song = shift;
 	my $debt = $self->debt;
 
 	my %votes = $self->acoustics->get_songs_by_votes;
@@ -103,7 +103,15 @@ sub song_stop {
 
 	for(keys(%{$debt}))
 	{
-		$cost += delete $debt->{$_} unless($participants{$_});
+		unless($participants{$_}){
+			if (abs($debt->{$_}) < $song->{length}){
+				$cost += delete $debt->{$_};
+			}
+			else {
+				$cost += $song->{length};
+				$debt->{$_} += $song->{length} * {$debt->{$_} > 0 ? -1 : 1};
+			}
+		}
 	}
 
 	my $size = keys %{$debt};
