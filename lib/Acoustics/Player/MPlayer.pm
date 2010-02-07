@@ -161,12 +161,12 @@ sub player_loop {
 		};
 
 		local $SIG{USR1} = sub {
-			WARN "changing volume to $player->{volume}";
 			my($player) = $acoustics->get_player({
 				player_id => $acoustics->player_id,
 			});
 			$player->{volume}  = 100 if $player->{volume} > 100;
 			$player->{volume} *= .7;
+			WARN "changing volume to $player->{volume}";
 			print $child_in "volume $player->{volume} 1\n";
 			print $child_in "get_volume\n";
 		};
