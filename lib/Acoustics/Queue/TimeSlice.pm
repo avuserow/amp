@@ -109,7 +109,7 @@ sub song_stop {
 			}
 			else {
 				$cost += $song->{length};
-				$debt->{$_} += $song->{length} * {$debt->{$_} > 0 ? -1 : 1};
+				$debt->{$_} += $song->{length} * ($debt->{$_} > 0 ? -1 : 1);
 			}
 		}
 	}
