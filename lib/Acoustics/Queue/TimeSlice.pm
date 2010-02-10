@@ -17,11 +17,18 @@ sub list {
 
 	my %votes = $acoustics->get_songs_by_votes;
 
+	# remove the current song
+	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	delete $votes{$player->{song_id}};
+
+	# get a copy of the current debt and a list of the voters
 	my %debt = %{$self->debt};
 	my @who  = uniq map {@{$_->{who}}} values %votes;
 
+	# add 0 debts for anyone not present to avoid warnings
 	$debt{$_} ||= 0 for @who;
 
+	# debug if we're running the player
 	if ($0 =~ /player-remote\.pl/) {
 		use Data::Dumper;
 		print Dumper(\%debt);
