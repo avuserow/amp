@@ -6,6 +6,7 @@ use warnings;
 use List::Util 'reduce';
 use List::MoreUtils 'uniq';
 use Mouse;
+use v5.010;
 
 extends 'Acoustics::Queue', 'Mouse::Object';
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
