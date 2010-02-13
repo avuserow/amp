@@ -402,9 +402,14 @@ function qsencode(str) {
 	str = str.replace(/\\/, '\\\\');
 	str = str.replace(/\'/, '\\\'');
 	str = str.replace(/\"/, '\\\"');
-	// Have to double escape & and + for CGI :(
 	str = str.replace('&','%2526');
 	str = str.replace('+','%252B');
+	return str;
+}
+
+function formencode(str) {
+	str = str.replace('&', '%26');
+	str = str.replace('+', '%2B');
 	return str;
 }
 

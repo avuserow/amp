@@ -11,7 +11,7 @@
 		<div id="container">
 			<div id="top">
 				<h1>Acoustics Music Player</h1>
-				<form action="" onSubmit="javascript:searchRequest(this.field.value, this.search_value.value); return false;">
+				<form action="" onSubmit="javascript:searchRequest(this.field.value, formencode(this.search_value.value)); return false;">
 					search:
 					<input type="text" id="search_value" />
 					<select id="field">
