@@ -199,6 +199,7 @@ function updateNowPlaying(json, player) {
 		}
 		nowPlaying += '&nbsp;('+readableTime(json.length)+')';
 		rem_time = parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
+		if (rem_time < 0) rem_time = 0;
 		nowPlaying += '&nbsp;(<span id="playingTime">'+readableTime(rem_time)+'</span> remaining)';
 	} else {
 		nowPlaying = 'nothing playing';
