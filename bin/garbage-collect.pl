@@ -23,7 +23,7 @@ for my $path (@ARGV) {
 		unless ($song->{online}) {
 			my $sans_filetype = $song->{path};
 			$sans_filetype =~ s{\..*$}{};
-			my @possibles = <$sans_filetype.*>;
+			my @possibles = glob("$sans_filetype.*");
 			my (@scanned) = &file_to_info($_) for @possibles;
 			my $new = first {defined($_->{length})} @scanned;
 			if ($new) {

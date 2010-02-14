@@ -1,7 +1,12 @@
 package Acoustics::Scanner;
+
+use strict;
+use warnings;
+
 require Exporter;
-@ISA=qw(Exporter);
+@ISA = qw(Exporter);
 @EXPORT_OK = qw(file_to_info);
+
 sub file_to_info {
 	my $file = shift;
 	#pass filenames through tagreader
@@ -16,4 +21,5 @@ sub file_to_info {
 	$hash{online} = 1; # set the online bit
 	return %hash;
 }
+
 1;

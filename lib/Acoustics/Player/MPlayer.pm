@@ -34,11 +34,11 @@ sub daemonize {
 		# The below is probably not needed and makes things more complicated
 		# regarding paths
 		#chdir '/'               or die "Can't chdir to /: $!";
-		open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
-		open STDOUT, '>/dev/null'
+		open STDIN, '<', '/dev/null' or die "Can't read /dev/null: $!";
+		open STDOUT, '>', '/dev/null'
 			or die "Can't write to /dev/null: $!";
 		setsid                  or die "Can't start a new session: $!";
-		#open STDERR, '>&STDOUT' or die "Can't dup stdout: $!";
+		#open STDERR, '>&', 'STDOUT' or die "Can't dup stdout: $!";
 		return $acoustics;
 	} else {
 		ERROR "fork failed: $!";
