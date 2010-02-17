@@ -21,7 +21,7 @@ $db->do("CREATE TABLE songs (song_id INT UNSIGNED AUTO_INCREMENT, path
     TINYINT(1) UNSIGNED, PRIMARY KEY (song_id))");
 
 $db->do("CREATE TABLE votes (song_id INT UNSIGNED, who VARCHAR(256), player_id
-    VARCHAR(256), time TIMESTAMP, priority INT, UNIQUE(song_id, who))");
+    VARCHAR(256), time INT UNSIGNED, priority INT, UNIQUE(song_id, who))");
 
 $db->do("CREATE TABLE history (song_id INT UNSIGNED, time TIMESTAMP, who
     VARCHAR(256), player_id VARCHAR(256))");
