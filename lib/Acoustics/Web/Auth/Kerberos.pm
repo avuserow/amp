@@ -40,13 +40,14 @@ sub whoami {
 sub is_admin {
 	my $self = shift;
 	return 1 unless $self->acoustics->config->{webauth}{use_pts_admin};
+	my $username = whoami();
+	return unless $username;
 
 	my $admin_group = $self->acoustics->config->{webauth}{pts_admin_group};
 	my @admins = qx(pts mem $admin_group -noauth);
 	shift @admins; # throw away the header line
 	s{\s+}{}g for @admins; # remove extra whitespace
 
-	my $username = whoami();
 	return first {$_ eq $username} @admins;
 }
 

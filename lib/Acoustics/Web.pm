@@ -124,7 +124,7 @@ sub status {
 sub can_skip {
 	my $self = shift;
 	my $acoustics = $self->acoustics;
-	my $who = $self->who;
+	my $who = $self->who || '';
 	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
 	my @voters = map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id});
 	my $voted = grep {$who eq $_} @voters;
