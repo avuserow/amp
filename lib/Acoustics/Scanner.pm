@@ -4,8 +4,8 @@ use strict;
 use warnings;
 
 require Exporter;
-@ISA = qw(Exporter);
-@EXPORT_OK = qw(file_to_info);
+our @ISA = qw(Exporter);
+our @EXPORT_OK = qw(file_to_info);
 
 sub file_to_info {
 	my $file = shift;

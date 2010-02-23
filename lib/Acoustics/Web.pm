@@ -356,7 +356,7 @@ sub history {
 	my $amount = $self->cgi->param('amount') || 50;
 	my @history;
 	for my $song ($self->acoustics->get_history($amount)) {
-		if ($history[-1] && $history[-1]{time} == $song->{time}) {
+		if ($history[-1] && $song->{song_id} == $history[-1]{song_id} && $history[-1]{time} == $song->{time}) {
 			push @{$history[-1]{who}}, $song->{who};
 		} else {
 			$song->{who} = [$song->{who}];
