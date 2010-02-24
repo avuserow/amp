@@ -266,7 +266,7 @@ sub volume {
 	return access_denied('You must log in.') unless $self->who;
 
 	my $vol = $self->cgi->param('value');
-	return bad_request('No volume specified.') unless $vol;
+	return bad_request('No volume specified.') unless defined $vol;
 	$self->acoustics->rpc('volume', $vol);
 	$self->status;
 }
