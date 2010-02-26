@@ -392,7 +392,12 @@ sub _search_or_select {
 
 	my $where;
 	my $value_clause = $value;
-	$value_clause    = {-like => "%$value%"} if $mode eq 'search';
+	if ($mode eq 'search') {
+		$value =~ s/^\s+//g;
+		$value =~ s/\s+$//g;
+		$value =~ s/\s+/ /g;
+		$value_clause    = {-like => "%$value%"};
+	}
 	if ($field eq 'any') {
 		$where = {-or => [map {$_ => $value_clause} qw(artist album title path)]};
 	} else {
