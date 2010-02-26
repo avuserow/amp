@@ -56,9 +56,9 @@
 				</div>
 				<br />
 				<br />
-				(<a href="javascript:unvoteSong(0)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>)
+				(<a href="javascript:purgeSongs(currentUser)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>)
 				<div id="purgeuser">
-					<form action="" onSubmit="javascript:purgeSongs(); return false;">
+					<form action="" onSubmit="javascript:purgeSongs(this.user.value); return false;">
 						Purge User:
 						<select id="user" size='1'></select>
 						<input type="submit" value="Purge" />
@@ -74,7 +74,7 @@
 		</script>
 		<p>Acoustics's code is available at <a
 			href="http://github.com/avuserow/amp">GitHub</a>. Please report
-		bugs to our <a href="http://github.com/avuserow/amp/issues">Github
+		bugs to our <a href="http://github.com/avuserow/amp/issues">GitHub
 			issue tracker</a>.</p>
 	</body>
 </html>

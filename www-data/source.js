@@ -376,11 +376,9 @@ function voteToTop(song_id) {
 	);
 }
 
-function purgeSongs() {
-	var userList = goog.dom.$('user');
-	var user = userList.options[userList.selectedIndex].value;
+function purgeSongs(user) {
 	goog.net.XhrIo.send(
-		jsonSource + '?mode=unvote;purge=' + user,
+		jsonSource + '?mode=purge;who=' + user,
 		function () {
 			userList.selectedIndex=0;
 			handlePlayerStateRequest(this.getResponseJson());

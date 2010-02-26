@@ -183,19 +183,32 @@ sub unvote {
 	my $self = shift;
 	return access_denied('You must log in.') unless $self->who;
 
-	my(@song_ids) = $self->cgi->param('song_id');
-	my $purge_user = $self->cgi->param('purge');
-
-	if (@song_ids && $song_ids[0]) {
+	for my $id ($self->cgi->param('song_id')) {
 		$self->acoustics->delete_vote({
-			song_id => 0+$_,
+			song_id => 0+$id,
 			who     => $self->who,
-		}) for @song_ids;
-	} elsif ($self->is_admin && $purge_user) {
-		$self->acoustics->delete_vote({who => $purge_user});
-	} else {
-		$self->acoustics->delete_vote({who => $self->who});
+		});
 	}
+
+	$self->status;
+}
+
+=head2 purge
+
+Purges all votes by a given user. If this user is not an admin, it purges their
+votes.
+
+=cut
+
+sub purge {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+
+	my $purge_user = $self->cgi->param('who');
+	$purge_user    = $self->who unless $self->is_admin;
+
+	$self->acoustics->delete_vote({who => $purge_user});
+
 	$self->status;
 }
 
