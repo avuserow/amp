@@ -380,7 +380,6 @@ function purgeSongs(user) {
 	goog.net.XhrIo.send(
 		jsonSource + '?mode=purge;who=' + user,
 		function () {
-			userList.selectedIndex=0;
 			handlePlayerStateRequest(this.getResponseJson());
 		}
 	);
