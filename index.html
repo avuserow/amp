@@ -28,25 +28,27 @@
 				<a href="www-data/auth">Log in</a>
 			</div>
 			<div id="center" class="column">
-				<span id="result_title"></span>
-				(browse by:
+				browse by:
 				<a href="javascript:loadRandomSongs(20)"><img src="www-data/icons/sport_8ball.png" alt="" /> random</a>
 				<a href="javascript:loadRecentSongs(50)"><img src="www-data/icons/new.png" alt="" /> recently added</a>
 				<a href="javascript:loadPlayHistory(25)"><img src="www-data/icons/hourglass.png" alt="" /> recently played</a>
 				<a href="javascript:browseSongs('album')"><img src="www-data/icons/cd.png" alt="" /> album</a>
 				<a href="javascript:browseSongs('artist')"><img src="www-data/icons/user.png" alt="" /> artist</a>
-				<a href="javascript:voteRandom()"><img src="www-data/icons/database_lightning.png" alt="" /> Pick one from this list</a>
-				)
-				<div id="songresults"></div>
+				<br />
+				<span id="result_title"></span>
+				(<a href="javascript:voteRandom()"><img src="www-data/icons/database_lightning.png" alt="" /> pick one from this list</a>)
+				<div id="songresults" class="ruled"></div>
 				<a href="javascript:voteAll()"><img src="www-data/icons/bomb.png" alt="" /> Vote them all up</a>
 			</div>
 			<div id="right" class="column">
 				<span id="nowplaying"></span>
-				<ul>
-					<li><a href="javascript:sendPlayerCommand('start')">start</a></li>
-					<li id="skip_link"><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
-					<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
-				</ul>
+				<div id="playcontrols">
+					<ul>
+						<li><a href="javascript:sendPlayerCommand('start')">start</a></li>
+						<li id="skip_link"><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
+						<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
+					</ul>
+				</div>
 				<img src="www-data/icons/sound.png" alt="" /> volume
 				<div id="volume"></div>
 				<br />

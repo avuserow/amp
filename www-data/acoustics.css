@@ -1,36 +1,41 @@
 body
 {
-    background: #f0f0ff;
+	background: #f0f0ff;
 }
 
 img {
-    border: none
+	border: none
+}
+
+/*added*/
+a {
+	color: #191970;
 }
 
 .goog-tablesorter-header {cursor: pointer}
 .goog-slider-horizontal {
-    background-color: ThreeDFace;
-    position: relative;
-    overflow: hidden;
+	background-color: ThreeDFace;
+	position: relative;
+	overflow: hidden;
 }
 
 .goog-slider-thumb {
-    position: absolute;
-    background-color: ThreeDShadow;
-    overflow: hidden;
+	position: absolute;
+	background-color: ThreeDShadow;
+	overflow: hidden;
 }
 
 .goog-slider-horizontal .goog-slider-thumb {
-    top: 0;
-    width: 10%;
-    height: 100%;
+	top: 0;
+	width: 10%;
+	height: 100%;
 }
 
 th.goog-tablesorter-sorted {
-    background-color: #ffcccc;
+	background-color: #ffcccc;
 }
 th.goog-tablesorter-sorted-reverse {
-    background-color: #ccccff;
+	background-color: #ccccff;
 }
 
 #container
@@ -38,49 +43,82 @@ th.goog-tablesorter-sorted-reverse {
 }
 #container .column
 {
-    border: 1px solid gray;
+	/*border: 1px solid gray;*/
 }
 #center
 {
-    float: left;
-    width: 75%;
+	float: left;
+	width: 75%;
 }
 #right {
-    float: right;
-    height: 98%;
-    position: fixed;
-    right: 1%;
-    top: 1%;
-    width: 22%;
-    overflow: auto;
+	float: right;
+	height: 98%;
+	position: fixed;
+	right: 1%;
+	top: 1%;
+	width: 22%;
+	overflow: auto;
 }
 
 #footer {
-    font-style: italic;
-    clear: both;
-}
-
-#songresults td {
-    border: 1px dotted gray;
-}
-
-#playlist ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-#playlist li {
-    font-size: .8em;
-    padding-bottom: .5em;
+	font-style: italic;
+	clear: both;
 }
 
 #result_table {
-    width: 100%;
+	border-spacing: 0px;
+}
+#songresults td {
+	border-bottom: 1px dotted gray;
+	padding-left: 1px;
+}
+
+/*added*/
+#right {
+	background: url('gradient.png') repeat-x;
+	padding-left: 1em;
+	border: 1px solid gray;
+	padding-top: 2px;
+}
+
+#playcontrols {
+	padding: 5px;
+}
+
+#playcontrols ul {
+	display: inline;
+	list-style: none;
+}
+#playcontrols ul li {
+	display: inline;
+}
+
+#playlist ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#playlist li {
+	font-size: .8em;
+	padding-bottom: .5em;
+}
+
+#result_table {
+	width: 100%;
 }
 
 
 #result_table .datacol {
-    font-size: .9em;
-    width: 33%;
+	font-size: .9em;
+	width: 33%;
+}
+
+/*the ruler color, for when you hover over the row in the result table*/
+.ruled tbody tr:hover {
+	background:#6996AD;
+}
+
+.ruled thead th {
+	border-bottom: 1px dotted black;
 }
