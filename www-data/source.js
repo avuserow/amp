@@ -395,14 +395,16 @@ function qsencode(str) {
 	str = str.replace(/\\/, '\\\\');
 	str = str.replace(/\'/, '\\\'');
 	str = str.replace(/\"/, '\\\"');
-	str = str.replace('&','%2526');
-	str = str.replace('+','%252B');
+	str = str.replace('&', '%2526');
+	str = str.replace('+', '%252B');
+	str = str.replace('#', '%2523');
 	return str;
 }
 
 function formencode(str) {
 	str = str.replace('&', '%26');
 	str = str.replace('+', '%2B');
+	str = str.replace('#', '%23');
 	return str;
 }
 
