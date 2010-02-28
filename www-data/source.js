@@ -308,14 +308,10 @@ function fillResultTable(json) {
 		+ '<td style="text-align: center"><a href="javascript:voteSong('
 		+ json[item].song_id
 		+ ')"><img src="www-data/icons/add.png" alt="vote" /></a></td>'
-		+ '<td>' + json[item].track + '</td>';
-		if (json[item].title) {
-			table += '<td class="datacol"><a href="javascript:selectRequest(\'title\', \''
-			+ qsencode(title) + '\')">' + title + '</a></td>';
-		} else {
-			table += '<td class="datacol">' + title + '</td>';
-		}
-		table += '<td class="datacol"><a href="javascript:selectRequest(\'album\', \''
+		+ '<td>' + json[item].track + '</td>'
+		+ '<td class="datacol"><a href="javascript:getSongDetails('
+		+ json[item].song_id + ')">' + title + '</a></td>'
+		+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \''
 		+ qsencode(json[item].album) + '\')">' + json[item].album + '</a></td>'
 		+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \''
 		+ qsencode(json[item].artist) + '\')">' + json[item].artist + '</a></td>'
