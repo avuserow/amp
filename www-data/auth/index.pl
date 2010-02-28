@@ -27,4 +27,6 @@ do {
 	# finish FastCGI if needed and auto-reload ourselves if we were modified
 	$req->Finish if $running_under_fastcgi;
 	exit if -M $ENV{SCRIPT_FILENAME} < 0;
+
+	$acoustics->db->disconnect;
 } while ($running_under_fastcgi && $req->Accept() >= 0);
