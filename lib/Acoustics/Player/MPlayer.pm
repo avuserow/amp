@@ -146,7 +146,7 @@ sub player_loop {
 		# and handle SIGHUP. don't use waitpid because it blocks SIGHUP.
 		my $pid = open2(my $child_out, my $child_in,
 			'mplayer', '-slave', '-quiet',
-			#'-af' => 'volnorm=2:0.10',
+			'-af' => 'volnorm=2:0.10',
 			'-volume' => $player->{volume},
 			$song->{path})
 			or LOGDIE "couldn't open mplayer: $!";
