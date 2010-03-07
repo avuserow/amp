@@ -152,7 +152,7 @@ function updatePlaylist(json)
 			+ qsencode(json[item].song_id) + ')">' + title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ qsencode(json[item].artist) + '\')">' + json[item].artist
-			+ '</a>&bsp;('
+			+ '</a>&nbsp;('
 			+ readableTime(json[item].length) +') ('+json[item].who.length+')</li>';
 		totalTime = totalTime + parseInt(json[item].length);
 		var voters = new Array();
