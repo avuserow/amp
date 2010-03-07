@@ -134,21 +134,26 @@ function updatePlaylist(json)
 	{
 		list += '<li>';
 		if (json[item].who && json[item].who.indexOf(currentUser) != -1) {
-			list += '<a href="javascript:unvoteSong(' + json[item].song_id
+			list += '<a title="Remove your vote for this" href="javascript:unvoteSong('
+				+ json[item].song_id
 				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> '
-				+ ' <a href="javascript:voteToTop(' + json[item].song_id
+				+ ' <a title="Vote To Top" href="javascript:voteToTop('
+				+ json[item].song_id
 				+ ')"><img src="www-data/icons/lightning_go.png" '
 				+ 'alt="vote to top" /></a> ';
 		} else {
-			list += '<a href="javascript:voteSong(' + json[item].song_id
+			list += '<a title="Vote for this" href="javascript:voteSong('
+				+ json[item].song_id
 				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
 		}
 		title = titleOrPath(json[item]);
-		list += '<a href="javascript:getSongDetails('+qsencode(json[item].song_id)+')">' + title
+		list += '<a title="See who voted for this" '
+			+ 'href="javascript:getSongDetails('
+			+ qsencode(json[item].song_id) + ')">' + title
 			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
 			+ qsencode(json[item].artist) + '\')">' + json[item].artist
-			+ '</a>'
-			+ '&nbsp;(' + readableTime(json[item].length) +') ('+json[item].who.length+')</li>';
+			+ '</a>&bsp;('
+			+ readableTime(json[item].length) +') ('+json[item].who.length+')</li>';
 		totalTime = totalTime + parseInt(json[item].length);
 		var voters = new Array();
 		for (var voter in json[item].who)
