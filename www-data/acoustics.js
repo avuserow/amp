@@ -204,26 +204,40 @@ function updateNowPlaying(json, player) {
 		rem_time = parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
 		if (rem_time < 0) rem_time = 0;
 		nowPlaying += '&nbsp;(<span id="playingTime">'+readableTime(rem_time)+'</span> remaining)';
-		nowPlaying += npLinkSong(json.artist,title);
 	} else {
 		nowPlaying = 'nothing playing';
 	}
 	goog.dom.$('nowplaying').innerHTML = nowPlaying;
 }
 
-function npLinkSong(artist, title)
+function lastLinkSong(artist, title)
 {
 	return '<a href="http://last.fm/music/'+artist+'/_/'+title+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
 }
 
-function npLinkAlbum(artist, album)
+function lastLinkAlbum(artist, album)
 {
 	return '<a href="http://last.fm/music/'+artist+'/'+album+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
 }
 
-function npLinkArtist(artist)
+function lastLinkArtist(artist)
 {
 	return '<a href="http://last.fm/music/'+artist+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
+}
+
+function wikiLinkArtist(artist)
+{
+	return '<a href="http://en.wikipedia.org/wiki/'+artist+'_(band)" target="_new"><img class="icon" src="www-data/icons/wiki.png"></a>';
+}
+
+function wikiLinkAlbum(album)
+{
+	return '<a href="http://en.wikipedia.org/wiki/'+album+'_(album)" target="_new"><img class="icon" src="www-data/icons/wiki.png"></a>';
+}
+
+function wikiLinkSong(title)
+{
+	return '<a href="http://en.wikipedia.org/wiki/'+title+'_(song)" target="_new"><img class="icon" src="www-data/icons/wiki.png"></a>';
 }
 
 function loadPlayHistory(amount) {
@@ -281,15 +295,14 @@ function getSongDetails(song_id) {
 				+ json.song_id + ')"><img src="www-data/icons/add.png" alt="vote" />'
 				+ '</a></td><td>' + json.track + '</td><td>'
 				+ '<a href="javascript:selectRequest(\'title\', \''
-				+ qsencode(json.title) + '\')">' + json.title + '</a></td><td>'
+				+ qsencode(json.title) + '\')">' + json.title + '</a>'+lastLinkSong(json.artist, json.title)+wikiLinkSong(json.title)+'</td><td>'
 				+ '<a href="javascript:selectRequest(\'album\', \''
-				+ qsencode(json.album) + '\')">' + json.album + '</a></td><td>'
+				+ qsencode(json.album) + '\')">' + json.album + '</a>'+lastLinkAlbum(json.artist, json.album)+wikiLinkAlbum(json.album)+'</td><td>'
 				+ '<a href="javascript:selectRequest(\'artist\', \''
-				+ qsencode(json.artist) + '\')">' + json.artist + '</a></td><td>'
+				+ qsencode(json.artist) + '\')">' + json.artist + '</a>'+lastLinkArtist(json.artist)+wikiLinkArtist(json.artist)+'</td><td>'
 				+ readableTime(json.length) + '</td></tr>'
 				+ '<tr><th colspan=2>Path:</th><td colspan=4>'
 				+ json.path + '</td></tr>'
-				+ '<tr><th colspan=2>&nbsp;</th><td>'+npLinkSong(json.artist, json.title)+'</td><td>'+npLinkAlbum(json.artist, json.album)+'</td><td>'+npLinkArtist(json.artist)+'</td><td></td></tr>'
 				+ '<tr><th colspan=2>Voters:</th><td colspan=4>';
 			if (json.who.length) {
 				for(var who in json.who) table += json.who[who]+" ";
