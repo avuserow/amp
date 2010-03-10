@@ -283,7 +283,7 @@ function browseSongs(field)
 }
 
 function getSongDetails(song_id) {
-	this.songIDs = new Array();
+	this.songIDs = [song_id];
 	goog.net.XhrIo.send(
 		jsonSource + '?mode=get_details;song_id='+song_id,
 		function() {
