@@ -204,10 +204,26 @@ function updateNowPlaying(json, player) {
 		rem_time = parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
 		if (rem_time < 0) rem_time = 0;
 		nowPlaying += '&nbsp;(<span id="playingTime">'+readableTime(rem_time)+'</span> remaining)';
+		nowPlaying += npLinkSong(json.artist,title);
 	} else {
 		nowPlaying = 'nothing playing';
 	}
 	goog.dom.$('nowplaying').innerHTML = nowPlaying;
+}
+
+function npLinkSong(artist, title)
+{
+	return '<a href="http://last.fm/music/'+artist+'/_/'+title+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
+}
+
+function npLinkAlbum(artist, album)
+{
+	return '<a href="http://last.fm/music/'+artist+'/'+album+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
+}
+
+function npLinkArtist(artist)
+{
+	return '<a href="http://last.fm/music/'+artist+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
 }
 
 function loadPlayHistory(amount) {
@@ -273,6 +289,7 @@ function getSongDetails(song_id) {
 				+ readableTime(json.length) + '</td></tr>'
 				+ '<tr><th colspan=2>Path:</th><td colspan=4>'
 				+ json.path + '</td></tr>'
+				+ '<tr><th colspan=2>&nbsp;</th><td>'+npLinkSong(json.artist, json.title)+'</td><td>'+npLinkAlbum(json.artist, json.album)+'</td><td>'+npLinkArtist(json.artist)+'</td><td></td></tr>'
 				+ '<tr><th colspan=2>Voters:</th><td colspan=4>';
 			if (json.who.length) {
 				for(var who in json.who) table += json.who[who]+" ";
