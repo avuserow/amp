@@ -484,8 +484,10 @@ function voteAll() {
 	for (var i in this.songIDs) {
 		block += "song_id=" + this.songIDs[i] + ";";
 	}
-	goog.net.XhrIo.send(
-			jsonSource + '?mode=vote;' + block,
-			function() {handlePlayerStateRequest(this.getResponseJson());}
-	);
+	if (block != ""){
+		goog.net.XhrIo.send(
+				jsonSource + '?mode=vote;' + block,
+				function() {handlePlayerStateRequest(this.getResponseJson());}
+		);
+	}
 }
