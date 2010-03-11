@@ -321,6 +321,7 @@ function getSongDetails(song_id) {
 			}
 			table += "</td></tr></tbody></table>";
 			goog.dom.$('songresults').innerHTML = table;
+			goog.dom.$('result_title').innerHTML = "Details for this song";
 		}
 	);
 }
