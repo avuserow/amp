@@ -358,6 +358,20 @@ sub recent {
 	return [], [$self->acoustics->get_song({}, {'-DESC' => 'song_id'}, $amount)];
 }
 
+=head2 byuser
+
+Returns the songs voter X has voted for.
+
+=cut
+
+sub byvoter {
+	my $self    = shift;
+	my $other   = $self->cgi->param('voter') || "";
+	my (@votes) = $self->acoustics->get_vote({who=>$other},'priority');
+	my (@songs) = map { $self->acoustics->get_song({song_id=>$_->{song_id}}) } @votes;
+	return [], [@songs];
+}
+
 =head2 history
 
 Returns the C<amount> or 50 most recently played songs.
