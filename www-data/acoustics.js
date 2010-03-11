@@ -362,11 +362,11 @@ function fillHistoryTable(json) {
 
 function fillStatsTable(json) {
 	table = '<table id="result_table">'
-			+'<tr><td>Total Songs</td><td>'+json.total_songs+'</td></tr>'
-			+'<tr><td>Most Played Artists:</td></tr>';
+			+'<tr><th>Total Songs</th><td>'+json.total_songs+'</td></tr>'
+			+'<tr><th colspan=2>Most Played Artists:</th></tr>';
 			for(var item in json.top_artists)
 			{
-				table += '<tr><td>'+item.artist+'</td><td>'+item.count+'</td></tr>'
+				table += '<tr><td>'+json.top_artists[item].artist+'</td><td>'+json.top_artists[item].count+'</td></tr>'
 			}
 			table +='</table>';
 	goog.dom.$('songresults').innerHTML = table;
