@@ -362,8 +362,13 @@ function fillHistoryTable(json) {
 
 function fillStatsTable(json) {
 	table = '<table id="result_table">'
-			+json.total_songs+
-			+'</table>';
+			+'<tr><td>Total Songs</td><td>'+json.total_songs+'</td></tr>'
+			+'<tr><td>Most Played Artists:</td></tr>';
+			for(var item in json.top_artists)
+			{
+				table += '<tr><td>'+item.artist+'</td><td>'+item.count+'</td></tr>'
+			}
+			table +='</table>';
 	goog.dom.$('songresults').innerHTML = table;
 }
 

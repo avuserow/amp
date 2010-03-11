@@ -505,14 +505,14 @@ sub stats
 
 	if($who) 
 	{
-		my $topartists = $db->prepare('select artist,count(songs.artist) from songs,history where songs.song_id = history.song_id and history.who = "?" group by artist order by count(songs.artist desc;');
+		my $topartists = $db->prepare('select artist,count(songs.artist) as count from songs,history where songs.song_id = history.song_id and history.who = ? group by artist order by count(songs.artist desc limit 10;');
 		$topartists->execute($who);
 		$results->{top_artists} = ($topartists->fetchall_arrayref({}))
 	}
 	else
 	{
-		my $topartists = $db->prepare('select artist,count(songs.artist) from songs,history where songs.song_id = history.song_id group by artist order by count(songs.artist) desc;');
-		$topartists->execute($who);
+			my $topartists = $db->prepare('select artist,count(songs.artist) as count from songs,history where songs.song_id = history.song_id group by artist order by count(songs.artist) desc limit 10;');
+		$topartists->execute();
 		$results->{top_artists} = ($topartists->fetchall_arrayref({}));
 	}
 
