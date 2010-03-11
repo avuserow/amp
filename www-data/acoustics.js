@@ -271,6 +271,16 @@ function loadRandomSongs(amount) {
 	);
 }
 
+function loadVotesFromVoter(voter){
+	goog.net.XhrIo.send(
+		jsonSource + '?mode=byvoter;voter=' + voter,
+		function(){
+			goog.dom.$('result_title').innerHTML = voter + "'s Songs";
+			fillResultTable(this.getResponseJson());
+		}
+	);
+}
+
 function browseSongs(field)
 {
 	goog.net.XhrIo.send(
@@ -305,7 +315,7 @@ function getSongDetails(song_id) {
 				+ json.path + '</td></tr>'
 				+ '<tr><th colspan=2>Voters:</th><td colspan=4>';
 			if (json.who.length) {
-				for(var who in json.who) table += json.who[who]+" ";
+				for(var who in json.who) table += '<a href=javascript:loadVotesFromVoter("' + json.who[who] + '")>' + json.who[who] + ' </a>';
 			} else {
 				table += 'no one';
 			}
