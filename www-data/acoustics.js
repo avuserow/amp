@@ -84,6 +84,17 @@ function startPlayingTimer() {
 	goog.events.listen(tim, goog.Timer.TICK, function () {updatePlayingTime()});
 }
 
+function statsRequest(who)
+{
+	goog.net.XhrIo.send(
+			jsonSource+'?mode=stats;who='+who,
+			function() {
+				goog.dom.$('result_title').innerHTML = 'A bit of statistics...';
+				fillStatsTable(this.getResponseJson());
+			}
+	);
+}
+
 function updatePlayingTime()
 {
 	if(rem_time > 0) goog.dom.$('playingTime').innerHTML = readableTime(--rem_time);
@@ -335,6 +346,13 @@ function fillHistoryTable(json) {
 		+		 '</td><td><a href="javascript:getSongDetails('+json[item].song_id+')">'+json[item].pretty_name+'</a></td><td>'+json[item].time+'</td></tr>';
 	}
 	table += '</table>';
+	goog.dom.$('songresults').innerHTML = table;
+}
+
+function fillStatsTable(json) {
+	table = '<table id="result_table">'
+			+json.total_songs+
+			+'</table>';
 	goog.dom.$('songresults').innerHTML = table;
 }
 

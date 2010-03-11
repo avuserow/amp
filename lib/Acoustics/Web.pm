@@ -477,4 +477,33 @@ L<http://wiki.github.com/avuserow/amp/json-api>
 
 =cut
 
+sub stats
+{
+	my $self = shift;
+	my $who = $self->cgi->param('who');
+	my $acoustics = $self->acoustics;
+	my $db = $acoustics->db;
+	my $results = {};
+	
+	my $totalsongs = $db->prepare("SELECT count(*) from songs");
+	$totalsongs->execute();
+	$results->{total_songs} = ($db->selectrow_array($totalsongs))[0];
+
+	if($who) 
+	{
+		my $topartists = $db->prepare('select artist,count(songs.artist) from songs,history where songs.song_id = history.song_id and history.who = "?" group by artist order by count(songs.artist desc;');
+		$topartists->execute($who);
+		$results->{top_artists} = ($topartists->fetchall_arrayref({}))
+	}
+	else
+	{
+		my $topartists = $db->prepare('select artist,count(songs.artist) from songs,history where songs.song_id = history.song_id group by artist order by count(songs.artist) desc;');
+		$topartists->execute($who);
+		$results->{top_artists} = ($topartists->fetchall_arrayref({}));
+	}
+
+	return [], $results;
+}
+
+
 1;
