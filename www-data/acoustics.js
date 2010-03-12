@@ -223,7 +223,7 @@ function updateNowPlaying(json, player) {
 	} else {
 		nowPlaying = 'nothing playing';
 	}
-	goog.dom.$('nowplaying').innerHTML = nowPlaying;
+	goog.dom.$('currentsong').innerHTML = nowPlaying;
 }
 
 function lastLinkSong(artist, title)

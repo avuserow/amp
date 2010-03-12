@@ -11,7 +11,7 @@
 	<body>
 		<div id="container">
 			<div id="top">
-				<h1>Acoustics Music Player</h1>
+				<img id = "logo" src = "www-data/amp.png" />
 				<form action="" onSubmit="javascript:searchRequest(this.field.value, formencode(this.search_value.value)); return false;">
 					search:
 					<input type="text" id="search_value" />
@@ -46,14 +46,18 @@
 				<a href="javascript:voteAll()"><img src="www-data/icons/bomb.png" alt="" /> Vote them all up</a>
 			</div>
 			<div id="right" class="column">
-				<span id="nowplaying"></span>
+				<div id="nowplaying">
+				<div id="currentsong">
+				    <a href="javascript:voteSong(166561)"><img src="www-data/icons/add.png" alt="vote"></a> <a href="javascript:getSongDetails(166561)">The Patient</a> by <a href="javascript:selectRequest('artist', 'Tool')">Tool</a> (from <a href="javascript:selectRequest('album', 'Lateralus')">Lateralus</a>)&nbsp;(7:13)&nbsp;(<span id="playingTime">3:56</span> remaining)
+				</div>
 				<div id="playcontrols">
 					<ul>
-						<li><a href="javascript:sendPlayerCommand('start')">start</a></li>
-						<li id="skip_link"><a href="javascript:sendPlayerCommand('skip')">skip</a></li>
-						<li><a href="javascript:sendPlayerCommand('stop')">stop</a></li>
+						<li><a href="javascript:sendPlayerCommand('start')"><img src="www-data/icons/controls/control.png" alt="start" /></a></li> 
+						<li id="skip_link"><a href="javascript:sendPlayerCommand('skip')"><img src="www-data/icons/controls/control-skip.png" alt="skip" /></a></li> 
+						<li><a href="javascript:sendPlayerCommand('stop')"><img src="www-data/icons/controls/control-stop-square.png" alt="stop" /></a></li> 
 					</ul>
 				</div>
+			</div>
 				<img src="www-data/icons/sound.png" alt="" /> volume
 				<div id="volume"></div>
 				<br />

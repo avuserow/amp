@@ -6,6 +6,22 @@ body
 img {
 	border: none
 }
+#top {
+  width: 66%;
+  position: relative;
+}
+#logo {
+  width: 55%;
+}
+#search {
+  position: absolute;
+  top: 4em;
+  right: 3em;
+  margin: 1em;
+}
+
+#loginbox {
+}
 
 .icon {
 	height: 16px;
@@ -55,7 +71,7 @@ th.goog-tablesorter-sorted-reverse {
 #center
 {
 	float: left;
-	width: 75%;
+	width: 66%;
 }
 #right {
 	float: right;
@@ -63,7 +79,7 @@ th.goog-tablesorter-sorted-reverse {
 	position: fixed;
 	right: 1%;
 	top: 1%;
-	width: 22%;
+	width: 30%;
 	overflow: auto;
 }
 
@@ -87,6 +103,16 @@ th.goog-tablesorter-sorted-reverse {
 	border: 1px solid gray;
 	padding-top: 2px;
 }
+#nowplaying {
+  border: 1px dotted gray;
+  padding: .5em;
+  margin: .5em 1em .5em .5em;
+  	background: white;
+}
+ 
+#currentsong {
+  margin-bottom: 1em;
+}
 
 #playcontrols {
 	padding: 5px;
@@ -98,6 +124,7 @@ th.goog-tablesorter-sorted-reverse {
 }
 #playcontrols ul li {
 	display: inline;
+	margin-left: 2em; //changed!
 }
 
 #playlist ul {
