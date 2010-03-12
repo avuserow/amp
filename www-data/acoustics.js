@@ -64,7 +64,7 @@ function searchRequest(field, value)
 		goog.net.XhrIo.send(
 				jsonSource + '?mode=search;field='+field+';value='+value,
 				function () {
-					goog.dom.$('result_title').innerHTML = 'Search on ' + field;
+					goog.dom.$('result_title').innerHTML = 'Search for ' + value + "in" + field;
 					fillResultTable(this.getResponseJson());
 				}
 		);
