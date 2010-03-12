@@ -58,13 +58,17 @@ function setVolume(value) {
 
 function searchRequest(field, value)
 {
-	goog.net.XhrIo.send(
-			jsonSource + '?mode=search;field='+field+';value='+value,
-			function () {
-				goog.dom.$('result_title').innerHTML = 'Search on ' + field;
-				fillResultTable(this.getResponseJson());
-			}
-	);
+	if (field == "stats"){
+		statsRequest(value);
+	} else {
+		goog.net.XhrIo.send(
+				jsonSource + '?mode=search;field='+field+';value='+value,
+				function () {
+					goog.dom.$('result_title').innerHTML = 'Search on ' + field;
+					fillResultTable(this.getResponseJson());
+				}
+		);
+	}
 }
 
 function selectRequest(field, value)
@@ -86,10 +90,11 @@ function startPlayingTimer() {
 
 function statsRequest(who)
 {
+	this.songIDs = [];
 	goog.net.XhrIo.send(
 			jsonSource+'?mode=stats;who='+who,
 			function() {
-				goog.dom.$('result_title').innerHTML = 'A bit of statistics...';
+				goog.dom.$('result_title').innerHTML = 'A bit of statistics for ' + (who === '' ? "everyone" : who) + "...";
 				fillStatsTable(this.getResponseJson());
 			}
 	);
@@ -218,7 +223,7 @@ function updateNowPlaying(json, player) {
 	} else {
 		nowPlaying = 'nothing playing';
 	}
-	goog.dom.$('nowplaying').innerHTML = nowPlaying;
+	goog.dom.$('currentsong').innerHTML = nowPlaying;
 }
 
 function lastLinkSong(artist, title)
@@ -288,6 +293,7 @@ function loadVotesFromVoter(voter){
 		function(){
 			goog.dom.$('result_title').innerHTML = voter + "'s Songs";
 			fillResultTable(this.getResponseJson());
+			goog.dom.$('userstats').innerHTML = '<a href="javascript:statsRequest(\'' + voter + '\')">' + voter + '\'s stats</a>';
 		}
 	);
 }
@@ -326,7 +332,7 @@ function getSongDetails(song_id) {
 				+ json.path + '</td></tr>'
 				+ '<tr><th colspan=2>Voters:</th><td colspan=4>';
 			if (json.who.length) {
-				for(var who in json.who) table += '<a href=javascript:loadVotesFromVoter("' + json.who[who] + '")>' + json.who[who] + ' </a>';
+				for(var who in json.who) table += '<a href=javascript:loadVotesFromVoter("' + json.who[who] + '")>' + json.who[who] + '</a>&nbsp;';
 			} else {
 				table += 'no one';
 			}
@@ -366,10 +372,11 @@ function fillStatsTable(json) {
 			+'<tr><th colspan=2>Most Played Artists:</th></tr>';
 			for(var item in json.top_artists)
 			{
-				table += '<tr><td>'+json.top_artists[item].artist+'</td><td>'+json.top_artists[item].count+'</td></tr>'
+				table += '<tr><td>'+'<a href="javascript:selectRequest(\'artist\',\'' + json.top_artists[item].artist +'\')">' + json.top_artists[item].artist + '</a></td><td>'+json.top_artists[item].count+'</td></tr>'
 			}
 			table +='</table>';
 	goog.dom.$('songresults').innerHTML = table;
+	goog.dom.$('userstats').innerHTML = "";
 }
 
 function fillResultTable(json) {
