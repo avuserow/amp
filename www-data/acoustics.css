@@ -99,11 +99,10 @@ th.goog-tablesorter-sorted-reverse {
 #right {
 	background: url('gradient.png') repeat-x;
 	padding-left: 1em;
-	border: 1px solid gray;
+	border: 1px solid #262626;
 	padding-top: 2px;
 }
 #nowplaying {
-  border: 1px dotted gray;
   padding: .5em;
   margin: .5em 1em .5em .5em;
 }
