@@ -90,7 +90,7 @@ function statsRequest(who)
 	goog.net.XhrIo.send(
 			jsonSource+'?mode=stats;who='+who,
 			function() {
-				goog.dom.$('result_title').innerHTML = 'A bit of statistics...';
+				goog.dom.$('result_title').innerHTML = 'A bit of statistics for ' + (who === '' ? "everyone" : who) + "...";
 				fillStatsTable(this.getResponseJson());
 			}
 	);
@@ -289,6 +289,7 @@ function loadVotesFromVoter(voter){
 		function(){
 			goog.dom.$('result_title').innerHTML = voter + "'s Songs";
 			fillResultTable(this.getResponseJson());
+			goog.dom.$('userstats').innerHTML = '<a href="javascript:statsRequest(\'' + voter + '\')">' + voter + '\'s stats</a>';
 		}
 	);
 }
@@ -371,6 +372,7 @@ function fillStatsTable(json) {
 			}
 			table +='</table>';
 	goog.dom.$('songresults').innerHTML = table;
+	goog.dom.$('userstats').innerHTML = "";
 }
 
 function fillResultTable(json) {
