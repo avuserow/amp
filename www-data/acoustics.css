@@ -75,7 +75,9 @@ th.goog-tablesorter-sorted-reverse {
 	font-style: italic;
 	clear: both;
 }
-
+#result_title {
+  font-size: 1.5em;
+}
 #result_table {
 	border-spacing: 0px;
 }
