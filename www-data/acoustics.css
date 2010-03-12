@@ -14,10 +14,9 @@ img {
   width: 55%;
 }
 #search {
-  position: absolute;
-  top: 4em;
-  right: 3em;
-  margin: 1em;
+  float: right;
+  margin-right: 3%;
+  clear: both;
 }
 
 #loginbox {
@@ -124,6 +123,10 @@ th.goog-tablesorter-sorted-reverse {
 #playcontrols ul li {
 	display: inline;
 	margin-left: 2em; //changed!
+}
+
+#playcontrols img {
+  width: 10%;
 }
 
 #playlist ul {
