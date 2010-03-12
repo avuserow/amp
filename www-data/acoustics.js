@@ -327,7 +327,7 @@ function getSongDetails(song_id) {
 				+ json.path + '</td></tr>'
 				+ '<tr><th colspan=2>Voters:</th><td colspan=4>';
 			if (json.who.length) {
-				for(var who in json.who) table += '<a href=javascript:loadVotesFromVoter("' + json.who[who] + '")>' + json.who[who] + ' </a>';
+				for(var who in json.who) table += '<a href=javascript:loadVotesFromVoter("' + json.who[who] + '")>' + json.who[who] + '</a>&nbsp;';
 			} else {
 				table += 'no one';
 			}
