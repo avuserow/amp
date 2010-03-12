@@ -58,13 +58,17 @@ function setVolume(value) {
 
 function searchRequest(field, value)
 {
-	goog.net.XhrIo.send(
-			jsonSource + '?mode=search;field='+field+';value='+value,
-			function () {
-				goog.dom.$('result_title').innerHTML = 'Search on ' + field;
-				fillResultTable(this.getResponseJson());
-			}
-	);
+	if (field == "stats"){
+		statsRequest(value);
+	} else {
+		goog.net.XhrIo.send(
+				jsonSource + '?mode=search;field='+field+';value='+value,
+				function () {
+					goog.dom.$('result_title').innerHTML = 'Search on ' + field;
+					fillResultTable(this.getResponseJson());
+				}
+		);
+	}
 }
 
 function selectRequest(field, value)
