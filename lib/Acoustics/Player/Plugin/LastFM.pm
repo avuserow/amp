@@ -17,17 +17,13 @@ sub start_player {
 	my $proxy = $acoustics->config->{proxy}{http};
 	$ua->proxy('http' => $proxy) if $proxy;
 
-	my $pid = fork();
-	if($pid==0)
-	{
-		$submit = Net::LastFM::Submission->new(
-			user     => $acoustics->config->{lastfm}{user},
-			password => $acoustics->config->{lastfm}{pass},
-			ua       => $ua,
-		);
-		my $status = $submit->handshake;
-		ERROR Dumper($status) unless $status->{status} eq 'OK';
-	}
+	$submit = Net::LastFM::Submission->new(
+		user     => $acoustics->config->{lastfm}{user},
+		password => $acoustics->config->{lastfm}{pass},
+		ua       => $ua,
+	);
+	my $status = $submit->handshake;
+	ERROR Dumper($status) unless $status->{status} eq 'OK';
 }
 
 sub start_song {
@@ -35,17 +31,13 @@ sub start_song {
 	my $player    = shift;
 	my $song      = shift;
 
-	my $pid = fork();
-	if($pid == 0)
-	{
-		if ($song->{artist} && $song->{title}) {
-			my $status = $submit->now_playing(
-				artist => $song->{artist},
-				title  => $song->{title},
-				length => $song->{length},
-			);
-			ERROR Dumper($status) unless $status->{status} eq 'OK';
-		}
+	if ($song->{artist} && $song->{title}) {
+		my $status = $submit->now_playing(
+			artist => $song->{artist},
+			title  => $song->{title},
+			length => $song->{length},
+		);
+		ERROR Dumper($status) unless $status->{status} eq 'OK';
 	}
 }
 
@@ -54,17 +46,13 @@ sub stop_song {
 	my $player    = shift;
 	my $song      = shift;
 
-	my $pid = fork();
-	if($pid == 0)
-	{
-		if ($song->{artist} && $song->{title}) {
-			my $status = $submit->submit(
-				artist => $song->{artist},
-				title  => $song->{title},
-				time   => $player->{song_start},
-			);
-			ERROR Dumper($status) unless $status->{status} eq 'OK';
-		}
+	if ($song->{artist} && $song->{title}) {
+		my $status = $submit->submit(
+			artist => $song->{artist},
+			title  => $song->{title},
+			time   => $player->{song_start},
+		);
+		ERROR Dumper($status) unless $status->{status} eq 'OK';
 	}
 }
 
