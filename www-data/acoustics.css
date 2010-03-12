@@ -59,6 +59,7 @@ th.goog-tablesorter-sorted-reverse {
 }
 #center
 {
+  width: 66%;
 	float: left;
 }
 #right {
@@ -77,7 +78,7 @@ th.goog-tablesorter-sorted-reverse {
 }
 
 #result_table {
-  width: 66%;
+
 	border-spacing: 0px;
 }
 #songresults td {
