@@ -367,7 +367,7 @@ function fillStatsTable(json) {
 			+'<tr><th colspan=2>Most Played Artists:</th></tr>';
 			for(var item in json.top_artists)
 			{
-				table += '<tr><td>'+json.top_artists[item].artist+'</td><td>'+json.top_artists[item].count+'</td></tr>'
+				table += '<tr><td>'+'<a href="javascript:selectRequest(\'artist\',\'' + json.top_artists[item].artist +'\')">' + json.top_artists[item].artist + '</a></td><td>'+json.top_artists[item].count+'</td></tr>'
 			}
 			table +='</table>';
 	goog.dom.$('songresults').innerHTML = table;
