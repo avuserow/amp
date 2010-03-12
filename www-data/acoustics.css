@@ -9,6 +9,7 @@ img {
 #top {
   width: 66%;
   position: relative;
+  height: 300px;
 }
 #logo {
   width: 55%;
@@ -56,18 +57,9 @@ th.goog-tablesorter-sorted {
 th.goog-tablesorter-sorted-reverse {
 	background-color: #ccccff;
 }
-
-#container
-{
-}
-#container .column
-{
-	/*border: 1px solid gray;*/
-}
 #center
 {
 	float: left;
-	width: 66%;
 }
 #right {
 	float: right;
@@ -85,6 +77,7 @@ th.goog-tablesorter-sorted-reverse {
 }
 
 #result_table {
+  border: 1px solid blue;
 	border-spacing: 0px;
 }
 #songresults td {
