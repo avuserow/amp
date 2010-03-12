@@ -86,6 +86,7 @@ function startPlayingTimer() {
 
 function statsRequest(who)
 {
+	this.songIDs = [];
 	goog.net.XhrIo.send(
 			jsonSource+'?mode=stats;who='+who,
 			function() {
