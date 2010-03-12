@@ -21,9 +21,6 @@ img {
   clear: both;
 }
 
-#loginbox {
-}
-
 .icon {
 	height: 16px;
 	height: 16px;
@@ -61,18 +58,9 @@ th.goog-tablesorter-sorted {
 th.goog-tablesorter-sorted-reverse {
 	background-color: #ccccff;
 }
-
-#container
-{
-}
-#container .column
-{
-	/*border: 1px solid gray;*/
-}
 #center
 {
-	float: left;
-	width: 66%;
+  margin-top: 2em;
 }
 #right {
 	float: right;
@@ -88,9 +76,15 @@ th.goog-tablesorter-sorted-reverse {
 	font-style: italic;
 	clear: both;
 }
-
+#result_title {
+  font-size: 1.5em;
+  margin-left: 20%;
+}
 #result_table {
 	border-spacing: 0px;
+}
+#songresults {
+  width: 66%;
 }
 #songresults td {
 	border-bottom: 1px dotted gray;
