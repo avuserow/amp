@@ -60,6 +60,8 @@ function searchRequest(field, value)
 {
 	if (field == "stats"){
 		statsRequest(value);
+	} else if (field == "history") {
+		loadPlayHistory(25, value);
 	} else {
 		goog.net.XhrIo.send(
 				jsonSource + '?mode=search;field='+field+';value='+value,
@@ -256,11 +258,13 @@ function wikiLinkSong(title)
 	return '<a href="http://en.wikipedia.org/wiki/'+title+'_(song)" target="_new"><img class="icon" src="www-data/icons/wiki.png"></a>';
 }
 
-function loadPlayHistory(amount) {
+function loadPlayHistory(amount, who) {
 	goog.net.XhrIo.send(
-		jsonSource + '?mode=history;amount='+amount,
+		jsonSource + '?mode=history;amount='+amount+';who='+who,
 		function() {
-			goog.dom.$('result_title').innerHTML = amount + ' previously played songs';
+			var text = amount + ' previously played songs';
+			if (who) text += ' by ' + who;
+			goog.dom.$('result_title').innerHTML = text
 			// TODO: make me mighty
 			fillResultTable(this.getResponseJson());
 		}

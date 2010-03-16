@@ -381,8 +381,9 @@ Returns the C<amount> or 50 most recently played songs.
 sub history {
 	my $self   = shift;
 	my $amount = $self->cgi->param('amount') || 50;
+	my $voter  = $self->cgi->param('who') || '';
 	my @history;
-	for my $song ($self->acoustics->get_history($amount)) {
+	for my $song ($self->acoustics->get_history($amount, $voter)) {
 		if ($history[-1] && $song->{song_id} == $history[-1]{song_id} && $history[-1]{time} == $song->{time}) {
 			push @{$history[-1]{who}}, $song->{who};
 		} else {

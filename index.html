@@ -4,7 +4,7 @@
 		<title>Acoustics</title>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" >
 		<link title="Acoustics" rel="stylesheet" href="www-data/acoustics.css" />
-    <link rel="SHORTCUT ICON" href="www-data/icons/favicon.ico"/>
+	<link rel="SHORTCUT ICON" href="www-data/icons/favicon.ico"/>
 		<script src="www-data/deps-compiled.js"></script>
 		<script src="www-data/acoustics.js"></script>
 		<!--<script src="closure-library-read-only/closure/goog/base.js"></script>-->
@@ -14,34 +14,35 @@
 			<div id="top">
 				<img id = "logo" src = "www-data/amp.png" />
 				<div id = "subheader">
-				  <form id="search" action="" onSubmit="javascript:searchRequest(this.field.value, formencode(this.search_value.value)); return false;">
-					  Search:
-					  <input type="text" id="search_value" />
-					  <select id="field">
-						  <option value="any">Any</option>
-						  <option value="artist">Artist</option>
-						  <option value="album">Album</option>
-						  <option value="title">Title</option>
-						  <option value="path">Path</option>
-						  <option value="stats">Stats</option>
-					  </select>
-					  <input type="submit" />
-				  </form>
-			  <div id="loginbox">
-				  <a href="www-data/auth">Log in</a>
-			  </div>
-        </div>
-			  <div id="center" class="column">
-				  Browse by:
-				  <a href="javascript:loadRandomSongs(20)"><img src="www-data/icons/sport_8ball.png" alt="" /> Random</a>
-				  <a href="javascript:loadRecentSongs(50)"><img src="www-data/icons/new.png" alt="" /> Recently Added</a>
-				  <a href="javascript:loadPlayHistory(25)"><img src="www-data/icons/hourglass.png" alt="" /> Recently Played</a>
-				  <a href="javascript:statsRequest('')"><img src="www-data/icons/music.png" alt="" /> Statistics</a>
-				  <br />
-				  
-				  <div id="userstats"></div>
-				
-				  <br />
+					<form id="search" action="" onSubmit="javascript:searchRequest(this.field.value, formencode(this.search_value.value)); return false;">
+						Search:
+						<input type="text" id="search_value" />
+						<select id="field">
+							<option value="any">Any</option>
+							<option value="artist">Artist</option>
+							<option value="album">Album</option>
+							<option value="title">Title</option>
+							<option value="path">Path</option>
+							<option value="stats">Stats</option>
+							<option value="history">History</option>
+						</select>
+						<input type="submit" />
+					</form>
+				<div id="loginbox">
+					<a href="www-data/auth">Log in</a>
+				</div>
+	</div>
+				<div id="center" class="column">
+					Browse by:
+					<a href="javascript:loadRandomSongs(20)"><img src="www-data/icons/sport_8ball.png" alt="" /> Random</a>
+					<a href="javascript:loadRecentSongs(50)"><img src="www-data/icons/new.png" alt="" /> Recently Added</a>
+					<a href="javascript:loadPlayHistory(25, '')"><img src="www-data/icons/hourglass.png" alt="" /> Recently Played</a>
+					<a href="javascript:statsRequest('')"><img src="www-data/icons/music.png" alt="" /> Statistics</a>
+					<br />
+
+					<div id="userstats"></div>
+
+					<br />
 				<span id="result_title"></span>
 				(<a href="javascript:voteRandom()"><img src="www-data/icons/database_lightning.png" alt="" /> pick one from this list</a>)
 				</div>
@@ -56,7 +57,7 @@
 				</div>
 				<div id="playcontrols">
 					<ul>
-					  <li><a href="javascript:sendPlayerCommand('stop')"><img src="www-data/icons/controls/stop2.png" alt="stop" /></a></li> 
+						<li><a href="javascript:sendPlayerCommand('stop')"><img src="www-data/icons/controls/stop2.png" alt="stop" /></a></li> 
 						<li><a href="javascript:sendPlayerCommand('start')"><img src="www-data/icons/controls/play2.png" alt="start" /></a></li> 
 						<li id="skip_link"><a href="javascript:sendPlayerCommand('skip')"><img src="www-data/icons/controls/skip2.png" alt="skip" /></a></li> 
 					</ul>

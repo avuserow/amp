@@ -244,17 +244,33 @@ sub get_history
 {
 	my $self = shift;
 	my $amount = shift;
+	my $voter  = shift;
 
-	my $sth = $self->db->prepare('SELECT time FROM history GROUP BY time ORDER BY time DESC LIMIT ?');
-	$sth->execute($amount);
+	my $sth;
+	if ($voter) {
+		$sth = $self->db->prepare('SELECT time FROM history WHERE who = ? GROUP BY time ORDER BY time DESC LIMIT ?');
+		$sth->execute($voter, $amount);
+	} else {
+		$sth = $self->db->prepare('SELECT time FROM history GROUP BY time ORDER BY time DESC LIMIT ?');
+		$sth->execute($amount);
+	}
 	my $final_time = (@{$sth->fetchall_arrayref({})})[-1]->{time};
 	$sth->finish;
 
-	my $select_history = $self->db->prepare('SELECT history.who, history.time,
-		songs.* FROM history INNER JOIN songs ON history.song_id =
-		songs.song_id WHERE history.time >= ? AND history.player_id = ? ORDER BY
-		history.time DESC');
-	$select_history->execute($final_time, $self->player_id);
+	my $select_history;
+	if ($voter) {
+		$select_history = $self->db->prepare('SELECT history.who, history.time,
+			songs.* FROM history INNER JOIN songs ON history.song_id =
+			songs.song_id WHERE history.time >= ? AND history.player_id = ? AND
+			history.who = ? ORDER BY history.time DESC');
+		$select_history->execute($final_time, $self->player_id, $voter);
+	} else {
+		$select_history = $self->db->prepare('SELECT history.who, history.time,
+			songs.* FROM history INNER JOIN songs ON history.song_id =
+			songs.song_id WHERE history.time >= ? AND history.player_id = ?
+			ORDER BY history.time DESC');
+		$select_history->execute($final_time, $self->player_id);
+	}
 
 	return @{$select_history->fetchall_arrayref({})};
 }
