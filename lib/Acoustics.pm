@@ -254,7 +254,8 @@ sub get_history
 		$sth = $self->db->prepare('SELECT time FROM history GROUP BY time ORDER BY time DESC LIMIT ?');
 		$sth->execute($amount);
 	}
-	my $final_time = (@{$sth->fetchall_arrayref({})})[-1]->{time};
+	$_ = (@{$sth->fetchall_arrayref({})})[-1];
+	my $final_time = (defined($_) ? $_->{time} : undef);
 	$sth->finish;
 
 	my $select_history;
@@ -272,7 +273,7 @@ sub get_history
 		$select_history->execute($final_time, $self->player_id);
 	}
 
-	return @{$select_history->fetchall_arrayref({})};
+	return (defined($final_time) ? @{$select_history->fetchall_arrayref({})} : () );
 }
 
 sub delete_song {
