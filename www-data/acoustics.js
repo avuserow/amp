@@ -58,6 +58,7 @@ function setVolume(value) {
 
 function searchRequest(field, value)
 {
+	showVoting();
 	if (field == "stats"){
 		statsRequest(value);
 	} else if (field == "history") {
