@@ -58,7 +58,6 @@ function setVolume(value) {
 
 function searchRequest(field, value)
 {
-	showVoting();
 	if (field == "stats"){
 		statsRequest(value);
 	} else if (field == "history") {
@@ -69,6 +68,7 @@ function searchRequest(field, value)
 				function () {
 					goog.dom.$('result_title').innerHTML = 'Search for "' + value + '" in ' + field;
 					fillResultTable(this.getResponseJson());
+					showVoting();
 				}
 		);
 	}
@@ -76,12 +76,12 @@ function searchRequest(field, value)
 
 function selectRequest(field, value)
 {
-	showVoting();
 	goog.net.XhrIo.send(
 			jsonSource + '?mode=select;field='+field+';value='+value,
 			function () {
 				goog.dom.$('result_title').innerHTML = 'Select on ' + field;
 				fillResultTable(this.getResponseJson());
+				showVoting();
 			}
 	);
 }
@@ -94,13 +94,13 @@ function startPlayingTimer() {
 
 function statsRequest(who)
 {
-	hideVoting();
 	this.songIDs = [];
 	goog.net.XhrIo.send(
 			jsonSource+'?mode=stats;who='+who,
 			function() {
 				goog.dom.$('result_title').innerHTML = 'A bit of statistics for ' + (who === '' ? "everyone" : who) + "...";
 				fillStatsTable(this.getResponseJson());
+				hideVoting();
 			}
 	);
 }
@@ -262,7 +262,6 @@ function wikiLinkSong(title)
 }
 
 function loadPlayHistory(amount, who) {
-	showVoting();
 	goog.net.XhrIo.send(
 		jsonSource + '?mode=history;amount='+amount+';who='+who,
 		function() {
@@ -271,40 +270,41 @@ function loadPlayHistory(amount, who) {
 			goog.dom.$('result_title').innerHTML = text
 			// TODO: make me mighty
 			fillResultTable(this.getResponseJson());
+			showVoting();
 		}
 	);
 }
 
 function loadRecentSongs(amount) {
-	showVoting();
 	goog.net.XhrIo.send(
 		jsonSource + '?mode=recent;amount=' + amount,
 		function () {
 			goog.dom.$('result_title').innerHTML = amount + ' Recently Added Songs';
 			fillResultTable(this.getResponseJson());
+			showVoting();
 		}
 	);
 }
 
 function loadRandomSongs(amount) {
-	showVoting();
 	goog.net.XhrIo.send(
 		jsonSource + '?mode=random;amount=' + amount,
 		function () {
 			goog.dom.$('result_title').innerHTML = amount + ' Random Songs';
 			fillResultTable(this.getResponseJson());
+			showVoting();
 		}
 	);
 }
 
 function loadVotesFromVoter(voter){
-	showVoting();
 	goog.net.XhrIo.send(
 		jsonSource + '?mode=byvoter;voter=' + voter,
 		function(){
 			goog.dom.$('result_title').innerHTML = voter + "'s Songs";
 			fillResultTable(this.getResponseJson());
 			goog.dom.$('userstats').innerHTML = '<a href="javascript:statsRequest(\'' + voter + '\')">' + voter + '\'s stats</a>';
+			showVoting();
 		}
 	);
 }
@@ -356,7 +356,6 @@ function getSongDetails(song_id) {
 }
 
 function fillResultList(json, field) {
-	showVoting();
 	list = '<ul>';
 	for (var item in json) {
 		list += '<li><a href="javascript:selectRequest(\'' + field
@@ -368,7 +367,6 @@ function fillResultList(json, field) {
 }
 
 function fillHistoryTable(json) {
-	showVoting();
 	this.songIDs = [];
 	var table = '<table id="result_table"><thead><tr><th>Vote</th><th>Name</th><th>Played at</th></tr></thead>';
 	for (var item in json)
