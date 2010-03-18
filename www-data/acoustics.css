@@ -6,7 +6,8 @@ body
 }
 
 img {
-	border: none
+	border: none;
+	vertical-align: text-bottom;
 }
 #top {
   width: 66%;
