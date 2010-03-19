@@ -20,18 +20,18 @@ for my $path (@ARGV) {
 		my $state = $song->{online};
 		$song->{online} = -e $song->{path} ? 1 : 0;
 		# Check if song was reencoded
-		unless ($song->{online}) {
-			my $sans_filetype = $song->{path};
-			$sans_filetype =~ s{\..*$}{};
-			my @possibles = glob("$sans_filetype.*");
-			my @scanned = ();
-			(@scanned) = &file_to_info($_) for @possibles;
-			my $new = first {defined($_->{length})} @scanned;
-			if ($new) {
-				$song->{online} = 1;
-				$acoustics->update_song($song,{path=>$new->{path}});
-			}
-		}
+#		unless ($song->{online}) {
+#			my $sans_filetype = $song->{path};
+#			$sans_filetype =~ s{\..*$}{};
+#			my @possibles = glob("$sans_filetype.*");
+#			my @scanned = ();
+#			(@scanned) = &file_to_info($_) for @possibles;
+#			my $new = first {defined($_->{length})} @scanned;
+#			if ($new) {
+#				$song->{online} = 1;
+#				$acoustics->update_song($song,{path=>$new->{path}});
+#			}
+#		}
 		if ($song->{online} != $state) {
 			if ($song->{online}) {
 				WARN "Setting $song->{path} online";

@@ -6,7 +6,8 @@ body
 }
 
 img {
-	border: none
+	border: none;
+	vertical-align: text-bottom;
 }
 #top {
   width: 66%;
@@ -28,7 +29,6 @@ img {
 	padding-left: 2px;
 }
 
-/*added*/
 a {
 	color: #191970;
 }
@@ -91,7 +91,6 @@ th.goog-tablesorter-sorted-reverse {
 	padding-left: 1px;
 }
 
-/*added*/
 #right {
 	background: url('gradient.png') repeat-x;
 	padding-left: 1em;
@@ -117,7 +116,7 @@ th.goog-tablesorter-sorted-reverse {
 }
 #playcontrols ul li {
 	display: inline;
-	margin-left: 2em; //changed!
+	margin-left: 2em;
 }
 
 #playcontrols img {
@@ -131,7 +130,7 @@ th.goog-tablesorter-sorted-reverse {
 }
 
 #playlist li {
-	font-size: .8em;
+	font-size: .9em;
 	padding-bottom: .5em;
 }
 
