@@ -294,7 +294,9 @@ sub shuffle_votes {
 	my $self = shift;
 	return access_denied('You must log in.') unless $self->who;
 
-	my @votes = shuffle($self->acoustics->get_vote({who => $self->who}));
+	my @votes = shuffle($self->acoustics->query(
+			'select_votes', {who => $self->who},
+	));
 	my $pri = 0;
 	for my $vote (@votes) {
 		$vote->{priority} = $pri;
@@ -322,8 +324,10 @@ sub vote_to_top {
 
 	my $vote_where = {who => $self->who, song_id => $song_id};
 
-	my($minvote) = $self->acoustics->get_vote({who => $self->who}, 'priority', 1);
-	my($vote)    = $self->acoustics->get_vote($vote_where);
+	my($minvote) = $self->acoustics->query(
+		'select_votes', {who => $self->who}, 'priority', 1,
+	);
+	my($vote)    = $self->acoustics->query('select_votes', $vote_where);
 	$vote->{priority} = $minvote->{priority} - 1;
 	$self->acoustics->update_vote($vote, $vote_where);
 

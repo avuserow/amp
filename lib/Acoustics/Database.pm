@@ -56,12 +56,13 @@ sub BUILD {
 
 	# we'd really like SQL::Abstract::Limit but we'll make do without it if we
 	# only have SQL::Abstract
-	my $abstract_class = 'SQL::Abstract';
+	$self->{abstract} = SQL::Abstract->new;
 	try {
 		require SQL::Abstract::Limit;
-		$abstract_class = 'SQL::Abstract::Limit';
-	};
-	$self->{abstract} = $abstract_class->new;
+		$self->{abstract} = SQL::Abstract::Limit->new(
+			limit_dialect => $self->db,
+		);
+	}
 }
 
 =head1 METHODS

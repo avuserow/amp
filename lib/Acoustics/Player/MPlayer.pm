@@ -191,7 +191,6 @@ sub player_loop {
 	else
 	{
 		ERROR "Song '$song->{path}' is invalid, (not yet) deleting";
-		#$acoustics->delete_song({song_id => $song->{song_id}});
 	}
 
 	# Get the votes and log them. Use undef if Acoustics itself chose it.

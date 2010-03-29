@@ -265,19 +265,6 @@ sub get_history
 	return (defined($final_time) ? @{$select_history->fetchall_arrayref({})} : () );
 }
 
-sub delete_song {
-	my $self  = shift;
-	my $where = shift;
-
-	unless ($where) {
-		$logger->logdie('you must pass an empty hashref to delete all songs');
-	}
-
-	my($sql, @values) = $self->abstract->delete('songs', $where);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
 sub vote {
 	my $self = shift;
 	my $song_id = shift;
@@ -301,22 +288,6 @@ sub vote {
 		);
 		$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
 	}
-}
-
-sub get_vote {
-	my $self   = shift;
-	my $where  = shift;
-	my $order  = shift;
-	my $limit  = shift;
-	my $offset = shift;
-
-	my($sql, @values) = $self->abstract->select(
-		'votes', '*', $where, $order, $limit, $offset,
-	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-
-	return @{$sth->fetchall_arrayref({})};
 }
 
 sub update_vote {
