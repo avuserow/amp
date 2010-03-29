@@ -150,7 +150,7 @@ function updatePlaylist(json)
 {
 	var totalTime = 0;
 	list = '<ul>';
-	var dropdown = new Array();
+	var dropdown = [];
 	for (var item in json)
 	{
 		list += '<li>';
@@ -176,7 +176,7 @@ function updatePlaylist(json)
 			+ '</a>&nbsp;('
 			+ readableTime(json[item].length) +') ('+json[item].who.length+')</li>';
 		totalTime = totalTime + parseInt(json[item].length);
-		var voters = new Array();
+		var voters = [];
 		for (var voter in json[item].who)
 		{
 			var index = json[item].who[voter];
@@ -394,7 +394,7 @@ function fillStatsTable(json) {
 }
 
 function fillResultTable(json) {
-	this.songIDs = new Array();
+	this.songIDs = [];
 	table = '<table id="result_table"><thead><tr><th>vote</th>'
 		+  '<th>Track</th>'
 		+  '<th>Title</th>'
