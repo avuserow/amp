@@ -155,7 +155,7 @@ sub player_loop {
 		local $SIG{HUP} = sub {
 			WARN "skipping song: $song->{path}!";
 			print $child_in "quit\n";
-			$acoustics->delete_vote({song_id => $song->{song_id}});
+			$acoustics->query(delete_votes => {song_id => $song->{song_id}});
 			$skipped = 1;
 			return;
 		};
@@ -197,7 +197,7 @@ sub player_loop {
 	# Get the votes and log them. Use undef if Acoustics itself chose it.
 	my @votes = $acoustics->get_votes_for_song($song->{song_id});
 	@votes    = (undef) unless @votes;
-	for my $vote ($acoustics->get_votes_for_song($song->{song_id})) {
+	for my $vote (@votes) {
 		$acoustics->add_playhistory({
 			song_id   => $song->{song_id},
 			who       => $vote->{who},
@@ -208,7 +208,7 @@ sub player_loop {
 
 	# Go to the next voter, and remove votes for this song
 	$acoustics->queue->song_stop($song);
-	$acoustics->delete_vote({song_id => $song->{song_id}});
+	$acoustics->query(delete_votes => {song_id => $song->{song_id}});
 }
 
 1;

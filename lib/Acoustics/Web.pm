@@ -184,7 +184,7 @@ sub unvote {
 	return access_denied('You must log in.') unless $self->who;
 
 	for my $id ($self->cgi->param('song_id')) {
-		$self->acoustics->delete_vote({
+		$self->acoustics->query('delete_votes', {
 			song_id => 0+$id,
 			who     => $self->who,
 		});
@@ -207,7 +207,7 @@ sub purge {
 	my $purge_user = $self->cgi->param('who');
 	$purge_user    = $self->who unless $self->is_admin;
 
-	$self->acoustics->delete_vote({who => $purge_user});
+	$self->acoustics->query('delete_vote', {who => $purge_user});
 
 	$self->status;
 }
@@ -355,7 +355,9 @@ Returns the C<amount> or 50 most recently added songs.
 sub recent {
 	my $self   = shift;
 	my $amount = $self->cgi->param('amount') || 50;
-	return [], [$self->acoustics->get_song({}, {'-DESC' => 'song_id'}, $amount)];
+	return [], [$self->acoustics->query(
+		'select_songs', {}, {'-DESC' => 'song_id'}, $amount,
+	)];
 }
 
 =head2 byuser
@@ -365,10 +367,14 @@ Returns the songs voter X has voted for.
 =cut
 
 sub byvoter {
-	my $self    = shift;
-	my $other   = $self->cgi->param('voter') || "";
-	my (@votes) = $self->acoustics->get_vote({who=>$other},'priority');
-	my (@songs) = map { $self->acoustics->get_song({song_id=>$_->{song_id}}) } @votes;
+	my $self  = shift;
+	my $other = $self->cgi->param('voter') || "";
+	my @votes = $self->acoustics->query(
+		'select_votes', {who => $other}, 'priority',
+	);
+	my (@songs) = map {
+		$self->acoustics->query('select_songs', {song_id => $_->{song_id}})
+	} @votes;
 	return [], [@songs];
 }
 
@@ -424,7 +430,7 @@ sub _search_or_select {
 		$value =~ s/^\s+//g;
 		$value =~ s/\s+$//g;
 		$value =~ s/\s+/ /g;
-		$value_clause    = {-like => "%$value%"};
+		$value_clause = {-like => "%$value%"};
 	}
 	if ($field eq 'any') {
 		$where = {-or => [map {$_ => $value_clause} qw(artist album title path)]};
@@ -433,8 +439,9 @@ sub _search_or_select {
 	}
 
 	$where->{online} = 1;
-
-	return [], [$self->acoustics->get_song($where, [qw(artist album track title)])];
+	return [], [$self->acoustics->query(
+		'select_songs', $where, [qw(artist album track)],
+	)];
 }
 
 =head1 OTHER METHODS

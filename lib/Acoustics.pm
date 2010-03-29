@@ -3,10 +3,11 @@ package Acoustics;
 use strict;
 use warnings;
 
+use Acoustics::Database;
+use SQL::Abstract::Limit;
 use Mouse;
 use Module::Load 'load';
 use DBI;
-use SQL::Abstract::Limit;
 use Log::Log4perl;
 use Date::Parse 'str2time';
 use Config::Tiny;
@@ -15,6 +16,7 @@ use Try::Tiny;
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'config' => (is => 'ro', isa => 'Config::Tiny');
 has 'abstract' => (is => 'ro', isa => 'SQL::Abstract');
+has 'querybook' => (is => 'ro', handles => ['query']);
 has 'config_file' => (is => 'ro', isa => 'Str');
 has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
 has 'queue' => (is => 'ro', isa => 'Acoustics::Queue');
@@ -63,9 +65,11 @@ sub BUILD {
 		$self->config->{database}{user}, $self->config->{database}{pass},
 		{RaiseError => 1, AutoCommit => 1},
 	);
-	$self->{abstract} = SQL::Abstract::Limit->new({
-		limit_dialect => $self->db,
-	});
+	$self->{abstract} = SQL::Abstract::Limit->new({limit_dialect => $self->db});
+	$self->{querybook} = Acoustics::Database->new(
+		db => $self->{db},
+		phrasebook => 'queries.txt',
+	);
 
 	my $queue_class = $self->config->{player}{queue} || 'RoundRobin';
 	$queue_class    = 'Acoustics::Queue::' . $queue_class;
@@ -214,21 +218,6 @@ sub get_current_song {
 		return $playlist[0];
 	}
 	return;
-}
-
-sub delete_vote {
-	my $self  = shift;
-	my $where = shift;
-
-	unless ($where) {
-		$logger->logdie('you must pass an empty hashref to delete all votes');
-	}
-
-	$where->{player_id} ||= $self->player_id;
-
-	my($sql, @values) = $self->abstract->delete('votes', $where);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
 }
 
 sub add_playhistory {
