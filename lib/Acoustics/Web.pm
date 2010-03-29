@@ -108,11 +108,13 @@ sub status {
 	# FIXME: there should be a better way to do this
 	my $hint = JSON::DWIW->new->from_json($player->{queue_hint});
 	$acoustics->queue->deserialize($hint);
-	$data->{playlist}      = [$acoustics->get_playlist()];
-	($data->{now_playing}) = $acoustics->get_song({song_id => $player->{song_id}});
+	$data->{playlist}    = [$acoustics->get_playlist()];
+	$data->{now_playing} = $acoustics->query(
+		'select_songs', {song_id => $player->{song_id}},
+	);
 
 	if ($data->{now_playing}) {
-		$data->{now_playing}{who} = [map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id})];
+		$data->{now_playing}{who} = [map {$_->{who}} $acoustics->query('select_votes', {song_id => $player->{song_id}})];
 	}
 
 	$data->{who} = $self->who;
@@ -126,7 +128,7 @@ sub can_skip {
 	my $acoustics = $self->acoustics;
 	my $who = $self->who || '';
 	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
-	my @voters = map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id});
+	my @voters = map {$_->{who}} $acoustics->query('select_votes', {song_id => $player->{song_id}});
 	my $voted = grep {$who eq $_} @voters;
 
 	return 0 unless $who;
@@ -149,9 +151,9 @@ sub get_details {
 	my $song = 0+(shift @song_ids);
 	my $acoustics = $self->acoustics;
 	my $details = {};
-	($details->{song}) = $acoustics->get_song({song_id => $song});
+	$details->{song} = $acoustics->query('select_songs', {song_id => $song});
 	if ($details->{song}) {
-		$details->{song}{who} = [map {$_->{who}} $acoustics->get_votes_for_song($song)];
+		$details->{song}{who} = [map {$_->{who}} $acoustics->query('select_votes', {song_id => $song})];
 	}
 	return [], $details;
 }
@@ -207,7 +209,7 @@ sub purge {
 	my $purge_user = $self->cgi->param('who');
 	$purge_user    = $self->who unless $self->is_admin;
 
-	$self->acoustics->query('delete_vote', {who => $purge_user});
+	$self->acoustics->query('delete_votes', {who => $purge_user});
 
 	$self->status;
 }
@@ -300,7 +302,7 @@ sub shuffle_votes {
 	my $pri = 0;
 	for my $vote (@votes) {
 		$vote->{priority} = $pri;
-		$self->acoustics->update_vote($vote, {
+		$self->acoustics->query('update_votes', $vote, {
 			who => $self->who, song_id => $vote->{song_id},
 		});
 		$pri++;
@@ -324,12 +326,12 @@ sub vote_to_top {
 
 	my $vote_where = {who => $self->who, song_id => $song_id};
 
-	my($minvote) = $self->acoustics->query(
+	my $minvote = $self->acoustics->query(
 		'select_votes', {who => $self->who}, 'priority', 1,
 	);
-	my($vote)    = $self->acoustics->query('select_votes', $vote_where);
+	my $vote = $self->acoustics->query('select_votes', $vote_where);
 	$vote->{priority} = $minvote->{priority} - 1;
-	$self->acoustics->update_vote($vote, $vote_where);
+	$self->acoustics->query('update_votes', $vote, $vote_where);
 
 	$self->status;
 }

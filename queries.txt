@@ -1,5 +1,0 @@
-recently_added=SELECT * FROM songs ORDER BY song_id DESC LIMIT :amount
-delete_vote=DELETE FROM votes WHERE song_id = :song_id AND who = :who
-purge_vote=DELETE FROM votes WHERE who = :who
-
-test=SELECT * FROM songs WHERE online=1 :orwhere LIMIT :limit

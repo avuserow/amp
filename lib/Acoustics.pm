@@ -77,53 +77,6 @@ sub BUILD {
 	$self->{queue} = $queue_class->new({acoustics => $self});
 }
 
-sub check_if_song_exists {
-	my $self = shift;
-	my $path = shift;
-
-	my @rows = $self->db->selectrow_array(
-		'SELECT count(*) FROM songs WHERE path = ?',
-		undef, $path,
-	);
-
-	return $rows[0];
-}
-
-sub add_song {
-	my $self = shift;
-	my $data = shift;
-
-	my($sql, @values) = $self->abstract->insert('songs', $data);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub update_song {
-	my $self  = shift;
-	my $data  = shift;
-	my $where = shift;
-
-	my($sql, @values) = $self->abstract->update('songs', $data, $where);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub get_song {
-	my $self   = shift;
-	my $where  = shift;
-	my $order  = shift;
-	my $limit  = shift;
-	my $offset = shift;
-
-	my($sql, @values) = $self->abstract->select(
-		'songs', '*', $where, $order, $limit, $offset,
-	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-
-	return @{$sth->fetchall_arrayref({})};
-}
-
 # MySQL fails hard on selecting a random song. see:
 # http://www.paperplanes.de/2008/4/24/mysql_nonos_order_by_rand.html
 sub get_random_song {
@@ -156,18 +109,6 @@ sub browse_songs_by_column {
 	$sth->execute(@values);
 
 	return map {$_->[0]} @{$sth->fetchall_arrayref([$col])};
-}
-
-sub get_votes_for_song {
-	my $self = shift;
-	my $song_id = shift;
-
-	my $select_votes = $self->db->prepare(
-			'SELECT who FROM votes WHERE song_id=?');
-	
-	$select_votes->execute($song_id);
-
-	return @{$select_votes->fetchall_arrayref({})};
 }
 
 sub get_voters_by_time {
@@ -218,15 +159,6 @@ sub get_current_song {
 		return $playlist[0];
 	}
 	return;
-}
-
-sub add_playhistory {
-	my $self = shift;
-	my $data = shift;
-
-	my($sql, @values) = $self->abstract->insert('history', $data);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
 }
 
 sub get_history
@@ -290,18 +222,6 @@ sub vote {
 	}
 }
 
-sub update_vote {
-	my $self  = shift;
-	my $data  = shift;
-	my $where = shift;
-
-	my($sql, @values) = $self->abstract->update(
-		'votes', $data, $where,
-	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
 sub add_player {
 	my $self = shift;
 	my $data = shift;
@@ -312,24 +232,6 @@ sub add_player {
 	my $sth  = $self->db->prepare($sql);
 
 	$sth->execute(@values);
-}
-
-sub update_player {
-	my $self = shift;
-	my $data = shift;
-
-	my($sql, @values) = $self->abstract->update(
-		'players', $data, {player_id => $self->player_id},
-	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub remove_player {
-	my $self = shift;
-	my $sth  = $self->db->prepare('DELETE FROM players WHERE player_id = ?');
-
-	$sth->execute($self->player_id);
 }
 
 sub get_player {

@@ -16,7 +16,7 @@ my $acoustics = Acoustics->new({
 die "Usage: $0 path1 path2 ..." unless @ARGV;
 
 for my $path (@ARGV) {
-	for my $song ($acoustics->get_song({path => {-like => "$path%"}})) {
+	for my $song ($acoustics->query('select_songs', {path => {-like => "$path%"}})) {
 		my $state = $song->{online};
 		$song->{online} = -e $song->{path} ? 1 : 0;
 		# Check if song was reencoded
