@@ -8,5 +8,5 @@ endif
 
 test:
 	prove t/init.pl
-	prove -s -r t/
+	prove -s -r t/database
 	chmod -R 755 cover_db
