@@ -19,7 +19,9 @@ sub list {
 	my %votes = $acoustics->get_songs_by_votes;
 
 	# remove the current song
-	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
 	delete $votes{$player->{song_id}};
 
 	# get a copy of the current debt and a list of the voters

@@ -1,0 +1,8 @@
+get_time_from_history=SELECT time FROM history :where GROUP BY time ORDER BY time DESC :limitoffset
+get_history=SELECT history.who, history.time, songs.* FROM history INNER JOIN songs ON history.song_id = songs.song_id WHERE history.time >= :time AND history.player_id = :player_id :andwhere ORDER BY history.time DESC
+
+# MySQL fails hard on selecting a random song. see:
+# http://www.paperplanes.de/2008/4/24/mysql_nonos_order_by_rand.html
+get_random_songs=SELECT * FROM (SELECT song_id FROM songs ORDER BY :random :limitoffset) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id
+
+get_songs_by_column=SELECT DISTINCT :column FROM songs WHERE online = 1 ORDER BY :column

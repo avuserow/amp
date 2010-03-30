@@ -72,7 +72,9 @@ sub volume {
 		{player_id => $acoustics->player_id},
 		{volume => $volume},
 	);
-	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
 	$class->send_signal($acoustics, 'USR1');
 }
 
@@ -80,7 +82,9 @@ sub send_signal {
 	my $class     = shift;
 	my $acoustics = shift;
 	my $signal    = shift;
-	my($player)   = $acoustics->get_player({player_id => $acoustics->player_id});
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
 
 	my $success   = kill $signal => $player->{local_id};
 
@@ -133,17 +137,18 @@ sub player_loop {
 		$acoustics->queue->song_start($song);
 		my $queue_hint = $acoustics->queue->serialize;
 		$acoustics->query('update_players',
-			{player_id => $acoustics->player_id}, {
+			{
 				song_id    => $song->{song_id},
 				song_start => $song_start_time,
 				queue_hint => scalar JSON::DWIW->new->to_json($queue_hint),
-		});
+			},
+			{player_id => $acoustics->player_id});
 		INFO "Playing '$song->{path}'";
 		INFO "$song->{title} by $song->{artist} from $song->{album}";
 
-		my($player) = $acoustics->get_player({
-			player_id => $acoustics->player_id,
-		});
+		my $player = $acoustics->query(
+			'select_players', {player_id => $acoustics->player_id},
+		);
 		$player->{volume} ||= -1;
 
 		# General plan: open both input and output of the mplayer process
@@ -166,9 +171,9 @@ sub player_loop {
 		};
 
 		local $SIG{USR1} = sub {
-			my($player) = $acoustics->get_player({
-				player_id => $acoustics->player_id,
-			});
+			my $player = $acoustics->query(
+				'select_players', {player_id => $acoustics->player_id},
+			);
 			$player->{volume}  = 100 if $player->{volume} > 100;
 			$player->{volume} *= .7;
 			WARN "changing volume to $player->{volume}";

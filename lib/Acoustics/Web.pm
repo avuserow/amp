@@ -102,7 +102,9 @@ sub status {
 	my $self = shift;
 	my $acoustics = $self->acoustics;
 	my $data = {};
-	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
 	$data->{player} = $player;
 
 	# FIXME: there should be a better way to do this
@@ -127,7 +129,9 @@ sub can_skip {
 	my $self = shift;
 	my $acoustics = $self->acoustics;
 	my $who = $self->who || '';
-	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
 	my @voters = map {$_->{who}} $acoustics->query('select_votes', {song_id => $player->{song_id}});
 	my $voted = grep {$who eq $_} @voters;
 
@@ -465,7 +469,10 @@ parameter.
 sub browse {
 	my $self  = shift;
 	my $field = $self->cgi->param('field');
-	return [], [$self->acoustics->browse_songs_by_column($field, $field)];
+	return [], [] if $field ne 'artist' && $field ne 'album';
+	return [], [map {$_->{$field}} $self->acoustics->query(
+		'get_songs_by_column', {}, {column => $field},
+	)];
 }
 
 =head1 ERROR FUNCTIONS

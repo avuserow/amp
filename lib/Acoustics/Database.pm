@@ -156,8 +156,15 @@ sub query {
 
 	my($sql, @bind) = $self->_get_sql_bind_query(@_);
 
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@bind);
+	use Try::Tiny;
+	my $sth;
+	try {
+		$sth = $self->db->prepare($sql);
+		$sth->execute(@bind);
+	} catch {
+		use Data::Dumper;
+		die Dumper($self->db->errstr, $sql, @bind);
+	};
 
 	# determine the return value based on context
 	if (!defined wantarray) {
@@ -212,6 +219,10 @@ sub _phrasebook_query {
 	my $replace = shift;
 	my $bind    = shift;
 
+	# remove out the -limit and -order items
+	my $limit = delete $where->{'-limit'};
+	my $offset = delete $where->{'-offset'};
+
 	# the where clause that we generate
 	my($where_clause, @where_bind) = $self->abstract->where($where);
 
@@ -237,6 +248,19 @@ sub _phrasebook_query {
 		$where =~ s/^\s+WHERE/ OR/i;
 		return $where;
 	};
+
+	if ($self->abstract->isa('SQL::Abstract::Limit')) {
+		my($limit_clause, @limit_bind) = $self->abstract->where({}, [], $limit, $offset);
+		$replace->{limitoffset} = sub {
+			push @bind, @limit_bind;
+			return $limit_clause;
+		};
+	} else {
+		die "SQL::Abstract::Limit not available -- limitoffset not available" if $limit || $offset;
+		$replace->{limitoffset} = sub {
+			die "SQL::Abstract::Limit not available -- limitoffset not available";
+		};
+	}
 
 	# Use the default to handle any binded values
 	my $default = sub {

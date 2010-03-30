@@ -82,33 +82,9 @@ sub BUILD {
 sub get_random_song {
 	my $self  = shift;
 	my $count = shift;
-	my $random = $self->rand;
-	my $sth = $self->db->prepare("SELECT * FROM (SELECT song_id FROM songs ORDER BY $random LIMIT ?) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id");
-	$sth->execute($count);
-
-	return @{$sth->fetchall_arrayref({})};
-}
-
-sub browse_songs_by_column {
-	my $self   = shift;
-	my $col    = shift;
-	my $order  = shift;
-	my $limit  = shift;
-	my $offset = shift;
-
-	# SQL injection.
-	if ($col =~ /\W/) {
-		$logger->error("SQL injection attempt with column '$col'");
-		return;
-	}
-
-	my($sql, @values) = $self->abstract->select(
-		'songs', "DISTINCT $col", {online => 1}, $order, $limit, $offset,
+	return $self->query(
+		'get_random_songs', {-limit => $count}, {random => $self->rand},
 	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-
-	return map {$_->[0]} @{$sth->fetchall_arrayref([$col])};
 }
 
 sub get_voters_by_time {
@@ -147,7 +123,7 @@ sub get_playlist {
 	my $self = shift;
 	my @playlist = $self->queue->list;
 
-	my($player) = $self->get_player({player_id => $self->player_id});
+	my $player = $self->query('select_players', {player_id => $self->player_id});
 	$player->{song_id} ||= 0;
 	return grep {$player->{song_id} != $_->{song_id}} @playlist;
 }
@@ -155,46 +131,28 @@ sub get_playlist {
 sub get_current_song {
 	my $self = shift;
 	my @playlist = $self->queue->list;
-	if (@playlist) {
-		return $playlist[0];
-	}
+	return $playlist[0] if @playlist;
 	return;
 }
 
-sub get_history
-{
-	my $self = shift;
+sub get_history {
+	my $self   = shift;
 	my $amount = shift;
 	my $voter  = shift;
 
-	my $sth;
-	if ($voter) {
-		$sth = $self->db->prepare('SELECT time FROM history WHERE who = ? GROUP BY time ORDER BY time DESC LIMIT ?');
-		$sth->execute($voter, $amount);
-	} else {
-		$sth = $self->db->prepare('SELECT time FROM history GROUP BY time ORDER BY time DESC LIMIT ?');
-		$sth->execute($amount);
-	}
-	$_ = (@{$sth->fetchall_arrayref({})})[-1];
-	my $final_time = (defined($_) ? $_->{time} : undef);
-	$sth->finish;
-
-	my $select_history;
-	if ($voter) {
-		$select_history = $self->db->prepare('SELECT history.who, history.time,
-			songs.* FROM history INNER JOIN songs ON history.song_id =
-			songs.song_id WHERE history.time >= ? AND history.player_id = ? AND
-			history.who = ? ORDER BY history.time DESC');
-		$select_history->execute($final_time, $self->player_id, $voter);
-	} else {
-		$select_history = $self->db->prepare('SELECT history.who, history.time,
-			songs.* FROM history INNER JOIN songs ON history.song_id =
-			songs.song_id WHERE history.time >= ? AND history.player_id = ?
-			ORDER BY history.time DESC');
-		$select_history->execute($final_time, $self->player_id);
+	my %where;
+	$where{who} = $voter if $voter;
+	my @times = $self->query(
+		'get_time_from_history', {%where, -limit => $amount},
+	);
+	if (@times) {
+		return $self->query(
+			'get_history', \%where, {},
+			{%where, time => $times[-1]{time}, player_id => $self->player_id},
+		);
 	}
 
-	return (defined($final_time) ? @{$select_history->fetchall_arrayref({})} : () );
+	return;
 }
 
 sub vote {
@@ -232,17 +190,6 @@ sub add_player {
 	my $sth  = $self->db->prepare($sql);
 
 	$sth->execute(@values);
-}
-
-sub get_player {
-	my $self  = shift;
-	my $where = shift;
-
-	my($sql, @values) = $self->abstract->select('players', '*', $where);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-
-	return @{$sth->fetchall_arrayref({})};
 }
 
 sub player {
