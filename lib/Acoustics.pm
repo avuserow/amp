@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use Acoustics::Database;
-use SQL::Abstract::Limit;
 use Mouse;
 use Module::Load 'load';
 use DBI;
@@ -15,7 +14,6 @@ use Try::Tiny;
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'config' => (is => 'ro', isa => 'Config::Tiny');
-has 'abstract' => (is => 'ro', isa => 'SQL::Abstract');
 has 'querybook' => (is => 'ro', handles => ['query']);
 has 'config_file' => (is => 'ro', isa => 'Str');
 has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
@@ -65,7 +63,6 @@ sub BUILD {
 		$self->config->{database}{user}, $self->config->{database}{pass},
 		{RaiseError => 1, AutoCommit => 1},
 	);
-	$self->{abstract} = SQL::Abstract::Limit->new({limit_dialect => $self->db});
 	$self->{querybook} = Acoustics::Database->new(
 		db => $self->{db},
 		phrasebook => 'queries.txt',
@@ -178,18 +175,6 @@ sub vote {
 		);
 		$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
 	}
-}
-
-sub add_player {
-	my $self = shift;
-	my $data = shift;
-	$data  ||= {};
-	$data->{player_id} = $self->player_id;
-
-	my($sql, @values) = $self->abstract->insert('players', $data);
-	my $sth  = $self->db->prepare($sql);
-
-	$sth->execute(@values);
 }
 
 sub player {

@@ -101,9 +101,10 @@ sub start_player {
 	my $acoustics = shift;
 
 	#$acoustics->query('delete_players', {player_id => $acoustics->player_id});
-	$acoustics->add_player({
-		local_id => $$,
-		volume   => -1,
+	$acoustics->query('insert_players', {
+		player_id => $acoustics->player_id,
+		local_id  => $$,
+		volume    => -1,
 	});
 
 	local $SIG{TERM} = local $SIG{INT} = sub {
