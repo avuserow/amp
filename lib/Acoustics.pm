@@ -24,7 +24,7 @@ has 'queue' => (is => 'ro', isa => 'Acoustics::Queue');
 # - Write out all WARN and above messages to a logfile
 my $log4perl_conf = q(
 log4perl.logger = INFO, Screen, Logfile
-log4perl.logger.Acoustics.Web = INFO, Logfile
+log4perl.logger.Acoustics.Web = INFO, Weblogfile
 
 # INFO messages
 log4perl.filter.MatchInfo = Log::Log4perl::Filter::LevelRange
@@ -48,6 +48,13 @@ log4perl.appender.Logfile.Filter   = MatchError
 log4perl.appender.Logfile.filename = /tmp/acoustics.log
 log4perl.appender.Logfile.layout   = Log::Log4perl::Layout::PatternLayout
 log4perl.appender.Logfile.layout.ConversionPattern = %p %d %F{1} %L> %m %n
+
+# INFO to Weblogfile
+log4perl.appender.Weblogfile          = Log::Log4perl::Appender::File
+log4perl.appender.Weblogfile.Filter   = MatchInfo
+log4perl.appender.Weblogfile.filename = /tmp/acoustics.log
+log4perl.appender.Weblogfile.layout   = Log::Log4perl::Layout::PatternLayout
+log4perl.appender.Weblogfile.layout.ConversionPattern = %p %d %F{1} %L> %m %n
 );
 Log::Log4perl::init(\$log4perl_conf);
 my $logger = Log::Log4perl::get_logger;

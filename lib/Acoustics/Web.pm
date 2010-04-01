@@ -3,6 +3,7 @@ package Acoustics::Web;
 use warnings;
 use strict;
 
+use Log::Log4perl ':easy';
 use Time::HiRes 'sleep';
 use Mouse;
 use Module::Load 'load';
@@ -229,6 +230,7 @@ sub start {
 	my $self = shift;
 	return access_denied('You must log in.') unless $self->who;
 
+	INFO("start requested by " . $self->who);
 	$self->acoustics->rpc('start');
 
 	sleep 0.25;
@@ -247,6 +249,7 @@ sub stop {
 	my $self = shift;
 	return access_denied('You must log in.') unless $self->who;
 
+	INFO("stop requested by " . $self->who);
 	$self->acoustics->rpc('stop');
 
 	sleep 0.25;
@@ -266,6 +269,7 @@ sub skip {
 	return access_denied('You must log in.') unless $self->who;
 	return access_denied('You cannot skip this song.') unless $self->can_skip;
 
+	INFO("skip requested by " . $self->who);
 	$self->acoustics->rpc('skip');
 
 	sleep 0.25;

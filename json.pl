@@ -6,6 +6,7 @@ use warnings;
 use lib 'lib';
 use Acoustics;
 use Acoustics::Web;
+use Log::Log4perl ':easy';
 use CGI::Simple '-debug1';
 use CGI::Carp 'fatalsToBrowser';
 use List::MoreUtils 'none';
