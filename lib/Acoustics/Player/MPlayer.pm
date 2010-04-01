@@ -69,8 +69,8 @@ sub volume {
 
 	$acoustics->query(
 		'update_players',
-		{player_id => $acoustics->player_id},
 		{volume => $volume},
+		{player_id => $acoustics->player_id},
 	);
 	my $player = $acoustics->query(
 		'select_players', {player_id => $acoustics->player_id},
