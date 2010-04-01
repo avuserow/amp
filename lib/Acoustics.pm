@@ -3,10 +3,10 @@ package Acoustics;
 use strict;
 use warnings;
 
+use Acoustics::Database;
 use Mouse;
 use Module::Load 'load';
 use DBI;
-use SQL::Abstract::Limit;
 use Log::Log4perl;
 use Date::Parse 'str2time';
 use Config::Tiny;
@@ -14,7 +14,7 @@ use Try::Tiny;
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'config' => (is => 'ro', isa => 'Config::Tiny');
-has 'abstract' => (is => 'ro', isa => 'SQL::Abstract');
+has 'querybook' => (is => 'ro', handles => ['query']);
 has 'config_file' => (is => 'ro', isa => 'Str');
 has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
 has 'queue' => (is => 'ro', isa => 'Acoustics::Queue');
@@ -63,9 +63,10 @@ sub BUILD {
 		$self->config->{database}{user}, $self->config->{database}{pass},
 		{RaiseError => 1, AutoCommit => 1},
 	);
-	$self->{abstract} = SQL::Abstract::Limit->new({
-		limit_dialect => $self->db,
-	});
+	$self->{querybook} = Acoustics::Database->new(
+		db => $self->{db},
+		phrasebook => 'queries.txt',
+	);
 
 	my $queue_class = $self->config->{player}{queue} || 'RoundRobin';
 	$queue_class    = 'Acoustics::Queue::' . $queue_class;
@@ -73,97 +74,14 @@ sub BUILD {
 	$self->{queue} = $queue_class->new({acoustics => $self});
 }
 
-sub check_if_song_exists {
-	my $self = shift;
-	my $path = shift;
-
-	my @rows = $self->db->selectrow_array(
-		'SELECT count(*) FROM songs WHERE path = ?',
-		undef, $path,
-	);
-
-	return $rows[0];
-}
-
-sub add_song {
-	my $self = shift;
-	my $data = shift;
-
-	my($sql, @values) = $self->abstract->insert('songs', $data);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub update_song {
-	my $self  = shift;
-	my $data  = shift;
-	my $where = shift;
-
-	my($sql, @values) = $self->abstract->update('songs', $data, $where);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub get_song {
-	my $self   = shift;
-	my $where  = shift;
-	my $order  = shift;
-	my $limit  = shift;
-	my $offset = shift;
-
-	my($sql, @values) = $self->abstract->select(
-		'songs', '*', $where, $order, $limit, $offset,
-	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-
-	return @{$sth->fetchall_arrayref({})};
-}
-
 # MySQL fails hard on selecting a random song. see:
 # http://www.paperplanes.de/2008/4/24/mysql_nonos_order_by_rand.html
 sub get_random_song {
 	my $self  = shift;
 	my $count = shift;
-	my $random = $self->rand;
-	my $sth = $self->db->prepare("SELECT * FROM (SELECT song_id FROM songs ORDER BY $random LIMIT ?) AS random_songs JOIN songs ON songs.song_id = random_songs.song_id");
-	$sth->execute($count);
-
-	return @{$sth->fetchall_arrayref({})};
-}
-
-sub browse_songs_by_column {
-	my $self   = shift;
-	my $col    = shift;
-	my $order  = shift;
-	my $limit  = shift;
-	my $offset = shift;
-
-	# SQL injection.
-	if ($col =~ /\W/) {
-		$logger->error("SQL injection attempt with column '$col'");
-		return;
-	}
-
-	my($sql, @values) = $self->abstract->select(
-		'songs', "DISTINCT $col", {online => 1}, $order, $limit, $offset,
+	return $self->query(
+		'get_random_songs', {-limit => $count}, {random => $self->rand},
 	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-
-	return map {$_->[0]} @{$sth->fetchall_arrayref([$col])};
-}
-
-sub get_votes_for_song {
-	my $self = shift;
-	my $song_id = shift;
-
-	my $select_votes = $self->db->prepare(
-			'SELECT who FROM votes WHERE song_id=?');
-	
-	$select_votes->execute($song_id);
-
-	return @{$select_votes->fetchall_arrayref({})};
 }
 
 sub get_voters_by_time {
@@ -202,7 +120,7 @@ sub get_playlist {
 	my $self = shift;
 	my @playlist = $self->queue->list;
 
-	my($player) = $self->get_player({player_id => $self->player_id});
+	my $player = $self->query('select_players', {player_id => $self->player_id});
 	$player->{song_id} ||= 0;
 	return grep {$player->{song_id} != $_->{song_id}} @playlist;
 }
@@ -210,83 +128,28 @@ sub get_playlist {
 sub get_current_song {
 	my $self = shift;
 	my @playlist = $self->queue->list;
-	if (@playlist) {
-		return $playlist[0];
-	}
+	return $playlist[0] if @playlist;
 	return;
 }
 
-sub delete_vote {
-	my $self  = shift;
-	my $where = shift;
-
-	unless ($where) {
-		$logger->logdie('you must pass an empty hashref to delete all votes');
-	}
-
-	$where->{player_id} ||= $self->player_id;
-
-	my($sql, @values) = $self->abstract->delete('votes', $where);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub add_playhistory {
-	my $self = shift;
-	my $data = shift;
-
-	my($sql, @values) = $self->abstract->insert('history', $data);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub get_history
-{
-	my $self = shift;
+sub get_history {
+	my $self   = shift;
 	my $amount = shift;
 	my $voter  = shift;
 
-	my $sth;
-	if ($voter) {
-		$sth = $self->db->prepare('SELECT time FROM history WHERE who = ? GROUP BY time ORDER BY time DESC LIMIT ?');
-		$sth->execute($voter, $amount);
-	} else {
-		$sth = $self->db->prepare('SELECT time FROM history GROUP BY time ORDER BY time DESC LIMIT ?');
-		$sth->execute($amount);
-	}
-	$_ = (@{$sth->fetchall_arrayref({})})[-1];
-	my $final_time = (defined($_) ? $_->{time} : undef);
-	$sth->finish;
-
-	my $select_history;
-	if ($voter) {
-		$select_history = $self->db->prepare('SELECT history.who, history.time,
-			songs.* FROM history INNER JOIN songs ON history.song_id =
-			songs.song_id WHERE history.time >= ? AND history.player_id = ? AND
-			history.who = ? ORDER BY history.time DESC');
-		$select_history->execute($final_time, $self->player_id, $voter);
-	} else {
-		$select_history = $self->db->prepare('SELECT history.who, history.time,
-			songs.* FROM history INNER JOIN songs ON history.song_id =
-			songs.song_id WHERE history.time >= ? AND history.player_id = ?
-			ORDER BY history.time DESC');
-		$select_history->execute($final_time, $self->player_id);
+	my %where;
+	$where{who} = $voter if $voter;
+	my @times = $self->query(
+		'get_time_from_history', {%where, -limit => $amount},
+	);
+	if (@times) {
+		return $self->query(
+			'get_history', \%where, {},
+			{%where, time => $times[-1]{time}, player_id => $self->player_id},
+		);
 	}
 
-	return (defined($final_time) ? @{$select_history->fetchall_arrayref({})} : () );
-}
-
-sub delete_song {
-	my $self  = shift;
-	my $where = shift;
-
-	unless ($where) {
-		$logger->logdie('you must pass an empty hashref to delete all songs');
-	}
-
-	my($sql, @values) = $self->abstract->delete('songs', $where);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
+	return;
 }
 
 sub vote {
@@ -312,75 +175,6 @@ sub vote {
 		);
 		$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
 	}
-}
-
-sub get_vote {
-	my $self   = shift;
-	my $where  = shift;
-	my $order  = shift;
-	my $limit  = shift;
-	my $offset = shift;
-
-	my($sql, @values) = $self->abstract->select(
-		'votes', '*', $where, $order, $limit, $offset,
-	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-
-	return @{$sth->fetchall_arrayref({})};
-}
-
-sub update_vote {
-	my $self  = shift;
-	my $data  = shift;
-	my $where = shift;
-
-	my($sql, @values) = $self->abstract->update(
-		'votes', $data, $where,
-	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub add_player {
-	my $self = shift;
-	my $data = shift;
-	$data  ||= {};
-	$data->{player_id} = $self->player_id;
-
-	my($sql, @values) = $self->abstract->insert('players', $data);
-	my $sth  = $self->db->prepare($sql);
-
-	$sth->execute(@values);
-}
-
-sub update_player {
-	my $self = shift;
-	my $data = shift;
-
-	my($sql, @values) = $self->abstract->update(
-		'players', $data, {player_id => $self->player_id},
-	);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-}
-
-sub remove_player {
-	my $self = shift;
-	my $sth  = $self->db->prepare('DELETE FROM players WHERE player_id = ?');
-
-	$sth->execute($self->player_id);
-}
-
-sub get_player {
-	my $self  = shift;
-	my $where = shift;
-
-	my($sql, @values) = $self->abstract->select('players', '*', $where);
-	my $sth = $self->db->prepare($sql);
-	$sth->execute(@values);
-
-	return @{$sth->fetchall_arrayref({})};
 }
 
 sub player {

@@ -102,17 +102,21 @@ sub status {
 	my $self = shift;
 	my $acoustics = $self->acoustics;
 	my $data = {};
-	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
 	$data->{player} = $player;
 
 	# FIXME: there should be a better way to do this
 	my $hint = JSON::DWIW->new->from_json($player->{queue_hint});
 	$acoustics->queue->deserialize($hint);
-	$data->{playlist}      = [$acoustics->get_playlist()];
-	($data->{now_playing}) = $acoustics->get_song({song_id => $player->{song_id}});
+	$data->{playlist}    = [$acoustics->get_playlist()];
+	$data->{now_playing} = $acoustics->query(
+		'select_songs', {song_id => $player->{song_id}},
+	);
 
 	if ($data->{now_playing}) {
-		$data->{now_playing}{who} = [map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id})];
+		$data->{now_playing}{who} = [map {$_->{who}} $acoustics->query('select_votes', {song_id => $player->{song_id}})];
 	}
 
 	$data->{who} = $self->who;
@@ -125,8 +129,10 @@ sub can_skip {
 	my $self = shift;
 	my $acoustics = $self->acoustics;
 	my $who = $self->who || '';
-	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
-	my @voters = map {$_->{who}} $acoustics->get_votes_for_song($player->{song_id});
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
+	my @voters = map {$_->{who}} $acoustics->query('select_votes', {song_id => $player->{song_id}});
 	my $voted = grep {$who eq $_} @voters;
 
 	return 0 unless $who;
@@ -149,9 +155,9 @@ sub get_details {
 	my $song = 0+(shift @song_ids);
 	my $acoustics = $self->acoustics;
 	my $details = {};
-	($details->{song}) = $acoustics->get_song({song_id => $song});
+	$details->{song} = $acoustics->query('select_songs', {song_id => $song});
 	if ($details->{song}) {
-		$details->{song}{who} = [map {$_->{who}} $acoustics->get_votes_for_song($song)];
+		$details->{song}{who} = [map {$_->{who}} $acoustics->query('select_votes', {song_id => $song})];
 	}
 	return [], $details;
 }
@@ -184,7 +190,7 @@ sub unvote {
 	return access_denied('You must log in.') unless $self->who;
 
 	for my $id ($self->cgi->param('song_id')) {
-		$self->acoustics->delete_vote({
+		$self->acoustics->query('delete_votes', {
 			song_id => 0+$id,
 			who     => $self->who,
 		});
@@ -207,7 +213,7 @@ sub purge {
 	my $purge_user = $self->cgi->param('who');
 	$purge_user    = $self->who unless $self->is_admin;
 
-	$self->acoustics->delete_vote({who => $purge_user});
+	$self->acoustics->query('delete_votes', {who => $purge_user});
 
 	$self->status;
 }
@@ -294,11 +300,13 @@ sub shuffle_votes {
 	my $self = shift;
 	return access_denied('You must log in.') unless $self->who;
 
-	my @votes = shuffle($self->acoustics->get_vote({who => $self->who}));
+	my @votes = shuffle($self->acoustics->query(
+			'select_votes', {who => $self->who},
+	));
 	my $pri = 0;
 	for my $vote (@votes) {
 		$vote->{priority} = $pri;
-		$self->acoustics->update_vote($vote, {
+		$self->acoustics->query('update_votes', $vote, {
 			who => $self->who, song_id => $vote->{song_id},
 		});
 		$pri++;
@@ -322,10 +330,12 @@ sub vote_to_top {
 
 	my $vote_where = {who => $self->who, song_id => $song_id};
 
-	my($minvote) = $self->acoustics->get_vote({who => $self->who}, 'priority', 1);
-	my($vote)    = $self->acoustics->get_vote($vote_where);
+	my $minvote = $self->acoustics->query(
+		'select_votes', {who => $self->who}, 'priority', 1,
+	);
+	my $vote = $self->acoustics->query('select_votes', $vote_where);
 	$vote->{priority} = $minvote->{priority} - 1;
-	$self->acoustics->update_vote($vote, $vote_where);
+	$self->acoustics->query('update_votes', $vote, $vote_where);
 
 	$self->status;
 }
@@ -355,7 +365,9 @@ Returns the C<amount> or 50 most recently added songs.
 sub recent {
 	my $self   = shift;
 	my $amount = $self->cgi->param('amount') || 50;
-	return [], [$self->acoustics->get_song({}, {'-DESC' => 'song_id'}, $amount)];
+	return [], [$self->acoustics->query(
+		'select_songs', {}, {'-DESC' => 'song_id'}, $amount,
+	)];
 }
 
 =head2 byuser
@@ -365,10 +377,14 @@ Returns the songs voter X has voted for.
 =cut
 
 sub byvoter {
-	my $self    = shift;
-	my $other   = $self->cgi->param('voter') || "";
-	my (@votes) = $self->acoustics->get_vote({who=>$other},'priority');
-	my (@songs) = map { $self->acoustics->get_song({song_id=>$_->{song_id}}) } @votes;
+	my $self  = shift;
+	my $other = $self->cgi->param('voter') || "";
+	my @votes = $self->acoustics->query(
+		'select_votes', {who => $other}, 'priority',
+	);
+	my (@songs) = map {
+		$self->acoustics->query('select_songs', {song_id => $_->{song_id}})
+	} @votes;
 	return [], [@songs];
 }
 
@@ -424,7 +440,7 @@ sub _search_or_select {
 		$value =~ s/^\s+//g;
 		$value =~ s/\s+$//g;
 		$value =~ s/\s+/ /g;
-		$value_clause    = {-like => "%$value%"};
+		$value_clause = {-like => "%$value%"};
 	}
 	if ($field eq 'any') {
 		$where = {-or => [map {$_ => $value_clause} qw(artist album title path)]};
@@ -433,8 +449,9 @@ sub _search_or_select {
 	}
 
 	$where->{online} = 1;
-
-	return [], [$self->acoustics->get_song($where, [qw(artist album track title)])];
+	return [], [$self->acoustics->query(
+		'select_songs', $where, [qw(artist album track)],
+	)];
 }
 
 =head1 OTHER METHODS
@@ -452,7 +469,10 @@ parameter.
 sub browse {
 	my $self  = shift;
 	my $field = $self->cgi->param('field');
-	return [], [$self->acoustics->browse_songs_by_column($field, $field)];
+	return [], [] if $field ne 'artist' && $field ne 'album';
+	return [], [map {$_->{$field}} $self->acoustics->query(
+		'get_songs_by_column', {}, {column => $field},
+	)];
 }
 
 =head1 ERROR FUNCTIONS

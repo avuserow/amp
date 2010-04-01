@@ -67,8 +67,14 @@ sub volume {
 		return;
 	}
 
-	$acoustics->update_player({volume => $volume});
-	my($player) = $acoustics->get_player({player_id => $acoustics->player_id});
+	$acoustics->query(
+		'update_players',
+		{player_id => $acoustics->player_id},
+		{volume => $volume},
+	);
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
 	$class->send_signal($acoustics, 'USR1');
 }
 
@@ -76,7 +82,9 @@ sub send_signal {
 	my $class     = shift;
 	my $acoustics = shift;
 	my $signal    = shift;
-	my($player)   = $acoustics->get_player({player_id => $acoustics->player_id});
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
 
 	my $success   = kill $signal => $player->{local_id};
 
@@ -92,15 +100,16 @@ sub send_signal {
 sub start_player {
 	my $acoustics = shift;
 
-#	$acoustics->remove_player;
-	$acoustics->add_player({
-		local_id => $$,
-		volume   => -1,
+	#$acoustics->query('delete_players', {player_id => $acoustics->player_id});
+	$acoustics->query('insert_players', {
+		player_id => $acoustics->player_id,
+		local_id  => $$,
+		volume    => -1,
 	});
 
 	local $SIG{TERM} = local $SIG{INT} = sub {
 		WARN "Exiting player $$";
-		$acoustics->remove_player;
+		$acoustics->query('delete_players', {player_id => $acoustics->player_id});
 		exit;
 	};
 	local $SIG{HUP}  = 'IGNORE';
@@ -120,7 +129,7 @@ sub start_player {
 sub player_loop {
 	my $acoustics = shift;
 	my $song = $acoustics->get_current_song;
-	($song)  = $acoustics->get_song({online => 1}, $acoustics->rand, 1) unless $song;
+	$song    = $acoustics->query('select_songs', {online => 1}, $acoustics->rand, 1) unless $song;
 
 	my $song_start_time = time;
 	my $skipped         = 0;
@@ -128,17 +137,19 @@ sub player_loop {
 	{
 		$acoustics->queue->song_start($song);
 		my $queue_hint = $acoustics->queue->serialize;
-		$acoustics->update_player({
-			song_id    => $song->{song_id},
-			song_start => $song_start_time,
-			queue_hint => scalar JSON::DWIW->new->to_json($queue_hint),
-		});
+		$acoustics->query('update_players',
+			{
+				song_id    => $song->{song_id},
+				song_start => $song_start_time,
+				queue_hint => scalar JSON::DWIW->new->to_json($queue_hint),
+			},
+			{player_id => $acoustics->player_id});
 		INFO "Playing '$song->{path}'";
 		INFO "$song->{title} by $song->{artist} from $song->{album}";
 
-		my($player) = $acoustics->get_player({
-			player_id => $acoustics->player_id,
-		});
+		my $player = $acoustics->query(
+			'select_players', {player_id => $acoustics->player_id},
+		);
 		$player->{volume} ||= -1;
 
 		# General plan: open both input and output of the mplayer process
@@ -155,15 +166,15 @@ sub player_loop {
 		local $SIG{HUP} = sub {
 			WARN "skipping song: $song->{path}!";
 			print $child_in "quit\n";
-			$acoustics->delete_vote({song_id => $song->{song_id}});
+			$acoustics->query(delete_votes => {song_id => $song->{song_id}});
 			$skipped = 1;
 			return;
 		};
 
 		local $SIG{USR1} = sub {
-			my($player) = $acoustics->get_player({
-				player_id => $acoustics->player_id,
-			});
+			my $player = $acoustics->query(
+				'select_players', {player_id => $acoustics->player_id},
+			);
 			$player->{volume}  = 100 if $player->{volume} > 100;
 			$player->{volume} *= .7;
 			WARN "changing volume to $player->{volume}";
@@ -174,7 +185,7 @@ sub player_loop {
 		local $SIG{__DIE__} = local $SIG{TERM} = local $SIG{INT} = sub {
 			WARN "Exiting player $$";
 			print $child_in "quit\n";
-			$acoustics->remove_player;
+			$acoustics->query('delete_players', {player_id => $acoustics->player_id});
 			exit;
 		};
 
@@ -191,14 +202,13 @@ sub player_loop {
 	else
 	{
 		ERROR "Song '$song->{path}' is invalid, (not yet) deleting";
-		#$acoustics->delete_song({song_id => $song->{song_id}});
 	}
 
 	# Get the votes and log them. Use undef if Acoustics itself chose it.
-	my @votes = $acoustics->get_votes_for_song($song->{song_id});
+	my @votes = $acoustics->query('select_votes', {song_id => $song->{song_id}});
 	@votes    = (undef) unless @votes;
-	for my $vote ($acoustics->get_votes_for_song($song->{song_id})) {
-		$acoustics->add_playhistory({
+	for my $vote (@votes) {
+		$acoustics->query('insert_history', {
 			song_id   => $song->{song_id},
 			who       => $vote->{who},
 			time      => $song_start_time,
@@ -208,7 +218,7 @@ sub player_loop {
 
 	# Go to the next voter, and remove votes for this song
 	$acoustics->queue->song_stop($song);
-	$acoustics->delete_vote({song_id => $song->{song_id}});
+	$acoustics->query(delete_votes => {song_id => $song->{song_id}});
 }
 
 1;

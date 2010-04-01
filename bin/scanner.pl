@@ -31,15 +31,15 @@ for my $file (@files) {
 		WARN "file $hash{path} not music";
 		next;
 	}
-	if($acoustics->check_if_song_exists($hash{path}))
+	if($acoustics->query('select_songs', {path => $hash{path}}, [], 1))
 	{
 		INFO "file $hash{path} updated";
 		my $path = delete $hash{path};
-		$acoustics->update_song(\%hash, {path => $path});
+		$acoustics->query('update_songs', \%hash, {path => $path});
 	}
 	else
 	{
 		INFO "file $hash{path} added";
-		$acoustics->add_song(\%hash);
+		$acoustics->query('insert_songs', \%hash);
 	}
 }

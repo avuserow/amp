@@ -1,0 +1,6 @@
+simple=SELECT * FROM simple
+where=SELECT * FROM simple :where
+andwhere=SELECT * FROM simple WHERE a = 1 :andwhere
+orwhere=SELECT * FROM simple WHERE a = 1 :orwhere
+
+bind=SELECT * FROM simple WHERE type = :type
