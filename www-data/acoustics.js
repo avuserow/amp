@@ -206,6 +206,7 @@ function updatePlaylistSelector(who) {
 			selector.options.length = 0;
 			selector.options.add(new Option('Queue', 0));
 			selector.options.add(new Option('New playlist...', -1));
+			selector.options.add(new Option('---', 0));
 			for (var i in json) {
 				selector.options.add(
 					new Option(json[i].title, json[i].playlist_id)
@@ -230,6 +231,7 @@ function selectPlaylist(playlist) {
 		);
 		else updatePlaylistSelector(currentUser);
 	} else if (playlist != 0) { // show a playlist
+		playerStateRequest();
 		goog.net.XhrIo.send(
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist,
 			function() {
@@ -310,7 +312,7 @@ function showPlaylist(json) {
 function updateNowPlaying(json, player) {
 	if (json) {
 		nowPlaying = '';
-		if (json.who && json.who.indexOf(currentUser) != -1) {
+		if (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0) {
 			nowPlaying += '<a href="javascript:unvoteSong(' + json.song_id
 				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> ';
 		} else {
