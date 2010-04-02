@@ -495,7 +495,7 @@ sub add_to_playlist {
 	my $priority = $self->acoustics->query(
 		'get_max_playlist_priority', {playlist_id => $plid},
 	);
-	$priority = $priority ? $priority->{time} : 0;
+	$priority = $priority ? $priority->{priority} : 0;
 
 	for my $song_id (@song_ids) {
 		my $song = $self->acoustics->query('select_playlist_contents',
@@ -508,6 +508,36 @@ sub add_to_playlist {
 					song_id     => 0+$song_id,
 					priority    => $priority++,
 				},
+			);
+		}
+	}
+	$self->playlist_contents;
+}
+
+=head2 remove_from_playlist
+
+Removes one or more songs (specified by C<song_id> parameters) from the given
+playlist (specified by C<playlist_id>).
+
+=cut
+
+sub remove_from_playlist {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+
+	my $plid = $self->cgi->param('playlist_id');
+	return bad_request('No playlist specified.') unless $plid;
+
+	my(@song_ids) = $self->cgi->param('song_id');
+	return bad_request('No songs specified.') unless @song_ids;
+
+	for my $song_id (@song_ids) {
+		my $song = $self->acoustics->query('select_playlist_contents',
+			{playlist_id => $plid, song_id => $song_id}
+		);
+		if ($song) {
+			$self->acoustics->query('delete_playlist_contents',
+				{playlist_id => $plid, song_id => 0+$song_id},
 			);
 		}
 	}

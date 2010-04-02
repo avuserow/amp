@@ -67,12 +67,12 @@
 				<div id="volume"></div>
 				<br />
 				<img src="www-data/icons/music.png" alt="" />
-				<form action="" onChange="selectPlaylist(this.playlistchooser.value)" onSubmit="return false" style="display: inline">
-					<select id="playlistchooser" name="playlistchooser">
+				<form action="" onSubmit="return false" style="display: inline">
+					<select onChange="selectPlaylist(this.value)" id="playlistchooser" name="playlistchooser">
 						<option value="">Queue</option>
 					</select>
 				</form>
-				(<a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a>)
+				(<span id="playlist_action"><a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a></span>)
 				<div id="playlist">
 				</div>
 				<br />
@@ -92,7 +92,6 @@
 			startPlayerStateTimer();
 			startPlayingTimer();
 			loadRandomSongs(20);
-			updatePlaylistSelector();
 		</script>
 		<p>Acoustics's code is available at <a
 			href="http://github.com/avuserow/amp">GitHub</a>. Please report

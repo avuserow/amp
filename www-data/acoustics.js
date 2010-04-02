@@ -7,6 +7,7 @@ goog.require('goog.Throttle');
 goog.require('goog.Timer');
 goog.require('goog.async.Delay');
 
+playlist_pane = '';
 vc_modifiable = false;
 currentUser = '';
 rem_time = 0;
@@ -136,7 +137,7 @@ function handlePlayerStateRequest (json) {
 
 	updateNowPlaying(json.now_playing, json.player);
 	if (json.player) updateVolumeScale(json.player.volume);
-	if (json.playlist) updatePlaylist(json.playlist);
+	if (json.playlist && playlist_pane == '') updatePlaylist(json.playlist);
 }
 
 function updateCurrentUser (who) {
@@ -188,7 +189,7 @@ function updatePlaylist(json)
 			}
 		}
 	}
-	list += '</ui>';
+	list += '</ul>';
 	list += 'Total Time: '+readableTime(totalTime);
 	goog.dom.$('playlist').innerHTML = list;
 	fillPurgeDropDown(dropdown);
@@ -212,7 +213,7 @@ function updatePlaylistSelector(who) {
 			var json = this.getResponseJson();
 			var selector = goog.dom.$('playlistchooser');
 			selector.options.length = 0;
-			selector.options.add(new Option("Queue", ''));
+			selector.options.add(new Option('Queue', ''));
 			for (var i in json) {
 				selector.options.add(
 					new Option(json[i].title, json[i].playlist_id)
@@ -223,12 +224,67 @@ function updatePlaylistSelector(who) {
 }
 
 function selectPlaylist(playlist) {
-	goog.net.XhrIo.send(
-		jsonSource + '?mode=playlist_contents;playlist_id=' + playlist,
-		function() {
-			alert (this.getResponseJson());
-		}
-	);
+	if (playlist) {
+		goog.net.XhrIo.send(
+			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist,
+			function() {
+				playlist_pane = playlist;
+				goog.dom.$('playlist_action').innerHTML = '<a href="javascript:enqueuePlaylist()"><img src="www-data/icons/add.png" alt="" /> add playlist to queue</a>';
+				showPlaylist(this.getResponseJson());
+			}
+		);
+	} else {
+		playlist_pane = '';
+		playerStateRequest();
+		goog.dom.$('playlist_action').innerHTML = '<a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a>';
+	}
+}
+
+function enqueuePlaylist () {
+	if (playlist_pane) {
+		goog.net.XhrIo.send(
+			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_pane,
+			function() {
+				var json = this.getResponseJson();
+				var block = "";
+				for (var i in json) {
+					block += "song_id=" + json[i].song_id + ";";
+				}
+				if (block != ""){
+					goog.net.XhrIo.send(
+							jsonSource + '?mode=vote;' + block,
+							function() {handlePlayerStateRequest(this.getResponseJson());}
+					);
+				}
+				// go back to the queue
+				goog.dom.$('playlistchooser').value = '';
+				selectPlaylist('');
+			}
+		);
+	} else {
+		alert('should not happen (enqueuePlaylist)!');
+	}
+}
+
+function showPlaylist(json) {
+	var totalTime = 0;
+	var list = '<ul>';
+	for (var item in json) {
+		title = titleOrPath(json[item]);
+		list += '<li>'
+			+ '<a title="Remove from your playlist" href="javascript:unvoteSong('
+			+ json[item].song_id
+			+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> '
+			+ '<a title="View Song Details" href="javascript:getSongDetails('
+			+ qsencode(json[item].song_id) + ')">' + title
+			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
+			+ qsencode(json[item].artist) + '\')">' + json[item].artist
+			+ '</a>&nbsp;(' + readableTime(json[item].length) +')';
+		totalTime += parseInt(json[item].length);
+	}
+	list += '</ul>';
+	list += 'Total Time: '+readableTime(totalTime);
+	goog.dom.$('playlist').innerHTML = list;
 }
 
 function updateNowPlaying(json, player) {
@@ -459,10 +515,18 @@ function voteSong(song_id) {
 		alert("You must log in first.");
 		return;
 	}
-	goog.net.XhrIo.send(
-		jsonSource + '?mode=vote;song_id=' + song_id,
-		function () {handlePlayerStateRequest(this.getResponseJson());}
-	);
+	if (playlist_pane) {
+		goog.net.XhrIo.send(
+			jsonSource + '?mode=add_to_playlist;playlist_id='
+			+ playlist_pane + ';song_id=' + song_id,
+			function () {showPlaylist(this.getResponseJson());}
+		);
+	} else {
+		goog.net.XhrIo.send(
+			jsonSource + '?mode=vote;song_id=' + song_id,
+			function () {handlePlayerStateRequest(this.getResponseJson());}
+		);
+	}
 }
 
 function unvoteSong(song_id) {
@@ -470,10 +534,18 @@ function unvoteSong(song_id) {
 		alert("You must log in first.");
 		return;
 	}
-	goog.net.XhrIo.send(
-		jsonSource + '?mode=unvote;song_id=' + song_id,
-		function () {handlePlayerStateRequest(this.getResponseJson());}
-	);
+	if (playlist_pane) {
+		goog.net.XhrIo.send(
+			jsonSource + '?mode=remove_from_playlist;playlist_id='
+			+ playlist_pane + ';song_id=' + song_id,
+			function () {showPlaylist(this.getResponseJson());}
+		);
+	} else {
+		goog.net.XhrIo.send(
+			jsonSource + '?mode=unvote;song_id=' + song_id,
+			function () {handlePlayerStateRequest(this.getResponseJson());}
+		);
+	}
 }
 
 function shuffleVotes() {
