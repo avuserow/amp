@@ -498,7 +498,8 @@ sub add_to_playlist {
 	my $priority = $self->acoustics->query(
 		'get_max_playlist_priority', {playlist_id => $plid},
 	);
-	$priority = $priority ? $priority->{priority} : 0;
+	$priority = $priority ? $priority->{'max(priority)'} : 0;
+	$priority++;
 
 	for my $song_id (@song_ids) {
 		my $song = $self->acoustics->query('select_playlist_contents',

@@ -7,5 +7,5 @@ get_random_songs=SELECT * FROM (SELECT song_id FROM songs ORDER BY :random :limi
 
 get_songs_by_column=SELECT DISTINCT :column FROM songs WHERE online = 1 ORDER BY :column
 
-get_playlist_contents=SELECT songs.* FROM playlist_contents INNER JOIN songs ON playlist_contents.song_id = songs.song_id :where
+get_playlist_contents=SELECT songs.* FROM playlist_contents INNER JOIN songs ON playlist_contents.song_id = songs.song_id :where ORDER BY priority
 get_max_playlist_priority=SELECT max(priority) FROM playlist_contents :where
