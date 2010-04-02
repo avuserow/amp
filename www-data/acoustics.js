@@ -279,8 +279,8 @@ function enqueuePlaylist () {
 					);
 				}
 				// go back to the queue
-				goog.dom.$('playlistchooser').value = '';
-				selectPlaylist('');
+				goog.dom.$('playlistchooser').selectedIndex = 0;
+				selectPlaylist(0);
 			}
 		);
 	} else {
