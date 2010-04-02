@@ -453,9 +453,12 @@ sub _search_or_select {
 	}
 
 	$where->{online} = 1;
-	return [], [$self->acoustics->query(
-		'select_songs', $where, [qw(artist album track)],
-	)];
+	
+	my @results = $self->acoustics->query('select_songs', $where, [qw(artist album track)]);
+
+	@results = $self->acoustics->dedupe(@results);
+
+	return [], \@results;
 }
 
 =head1 OTHER METHODS
