@@ -6,3 +6,4 @@ goog.require('goog.ui.Component');
 goog.require('goog.Throttle');
 goog.require('goog.Timer');
 goog.require('goog.async.Delay');
+goog.require('goog.i18n.DateTimeParse');
