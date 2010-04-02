@@ -256,11 +256,12 @@ function playlistRequest (who) {
 		jsonSource + '?mode=playlists;who=' + who,
 		function() {
 			hideVoting();
+			goog.dom.$('result_title').innerHTML = who + "'s playlists";
 			var json = this.getResponseJson();
 			var list = "<ul>";
 			for (var i in json) {
 				list += '<li><a href="javascript:playlistTableRequest('
-					+ json[i].playlist_id + ')">' + json[i].title + '</a> by '
+					+ json[i].playlist_id + ',' + "\'" + json[i].title + "\'" + ')">' + json[i].title + '</a> by '
 					+ json[i].who + '</li>';
 			}
 			list += "</ul>";
@@ -269,11 +270,12 @@ function playlistRequest (who) {
 	);
 }
 
-function playlistTableRequest(playlist_id) {
+function playlistTableRequest(playlist_id,title,who) {
 	goog.net.XhrIo.send(
 		jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_id,
 		function() {
 			showVoting();
+			goog.dom.$('result_title').innerHTML = 'Contents of playlist "' + title + '"';
 			fillResultTable(this.getResponseJson());
 		}
 	);
