@@ -251,4 +251,21 @@ sub rand {
 		return "RANDOM()";
 	}
 }
+
+sub dedupe
+{
+	my $self = shift;
+	my @input = grep {$_->{title} ne ""} @_;
+
+	my %songs = map { 
+		join(' ', uc(join '', ($_->{title} =~ /\S+/g)),
+		uc(join '', ($_->{artist} =~ /\S+/g)),
+		uc(join '', ($_->{album} =~ /\S+/g)))
+		=> $_
+	} @input;
+
+
+	return sort {$a->{album} cmp $b->{album}} (sort {$a->{track} <=> $b->{track}} (values %songs));
+}
+
 1;
