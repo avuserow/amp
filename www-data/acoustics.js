@@ -256,7 +256,7 @@ function playlistRequest (who) {
 		jsonSource + '?mode=playlists;who=' + who,
 		function() {
 			hideVoting();
-			goog.dom.$('result_title').innerHTML = who + "'s playlists";
+			goog.dom.$('result_title').innerHTML = (who === "" ? "All" : who + "'s") + " playlists";
 			var json = this.getResponseJson();
 			var list = "<ul>";
 			for (var i in json) {
