@@ -52,6 +52,8 @@ function searchRequest(field, value)
 {
 	if (field == "stats"){
 		statsRequest(value);
+	} else if (field == "playlist") {
+		playlistRequest(value);
 	} else if (field == "history") {
 		loadPlayHistory(25, value);
 	} else {
@@ -247,6 +249,34 @@ function selectPlaylist(playlist) {
 		goog.dom.$('playlist_action').innerHTML = '<a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a>';
 		goog.dom.$('playlist_remove').innerHTML = '<a href="javascript:purgeSongs(currentUser)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>';
 	}
+}
+
+function playlistRequest (who) {
+	goog.net.XhrIo.send(
+		jsonSource + '?mode=playlists;who=' + who,
+		function() {
+			hideVoting();
+			var json = this.getResponseJson();
+			var list = "<ul>";
+			for (var i in json) {
+				list += '<li><a href="javascript:playlistTableRequest('
+					+ json[i].playlist_id + ')">' + json[i].title + '</a> by '
+					+ json[i].who + '</li>';
+			}
+			list += "</ul>";
+			goog.dom.$('songresults').innerHTML = list;
+		}
+	);
+}
+
+function playlistTableRequest(playlist_id) {
+	goog.net.XhrIo.send(
+		jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_id,
+		function() {
+			showVoting();
+			fillResultTable(this.getResponseJson());
+		}
+	);
 }
 
 function deletePlaylist () {
