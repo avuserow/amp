@@ -38,7 +38,7 @@ for my $path (@ARGV) {
 			} else {
 				ERROR "Setting $song->{path} offline";
 			}
-			$acoustics->query('update_songs', {path => $song->{path}}, $song);
+			$acoustics->query('update_songs', $song, {path => $song->{path}},);
 		}
 	}
 }
