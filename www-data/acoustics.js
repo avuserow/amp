@@ -238,7 +238,7 @@ function selectPlaylist(playlist) {
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist,
 			function() {
 				playlist_pane = playlist;
-				goog.dom.$('playlist_action').innerHTML = '<a href="javascript:enqueuePlaylist()"><img src="www-data/icons/add.png" alt="" /> add playlist to queue</a>';
+				goog.dom.$('playlist_action').innerHTML = '<a href="javascript:enqueuePlaylist()"><img src="www-data/icons/add.png" alt="" /> enqueue playlist</a> <br /> <a href="javascript:enqueuePlaylistShuffled(10)"><img src="www-data/icons/sport_8ball.png" alt="" /> enqueue 10 random songs</a>';
 				goog.dom.$('playlist_remove').innerHTML = '<a href="javascript:deletePlaylist()"><img src="www-data/icons/bomb.png" alt="" /> delete playlist</a>';
 				showPlaylist(this.getResponseJson());
 			}
@@ -292,6 +292,30 @@ function deletePlaylist () {
 			}
 		);
 	}
+}
+
+function enqueuePlaylistShuffled (amount) {
+	if (playlist_pane != 0) {
+		goog.net.XhrIo.send(
+			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_pane,
+			function() {
+				var json = shuffle(this.getResponseJson());
+				var block = "";
+				for (var i = 0; i < json.length && i < amount; i++) {
+					block += "song_id=" + json[i].song_id + ";";
+				}
+				if (block != ""){
+					goog.net.XhrIo.send(
+							jsonSource + '?mode=vote;' + block,
+							function() {handlePlayerStateRequest(this.getResponseJson());}
+					);
+				}
+			}
+		);
+	} else {
+		alert('should not happen (enqueuePlaylistShuffled)!');
+	}
+
 }
 
 function enqueuePlaylist () {
@@ -714,4 +738,17 @@ function hideVoting() {
 function showVoting() {
 	goog.dom.$('voterand').style.visibility = "visible";
 	goog.dom.$('voteall').style.visibility = "visible";
+}
+
+function shuffle(array) {
+	var tmp, current, top = array.length;
+
+	if(top) while(--top) {
+		current = Math.floor(Math.random() * (top + 1));
+		tmp = array[current];
+		array[current] = array[top];
+		array[top] = tmp;
+	}
+
+	return array;
 }
