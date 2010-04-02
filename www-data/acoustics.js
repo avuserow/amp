@@ -18,27 +18,11 @@ function readableTime(length)
 	var seconds = length % 60;
 	var minutes = Math.floor(length / 60) % 60;
 	var hours = Math.floor(length / 3600);
-	if (hours){
-		return sprintf("%02d:%02d:%02d",hours,minutes,seconds);
+	if (hours) {
+		return sprintf("%d:%02d:%02d",hours,minutes,seconds);
+	} else {
+		return sprintf("%d:%02d",minutes,seconds);
 	}
-	else{
-		return sprintf("%02d:%02d",minutes,seconds);
-	}
-/*	var result = "";
-	if(hours > 0)
-		result += hours+':';
-	if(minutes >= 10)
-		result += minutes+':';
-	else if(minutes < 10 && hours > 0)
-		result += '0'+minutes+':';
-	else if(minutes < 10)
-		result += minutes+':';
-	if(seconds < 10)
-		result += '0'+seconds;
-	else
-		result += seconds;
-		return result;
-		*/
 }
 
 function sendPlayerCommand(mode) {
