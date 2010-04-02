@@ -458,6 +458,62 @@ sub _search_or_select {
 	)];
 }
 
+=head2 playlist_contents
+
+Takes a parameter (C<playlist_id>) and returns the songs in it.
+
+=cut
+
+sub playlist_contents {
+	my $self = shift;
+	my $plid = $self->cgi->param('playlist_id');
+
+	return bad_request('No playlist_id specified.') unless $plid;
+
+	return [], [$self->acoustics->query(
+		'get_playlist_contents', {playlist_id => $plid},
+	)];
+}
+
+=head2 add_to_playlist
+
+Adds all the songs (specified by the C<song_id> parameter(s)) to the given
+playlist (specified by C<playlist_id>).
+
+=cut
+
+sub add_to_playlist {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+
+	my $plid = $self->cgi->param('playlist_id');
+	return bad_request('No playlist specified.') unless $plid;
+
+	my(@song_ids) = $self->cgi->param('song_id');
+	return bad_request('No songs specified.') unless @song_ids;
+
+	my $priority = $self->acoustics->query(
+		'get_max_playlist_priority', {playlist_id => $plid},
+	);
+	$priority = $priority ? $priority->{time} : 0;
+
+	for my $song_id (@song_ids) {
+		my $song = $self->acoustics->query('select_playlist_contents',
+			{playlist_id => $plid, song_id => $song_id}
+		);
+		unless ($song) {
+			$self->acoustics->query('insert_playlist_contents',
+				{
+					playlist_id => $plid,
+					song_id     => 0+$song_id,
+					priority    => $priority++,
+				},
+			);
+		}
+	}
+	$self->playlist_contents;
+}
+
 =head1 OTHER METHODS
 
 These methods (currently just browse) do not return the player state or an
@@ -477,6 +533,53 @@ sub browse {
 	return [], [map {$_->{$field}} $self->acoustics->query(
 		'get_songs_by_column', {}, {column => $field},
 	)];
+}
+
+=head2 create_playlist
+
+Creates a playlist with the given title (C<title> parameter).
+
+=cut
+
+sub create_playlist {
+	my $self  = shift;
+	my $title = $self->cgi->param('title');
+
+	die access_denied('You must log in.') unless $self->who;
+
+	# require that the title contains at least one printable nonspace character
+	if(!$title || $title =~ /[^[:print:]]/ || $title !~ /\S/) {
+		die bad_request('Invalid title');
+	}
+
+	$self->acoustics->query('insert_playlists', {
+		who   => $self->who,
+		title => $title,
+	});
+
+	# rebind some parameters for when we chain to the next routine
+	$self->cgi->param('who', $self->who);
+	$self->cgi->delete('title');
+	$self->playlists;
+}
+
+=head2 playlists
+
+Returns a list of all the playlists, optionally with a C<who> parameter
+(case-insensitive match) or a C<title> (case-insensitive, substring match).
+
+=cut
+
+sub playlists {
+	my $self  = shift;
+	my $who   = $self->cgi->param('who') || '';
+	my $title = $self->cgi->param('title') || '';
+
+	my $where = {};
+	$where->{who}   = {-like => $who} if $who;
+	$where->{title} = {-like => "%$title%"} if $title;
+
+	return [], [$self->acoustics->query('select_playlists', $where)];
 }
 
 =head1 ERROR FUNCTIONS

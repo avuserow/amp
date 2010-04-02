@@ -141,6 +141,8 @@ function handlePlayerStateRequest (json) {
 
 function updateCurrentUser (who) {
 	if (who) {
+		// update the playlist selector on the first time we have a valid user
+		if (!currentUser) updatePlaylistSelector(who);
 		currentUser = who;
 		goog.dom.$('loginbox').innerHTML = 'welcome ' + who;
 	} else goog.dom.$('loginbox').innerHTML = '<a href="www-data/auth">Log in</a>';
@@ -201,6 +203,32 @@ function fillPurgeDropDown(options)
 	{
 		purgelist.options.add(new Option(options[i],options[i]));
 	}
+}
+
+function updatePlaylistSelector(who) {
+	if (who) goog.net.XhrIo.send(
+		jsonSource + '?mode=playlists;who='+who,
+		function() {
+			var json = this.getResponseJson();
+			var selector = goog.dom.$('playlistchooser');
+			selector.options.length = 0;
+			selector.options.add(new Option("Queue", ''));
+			for (var i in json) {
+				selector.options.add(
+					new Option(json[i].title, json[i].playlist_id)
+				);
+			}
+		}
+	);
+}
+
+function selectPlaylist(playlist) {
+	goog.net.XhrIo.send(
+		jsonSource + '?mode=playlist_contents;playlist_id=' + playlist,
+		function() {
+			alert (this.getResponseJson());
+		}
+	);
 }
 
 function updateNowPlaying(json, player) {

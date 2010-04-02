@@ -15,7 +15,7 @@ $db->do("DROP TABLE IF EXISTS votes");
 $db->do("DROP TABLE IF EXISTS history");
 $db->do("DROP TABLE IF EXISTS players");
 $db->do("DROP TABLE IF EXISTS playlists");
-$db->do("DROP TABLE IF EXISTS playlists_contents");
+$db->do("DROP TABLE IF EXISTS playlist_contents");
 
 $db->do("CREATE TABLE songs (song_id INT UNSIGNED AUTO_INCREMENT, path
     VARCHAR(1024) NOT NULL, artist VARCHAR(256), album VARCHAR(256), title
@@ -32,8 +32,8 @@ $db->do("CREATE TABLE players (player_id VARCHAR(256), volume INT UNSIGNED,
     song_id INT UNSIGNED, song_start INT UNSIGNED, local_id VARCHAR(256),
     remote_id VARCHAR(256), queue_hint TEXT, PRIMARY KEY(player_id))");
 
-$db->do("CREATE TABLE playlists (who VARCHAR(256) NOT NULL, id INT
+$db->do("CREATE TABLE playlists (who VARCHAR(256) NOT NULL, playlist_id INT
     AUTO_INCREMENT PRIMARY KEY, title VARCHAR(256) NOT NULL)");
 
-$db->do("CREATE TABLE playlists_contents (id INT UNSIGNED, song_id INT
-    UNSIGNED, priority INT, UNIQUE(id,song_id))");
+$db->do("CREATE TABLE playlist_contents (playlist_id INT UNSIGNED, song_id INT
+    UNSIGNED, priority INT, UNIQUE(playlist_id,song_id))");
