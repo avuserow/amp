@@ -7,7 +7,7 @@ goog.require('goog.Throttle');
 goog.require('goog.Timer');
 goog.require('goog.async.Delay');
 
-playlist_pane = '';
+playlist_pane = 0;
 vc_modifiable = false;
 currentUser = '';
 rem_time = 0;
@@ -137,7 +137,7 @@ function handlePlayerStateRequest (json) {
 
 	updateNowPlaying(json.now_playing, json.player);
 	if (json.player) updateVolumeScale(json.player.volume);
-	if (json.playlist && playlist_pane == '') updatePlaylist(json.playlist);
+	if (json.playlist && playlist_pane == 0) updatePlaylist(json.playlist);
 }
 
 function updateCurrentUser (who) {
@@ -213,7 +213,8 @@ function updatePlaylistSelector(who) {
 			var json = this.getResponseJson();
 			var selector = goog.dom.$('playlistchooser');
 			selector.options.length = 0;
-			selector.options.add(new Option('Queue', ''));
+			selector.options.add(new Option('Queue', 0));
+			selector.options.add(new Option('New playlist...', -1));
 			for (var i in json) {
 				selector.options.add(
 					new Option(json[i].title, json[i].playlist_id)
@@ -224,24 +225,52 @@ function updatePlaylistSelector(who) {
 }
 
 function selectPlaylist(playlist) {
-	if (playlist) {
+	if (playlist == -1) { // make a new playlist
+		var title = prompt(
+			"Name your playlist!",
+			"experiment " + Math.floor(Math.random()*10000)
+		);
+		if (title) goog.net.XhrIo.send(
+			jsonSource + '?mode=create_playlist;title=' + title,
+			function() {
+				//var json = this.getResponseJson();
+				updatePlaylistSelector(currentUser);
+			}
+		);
+		else updatePlaylistSelector(currentUser);
+	} else if (playlist != 0) { // show a playlist
 		goog.net.XhrIo.send(
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist,
 			function() {
 				playlist_pane = playlist;
 				goog.dom.$('playlist_action').innerHTML = '<a href="javascript:enqueuePlaylist()"><img src="www-data/icons/add.png" alt="" /> add playlist to queue</a>';
+				goog.dom.$('playlist_remove').innerHTML = '<a href="javascript:deletePlaylist()"><img src="www-data/icons/bomb.png" alt="" /> delete playlist</a>';
 				showPlaylist(this.getResponseJson());
 			}
 		);
-	} else {
-		playlist_pane = '';
+	} else { // show the queue
+		playlist_pane = 0;
 		playerStateRequest();
 		goog.dom.$('playlist_action').innerHTML = '<a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a>';
+		goog.dom.$('playlist_remove').innerHTML = '<a href="javascript:purgeSongs(currentUser)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>';
+	}
+}
+
+function deletePlaylist () {
+	var answer = confirm("Really delete this playlist?");
+	if (answer) {
+		goog.net.XhrIo.send(
+			jsonSource + '?mode=delete_playlist;playlist_id=' + playlist_pane,
+			function() {
+				updatePlaylistSelector(currentUser);
+				selectPlaylist(0);
+			}
+		);
 	}
 }
 
 function enqueuePlaylist () {
-	if (playlist_pane) {
+	if (playlist_pane != 0) {
 		goog.net.XhrIo.send(
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_pane,
 			function() {
@@ -515,7 +544,7 @@ function voteSong(song_id) {
 		alert("You must log in first.");
 		return;
 	}
-	if (playlist_pane) {
+	if (playlist_pane != 0) {
 		goog.net.XhrIo.send(
 			jsonSource + '?mode=add_to_playlist;playlist_id='
 			+ playlist_pane + ';song_id=' + song_id,
@@ -534,7 +563,7 @@ function unvoteSong(song_id) {
 		alert("You must log in first.");
 		return;
 	}
-	if (playlist_pane) {
+	if (playlist_pane != 0) {
 		goog.net.XhrIo.send(
 			jsonSource + '?mode=remove_from_playlist;playlist_id='
 			+ playlist_pane + ';song_id=' + song_id,
@@ -640,9 +669,16 @@ function voteAll() {
 		block += "song_id=" + this.songIDs[i] + ";";
 	}
 	if (block != ""){
+		var command = "?mode=vote;";
+		if (playlist_pane) {
+			command = "?mode=add_to_playlist;playlist_id=" + playlist_pane + ";";
+		}
 		goog.net.XhrIo.send(
-				jsonSource + '?mode=vote;' + block,
-				function() {handlePlayerStateRequest(this.getResponseJson());}
+				jsonSource + command + block,
+				function() {
+					if (playlist_pane) showPlaylist(this.getResponseJson());
+					else handlePlayerStateRequest(this.getResponseJson());
+				}
 		);
 	}
 }

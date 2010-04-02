@@ -575,11 +575,11 @@ sub create_playlist {
 	my $self  = shift;
 	my $title = $self->cgi->param('title');
 
-	die access_denied('You must log in.') unless $self->who;
+	return access_denied('You must log in.') unless $self->who;
 
 	# require that the title contains at least one printable nonspace character
 	if(!$title || $title =~ /[^[:print:]]/ || $title !~ /\S/) {
-		die bad_request('Invalid title');
+		return bad_request('Invalid title');
 	}
 
 	$self->acoustics->query('insert_playlists', {
@@ -590,6 +590,27 @@ sub create_playlist {
 	# rebind some parameters for when we chain to the next routine
 	$self->cgi->param('who', $self->who);
 	$self->cgi->delete('title');
+	$self->playlists;
+}
+
+=head2 delete_playlist
+
+Permanently removes the specified playlist (using the C<playlist_id> parameter).
+
+=cut
+
+sub delete_playlist {
+	my $self = shift;
+	my $plid = $self->cgi->param('playlist_id');
+
+	return access_denied('You must log in.') unless $self->who;
+
+	$self->acoustics->query('delete_playlists',
+		{who => $self->who, playlist_id => $plid},
+	);
+
+	# rebind some parameters for when we chain to the next routine
+	$self->cgi->param('who', $self->who);
 	$self->playlists;
 }
 
