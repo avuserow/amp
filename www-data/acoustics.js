@@ -14,11 +14,17 @@ jsonSource = '/acoustics/json.pl';
 
 function readableTime(length)
 {
+	if (length < 0) {length = 0;}
 	var seconds = length % 60;
 	var minutes = Math.floor(length / 60) % 60;
 	var hours = Math.floor(length / 3600);
-
-	var result = "";
+	if (hours){
+		return sprintf("%02d:%02d:%02d",hours,minutes,seconds);
+	}
+	else{
+		return sprintf("%02d:%02d",minutes,seconds);
+	}
+/*	var result = "";
 	if(hours > 0)
 		result += hours+':';
 	if(minutes >= 10)
@@ -32,6 +38,7 @@ function readableTime(length)
 	else
 		result += seconds;
 		return result;
+		*/
 }
 
 function sendPlayerCommand(mode) {
