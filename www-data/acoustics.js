@@ -6,7 +6,6 @@ goog.require('goog.ui.Component');
 goog.require('goog.Throttle');
 goog.require('goog.Timer');
 goog.require('goog.async.Delay');
-goog.require('goog.i18n.DateTimeParse');
 
 vc_modifiable = false;
 currentUser = '';
@@ -15,9 +14,24 @@ jsonSource = '/acoustics/json.pl';
 
 function readableTime(length)
 {
-	var date = {};
-	goog.i18n.DateTimeParse(length,date);
-	return date.toLocaleTimeString();
+	var seconds = length % 60;
+	var minutes = Math.floor(length / 60) % 60;
+	var hours = Math.floor(length / 3600);
+
+	var result = "";
+	if(hours > 0)
+		result += hours+':';
+	if(minutes >= 10)
+		result += minutes+':';
+	else if(minutes < 10 && hours > 0)
+		result += '0'+minutes+':';
+	else if(minutes < 10)
+		result += minutes+':';
+	if(seconds < 10)
+		result += '0'+seconds;
+	else
+		result += seconds;
+		return result;
 }
 
 function sendPlayerCommand(mode) {
