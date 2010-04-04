@@ -116,8 +116,10 @@ sub get_songs_by_votes {
 	while (my $row = $select_votes->fetchrow_hashref()) {
 		my $who = delete $row->{who}; # remove the who, save it
 		$row->{time} = str2time($row->{time});
+		my $priority = delete $row->{priority};
 		$votes{$row->{song_id}} ||= $row;
-		push @{$votes{$row->{song_id}}{who}}, $who; # re-add the voter
+		$votes{$row->{song_id}}{priority}{$who} = $priority;
+		push @{$votes{$row->{song_id}}{who}}, $who;
 	}
 
 	return %votes;

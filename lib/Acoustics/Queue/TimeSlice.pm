@@ -43,7 +43,7 @@ sub list {
 		my %next_songs;
 		for my $who (@who) {
 			$next_songs{$who} = reduce {
-				$a->{priority} < $b->{priority} ? $a : $b
+				$a->{priority}{$who} < $b->{priority}{$who} ? $a : $b
 			} grep {$who ~~ $_->{who}} values %votes;
 		}
 

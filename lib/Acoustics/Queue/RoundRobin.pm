@@ -53,7 +53,7 @@ sub list {
 		my @candidates = grep {
 			grep {$_ eq $voter} @{$_->{who}}
 		} values %votes;
-		@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{priority} <=> $b->{priority}} @candidates;
+		@candidates = reverse sort {@{$a->{who}} <=> @{$b->{who}}} reverse sort {$a->{priority}{$voter} <=> $b->{priority}{$voter}} @candidates;
 
 		# if this user has no more stored votes, ignore them
 		next unless @candidates;
