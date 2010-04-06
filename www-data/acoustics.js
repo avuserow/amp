@@ -586,7 +586,22 @@ function fillResultTable(json) {
 	component.decorate(goog.dom.$('result_table'));
 	component.setDefaultSortFunction(goog.ui.TableSorter.alphaSort);
 	component.setSortFunction(1, goog.ui.TableSorter.numericSort);
+	component.setSortFunction(5, timeSorter);
 }
+
+timeSorter = function(a, b) {
+	var a_ = a.split(":");
+	a = 0;
+	for (var i=0; i<a_.length; i++) {
+		a = a * 100 + parseFloat(a_[i]);
+	}
+	a_ = b.split(":");
+	b = 0;
+	for (var i=0; i<a_.length; i++) {
+		b = b * 100 + parseFloat(a_[i]);
+	}
+	return parseFloat(a) - parseFloat(b);
+};
 
 function voteSong(song_id) {
 	if (!currentUser) {
