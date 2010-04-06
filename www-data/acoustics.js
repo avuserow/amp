@@ -246,6 +246,8 @@ function selectPlaylist(playlist) {
 	} else { // show the queue
 		playlist_pane = 0;
 		playerStateRequest();
+		// reset the dropdown to "Queue"
+		goog.dom.$('playlistchooser').selectedIndex = 0;
 		goog.dom.$('playlist_action').innerHTML = '<a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a>';
 		goog.dom.$('playlist_remove').innerHTML = '<a href="javascript:purgeSongs(currentUser)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>';
 	}
@@ -307,7 +309,7 @@ function enqueuePlaylistShuffled (amount) {
 				if (block != ""){
 					goog.net.XhrIo.send(
 							jsonSource + '?mode=vote;' + block,
-							function() {handlePlayerStateRequest(this.getResponseJson());}
+							function() {handlePlayerStateRequest(this.getResponseJson());selectPlaylist(0);}
 					);
 				}
 			}
@@ -335,7 +337,6 @@ function enqueuePlaylist () {
 					);
 				}
 				// go back to the queue
-				goog.dom.$('playlistchooser').selectedIndex = 0;
 				selectPlaylist(0);
 			}
 		);
