@@ -37,6 +37,13 @@ function sendPlayerCommand(mode) {
 	);
 }
 
+function zapPlayer(player) {
+	goog.net.XhrIo.send(
+			jsonSource + '?mode=zap;value=' + '"'.player.'"',
+			function () {handlePlayerStateRequest(this.getResponseJson());}
+	);
+}
+
 function setVolume(value) {
 	if (!currentUser) {
 		alert("You must log in first.");
@@ -124,9 +131,15 @@ function handlePlayerStateRequest (json) {
 	// skip link
 	if (json.can_skip) goog.dom.$('skip_link').style.visibility = 'visible';
 	else goog.dom.$('skip_link').style.visibility = 'hidden';
-	// Admin Dequeue
-	if (json.is_admin) goog.dom.$('purgeuser').style.visibility = 'visible';
-	else goog.dom.$('purgeuser').style.visibility = 'hidden';
+	// Admin Dequeue && zap
+	if (json.is_admin){
+		goog.dom.$('purgeuser').style.visibility = 'visible';
+		goog.dom.$('zap').style.visibility = 'visible';
+	}
+	else {
+		goog.dom.$('purgeuser').style.visibility = 'hidden';
+		goog.dom.$('zap').style.visibility = 'hidden';
+	}
 
 	updateNowPlaying(json.now_playing, json.player);
 	if (json.player) updateVolumeScale(json.player.volume);

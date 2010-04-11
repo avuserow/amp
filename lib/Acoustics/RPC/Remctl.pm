@@ -34,6 +34,13 @@ sub volume {
 	$class->do_call($acoustics, 'volume', $volume);
 }
 
+sub zap {
+	my $class = shift;
+	my $acoustics = shift;
+	my $zap_player = shift;
+	$class->do_call($acoustics, 'zap', $zap_player);
+}
+
 sub do_call {
 	my $class     = shift;
 	my $acoustics = shift;

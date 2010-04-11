@@ -257,6 +257,20 @@ sub stop {
 	$self->status;
 }
 
+=head2 zap
+
+removes the specified player from the database by force. sleeps for 0.25 seconds
+before checking on the player state
+
+=cut
+
+sub zap {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+	my $zap_player = $self->cgi->param('value');
+	INFO("zap requested by " . $self->who . " for player " . $zap_player);
+	$self->acoustics->rpc('zap',$zap_player);
+
 =head2 skip
 
 Attempts to skip the current song. Sleeps for 0.25 seconds before checking on

@@ -34,4 +34,12 @@ sub volume {
 	$acoustics->player('volume', $volume);
 }
 
+sub zap {
+	my $self = shift;
+	my $acoustics = shift;
+	my $zap_player = shift;
+
+	$acoustics->player('zap',$zap_player);
+}
+
 1;
