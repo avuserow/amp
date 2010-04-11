@@ -57,6 +57,20 @@ sub stop {
 	$class->send_signal($acoustics, 'INT');
 }
 
+sub zap {
+	my $class = shift;
+	my $acoustics = shift;
+	my $dead_player_id = shift;
+	# Don't do stupid things
+	unless ($dead_player_id){
+		ERROR "Blank player_id";
+	} else {
+		# KILL IT WITH FIRE
+		$acoustics->query('delete_players', {player_id => $dead_player_id});
+		INFO "Zapped $dead_player_id";
+	}
+}
+
 sub volume {
 	my $class     = shift;
 	my $acoustics = shift;
