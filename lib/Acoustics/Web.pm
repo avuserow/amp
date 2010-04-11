@@ -270,6 +270,7 @@ sub zap {
 	my $zap_player = $self->cgi->param('value');
 	INFO("zap requested by " . $self->who . " for player " . $zap_player);
 	$self->acoustics->rpc('zap',$zap_player);
+}
 
 =head2 skip
 
