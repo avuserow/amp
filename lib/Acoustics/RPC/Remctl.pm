@@ -38,6 +38,7 @@ sub zap {
 	my $class = shift;
 	my $acoustics = shift;
 	my $zap_player = shift;
+
 	$class->do_call($acoustics, 'zap', $zap_player);
 }
 

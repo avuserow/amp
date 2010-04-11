@@ -267,9 +267,14 @@ before checking on the player state
 sub zap {
 	my $self = shift;
 	return access_denied('You must log in.') unless $self->who;
+
 	my $zap_player = $self->cgi->param('value');
 	INFO("zap requested by " . $self->who . " for player " . $zap_player);
 	$self->acoustics->rpc('zap',$zap_player);
+	
+	sleep 0.25;
+
+	$self->status;
 }
 
 =head2 skip

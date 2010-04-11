@@ -39,7 +39,7 @@ function sendPlayerCommand(mode) {
 
 function zapPlayer(player) {
 	goog.net.XhrIo.send(
-			jsonSource + '?mode=zap;value=' + '"'.player.'"',
+			jsonSource + '?mode=zap;value=' + '"' + player +'"',
 			function () {handlePlayerStateRequest(this.getResponseJson());}
 	);
 }
