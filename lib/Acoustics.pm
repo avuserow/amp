@@ -62,6 +62,8 @@ my $logger = Log::Log4perl::get_logger;
 sub BUILD {
 	my $self = shift;
 
+	$self->{config_file} ||= $ENV{ACOUSTICS_CONFIG_FILE};
+
 	$self->{config} = Config::Tiny->read($self->config_file)
 		or die "couldn't read config: \"" . $self->config_file . '"';
 
@@ -79,6 +81,40 @@ sub BUILD {
 	$queue_class    = 'Acoustics::Queue::' . $queue_class;
 	load $queue_class;
 	$self->{queue} = $queue_class->new({acoustics => $self});
+}
+
+sub initdb_mysql {
+	my $self = shift;
+	my $db   = $self->db;
+
+	$db->do("DROP TABLE IF EXISTS songs");
+	$db->do("DROP TABLE IF EXISTS votes");
+	$db->do("DROP TABLE IF EXISTS history");
+	$db->do("DROP TABLE IF EXISTS players");
+	$db->do("DROP TABLE IF EXISTS playlists");
+	$db->do("DROP TABLE IF EXISTS playlist_contents");
+
+	$db->do("CREATE TABLE songs (song_id INT UNSIGNED AUTO_INCREMENT, path
+		VARCHAR(1024) NOT NULL, artist VARCHAR(256), album VARCHAR(256), title
+		VARCHAR(256), length INT UNSIGNED NOT NULL, track INT UNSIGNED, online
+		TINYINT(1) UNSIGNED, PRIMARY KEY (song_id))");
+
+	$db->do("CREATE TABLE votes (song_id INT UNSIGNED, who VARCHAR(256),
+		player_id VARCHAR(256), time INT UNSIGNED, priority INT,
+		UNIQUE(song_id, who))");
+
+	$db->do("CREATE TABLE history (song_id INT UNSIGNED, time TIMESTAMP, who
+		VARCHAR(256), player_id VARCHAR(256))");
+
+	$db->do("CREATE TABLE players (player_id VARCHAR(256), volume INT UNSIGNED,
+		song_id INT UNSIGNED, song_start INT UNSIGNED, local_id VARCHAR(256),
+		remote_id VARCHAR(256), queue_hint TEXT, PRIMARY KEY(player_id))");
+
+	$db->do("CREATE TABLE playlists (who VARCHAR(256) NOT NULL, playlist_id INT
+		AUTO_INCREMENT PRIMARY KEY, title VARCHAR(256) NOT NULL)");
+
+	$db->do("CREATE TABLE playlist_contents (playlist_id INT UNSIGNED, song_id
+		INT UNSIGNED, priority INT, UNIQUE(playlist_id,song_id))");
 }
 
 # MySQL fails hard on selecting a random song. see:
@@ -175,7 +211,7 @@ sub vote {
 	$sth->execute($who, $self->player_id);
 	my($num_votes) = $sth->fetchrow_array() || 0;
 	# Cap # of votes per voter
-	my $maxvotes = $self->config->{player}{max_votes};
+	my $maxvotes = $self->config->{player}{max_votes} || 0;
 	$maxvotes = 0 if $maxvotes < 0;
 	if ($num_votes < $maxvotes || !$maxvotes){
 		$sth = $self->db->prepare(
@@ -204,6 +240,28 @@ sub rpc {
 	load $rpc_class;
 
 	$rpc_class->$act($self, @_);
+}
+
+=head2 test
+
+Provides lazy access to testing routines in Acoustics::Test. See
+L<Acoustics::Test>. (Basically turns C<<$ac->test->hats(@clowns)>> into
+C<<Acoustics::Test::hats($ac, @clowns)>>.)
+
+=cut
+
+sub test {
+	my $self = shift;
+	my $act  = shift;
+
+	require Acoustics::Test;
+
+	my $routine = Acoustics::Test->can($act);
+	if ($routine) {
+		$routine->($self, @_);
+	} else {
+		die "whoa! '$routine' is not a valid method in Acoustics::Test\n";
+	}
 }
 
 sub plugin_call {

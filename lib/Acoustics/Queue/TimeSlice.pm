@@ -22,7 +22,7 @@ sub list {
 	my $player = $acoustics->query(
 		'select_players', {player_id => $acoustics->player_id},
 	);
-	delete $votes{$player->{song_id}};
+	delete $votes{$player->{song_id}} if $player->{song_id};
 
 	# get a copy of the current debt and a list of the voters
 	my %debt = %{$self->debt};
@@ -51,7 +51,11 @@ sub list {
 		# now find the person that will have the most credit left over after
 		# we play their next song
 		my $best_choice = reduce {
-				$debt{$a} < $debt{$b} ? $a : $b
+				if ($debt{$a} == $debt{$b}) {
+					$next_songs{$a}{length} < $next_songs{$b}{length} ? $a : $b
+				} else {
+					$debt{$a} < $debt{$b} ? $a : $b
+				}
 		} @who;
 		
 
