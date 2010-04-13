@@ -310,6 +310,7 @@ sub volume {
 
 	my $vol = $self->cgi->param('value');
 	return bad_request('No volume specified.') unless defined $vol;
+	INFO("volume change requested by " . $self->who . " to " . $vol);
 	$self->acoustics->rpc('volume', $vol);
 	$self->status;
 }
