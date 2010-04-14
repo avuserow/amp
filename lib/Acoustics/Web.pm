@@ -658,6 +658,29 @@ sub playlists {
 	return [], [$self->acoustics->query('select_playlists', $where)];
 }
 
+=head2 rename_playlist
+
+Renames a given playlist
+
+=cut
+
+sub rename_playlist {
+	my $self = shift;
+	my $id = $self->cgi->param('id') || '';
+	my $new = $self->cgi->param('new') || '';
+	if($new eq '' || $id eq '')
+	{
+		return;
+	}
+
+	my $where = {};
+	$where->{playlist_id} = {$id};
+	
+	my $set = {};
+	$set->{title} = $new;
+	return [], [$self->acoustics->query('update_playlists', $set, $where)];
+
+}
 =head1 ERROR FUNCTIONS
 
 These are to be called as functions, not methods, for internal use only.
