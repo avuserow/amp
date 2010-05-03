@@ -12,19 +12,17 @@ require_prefix=/path/to/my/music
 
 ## Name each player [player.XXX], fill in from players list at the top
 [player.default]
-module=Acoustics::Player::MPlayer
+name=default
+player=Acoustics::Player::MPlayer
 plugins= # optional, specify player plugins
-
 ## pick one:
-# module=Acoustics::RPC::SSH_PrivateKey
+# rpc=Acoustics::RPC::SSH_PrivateKey
 # host=musicalbox
 # user=aparsons
 # private_key=conf/id_rsa
 # player_remote=/home/aparsons/projects/acoustics/bin/player-remote.pl
-
-# module=Acoustics::RPC::Remctl
+# rpc=Acoustics::RPC::Remctl
 # host=musicalbox
-
 ## queue ("playlist") module to use (defaults to RoundRobin)
 queue=RoundRobin
 # queue=TimeSlice
