@@ -37,7 +37,7 @@ function sendPlayerCommand(mode) {
 	);
 }
 
-function zapPlayer() {
+function zapPlayer(player) {
 	if (player){
 		goog.net.XhrIo.send(
 			jsonSource + '?mode=zap;value=' + '"' + player +'"',
@@ -422,7 +422,7 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 	}
 
 	goog.dom.$('currentsong').innerHTML = nowPlaying;
-	goog.dom.$('zap').innerHTML = '<a href="javascript:zapPlayer(' + selected_player + ')"><img src="www-data/icons/wrench_orange.png" alt="zap"/> Zap The Player</a>';
+	goog.dom.$('zap').innerHTML = '<a href="javascript:zapPlayer(\'' + selected_player + '\')"><img src="www-data/icons/wrench_orange.png" alt="zap"/> Zap The Player</a>';
 }
 
 function changePlayer(player_id) {
