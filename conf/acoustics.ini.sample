@@ -1,3 +1,5 @@
+## Specify what players you want
+players=default
 [database]
 data_source=dbi:mysql:host=localhost;database=acoustics
 user=acoustics
@@ -8,23 +10,11 @@ pass=
 ## leave blank if you don't care
 require_prefix=/path/to/my/music
 
-[player]
+## Name each player [player.XXX], fill in from players list at the top
+[player.default]
 module=Acoustics::Player::MPlayer
 plugins= # optional, specify player plugins
 
-## queue ("playlist") module to use (defaults to RoundRobin)
-queue=RoundRobin
-# queue=TimeSlice
-## Cap votes per voter (optional)
-# max_votes = 50
-
-## have a business hours time, no obscene music, lower volume (optional)
-# office_hours_start=0900
-# office_hours_end=1800
-# office_hours_volume=4
-# office_hours_censor=1 or 0
-
-[rpc]
 ## pick one:
 # module=Acoustics::RPC::SSH_PrivateKey
 # host=musicalbox
@@ -35,10 +25,17 @@ queue=RoundRobin
 # module=Acoustics::RPC::Remctl
 # host=musicalbox
 
+## queue ("playlist") module to use (defaults to RoundRobin)
+queue=RoundRobin
+# queue=TimeSlice
+## Cap votes per voter (optional)
+# max_votes = 50
+
 [webauth]
 ## pick one:
 # module=Acoustics::Web::Auth::Simple
-# field=REMOTE_ADDR # pick something in %ENV
+## pick something in %ENV
+# field=REMOTE_ADDR
 ## or... field=random # random integer
 ## or... field=time # the Unix timestamp
 
