@@ -72,8 +72,10 @@ sub song_stop {
 	my $self  = shift;
 	my @order = @{$self->voter_order};
 
-	push @order, shift @order;
-	$self->voter_order(\@order);
+	if (@order) {
+		push @order, shift @order;
+		$self->voter_order(\@order);
+	}
 }
 
 sub serialize {
