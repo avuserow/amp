@@ -9,13 +9,15 @@ use Getopt::Long;
 my $daemonize = 1;
 GetOptions('daemonize!' => \$daemonize);
 
+my $player  = shift;
 my $command = shift;
 
 my $acoustics = Acoustics->new({
 	config_file => ($0 =~ m{(.+)/})[0] . '/../conf/acoustics.ini',
+	player_id   => $player,
 });
 
-print "command: $command @ARGV\n";
+print "command: $player $command @ARGV\n";
 if($command eq 'update')
 {
 	my ($path) = $0 =~ m{(.+)/};

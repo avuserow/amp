@@ -85,6 +85,8 @@ sub BUILD {
 		acoustics => $self->acoustics,
 		cgi       => $self->cgi,
 	});
+
+	$self->acoustics->select_player($self->auth->player_id);
 }
 
 =head1 METHODS THAT RETURN THE PLAYER STATE OBJECT
@@ -115,6 +117,9 @@ sub status {
 	$data->{now_playing} = $acoustics->query(
 		'select_songs', {song_id => $player->{song_id}},
 	);
+
+	$data->{players} = [split /\s*,\s*/, $self->acoustics->config->{_}{players}];
+	$data->{selected_player} = $self->acoustics->player_id;
 
 	if ($data->{now_playing}) {
 		$data->{now_playing}{who} = [map {$_->{who}} $acoustics->query('select_votes', {song_id => $player->{song_id}})];
@@ -313,6 +318,22 @@ sub volume {
 	INFO("volume change requested by " . $self->who . " to " . $vol);
 	$self->acoustics->rpc('volume', $vol);
 	$self->status;
+}
+
+=head2 change_player
+
+Moves you to a different player specified by C<player_id>.
+
+=cut
+
+sub change_player {
+	my $self = shift;
+
+	my $player = $self->cgi->param('player_id');
+	$self->acoustics->select_player($player);
+
+	$self->auth->player_id($self->acoustics->player_id);
+	return $self->status;
 }
 
 =head2 shuffle_votes
