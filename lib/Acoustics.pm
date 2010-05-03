@@ -77,11 +77,11 @@ sub BUILD {
 		phrasebook => 'queries.txt',
 	);
 
+	$self->select_player($self->player_id);
 	my $queue_class = $self->config->{player}{queue} || 'RoundRobin';
 	$queue_class    = 'Acoustics::Queue::' . $queue_class;
 	load $queue_class;
 	$self->{queue} = $queue_class->new({acoustics => $self});
-	$self->select_player($self->player_id);
 }
 
 sub select_player {
@@ -309,7 +309,10 @@ sub plugin_call {
 sub reinit {
 	my $self = shift;
 
-	return Acoustics->new({config_file => $self->config_file});
+	return Acoustics->new({
+		config_file => $self->config_file,
+		player_id   => $self->player_id,
+	});
 }
 
 # Mysql has RAND, everyone else has RANDOM

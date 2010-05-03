@@ -11,3 +11,12 @@ www-data/acoustics2.js
 *test.pl
 cover_db
 robots.txt
+*.so
+*.so.*
+taglib-1.6.1
+lib/pkgconfig
+*.a
+*.la
+include
+bin/taglib-config
+.gitignore
