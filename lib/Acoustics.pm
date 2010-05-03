@@ -16,7 +16,7 @@ has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'config' => (is => 'ro', isa => 'Config::Tiny');
 has 'querybook' => (is => 'ro', handles => ['query']);
 has 'config_file' => (is => 'ro', isa => 'Str');
-has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
+has 'player_id' => (is => 'rw', isa => 'Str', default => 'default player');
 has 'queue' => (is => 'ro', isa => 'Acoustics::Queue');
 
 # Logger configuration:
@@ -81,6 +81,22 @@ sub BUILD {
 	$queue_class    = 'Acoustics::Queue::' . $queue_class;
 	load $queue_class;
 	$self->{queue} = $queue_class->new({acoustics => $self});
+	$self->select_player($self->player_id);
+}
+
+sub select_player {
+	my $self   = shift;
+	my $player = shift;
+
+	my @players = split /\s*,\s*/, $self->config->{_}{players};
+
+	if (grep {$_ eq $player} @players) {
+		$self->config->{player} = $self->config->{'player.' . $player};
+		$self->player_id($player);
+	} else {
+		$self->config->{player} = $self->config->{'player.' . $players[0]};
+		$self->player_id($players[0]);
+	}
 }
 
 sub initdb_mysql {
@@ -236,7 +252,7 @@ sub rpc {
 	my $self = shift;
 	my $act  = shift;
 
-	my $rpc_class = $self->config->{rpc}{module};
+	my $rpc_class = $self->config->{player}{rpc};
 	load $rpc_class;
 
 	$rpc_class->$act($self, @_);
@@ -295,6 +311,7 @@ sub reinit {
 
 	return Acoustics->new({config_file => $self->config_file});
 }
+
 # Mysql has RAND, everyone else has RANDOM
 # TODO: Make this a stored procedure
 sub rand {

@@ -14,6 +14,8 @@ extends 'Mouse::Object', 'Acoustics::Web::Auth';
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
 has 'cgi'       => (is => 'ro', isa => 'Object');
 
+has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
+
 sub authenticate {
 	my $self = shift;
 
@@ -34,6 +36,20 @@ sub authenticate {
 	$session->flush;
 
 	print $session->header(-status => 302, -location => '/acoustics/');
+}
+
+sub player_id {
+	my $self  = shift;
+	my $value = shift;
+
+	my $session = CGI::Session->load;
+
+	if ($value) {
+		$session->param(player_id => $value);
+		$session->flush;
+	} else {
+		return $session->param('player_id') || '';
+	}
 }
 
 sub whoami {

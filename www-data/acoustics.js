@@ -141,7 +141,7 @@ function handlePlayerStateRequest (json) {
 		goog.dom.$('zap').style.visibility = 'hidden';
 	}
 
-	updateNowPlaying(json.now_playing, json.player);
+	updateNowPlaying(json.now_playing, json.player, json.selected_player, json.players);
 	if (json.player) updateVolumeScale(json.player.volume);
 	if (json.playlist && playlist_pane == 0) updatePlaylist(json.playlist);
 }
@@ -379,7 +379,7 @@ function showPlaylist(json) {
 	goog.dom.$('playlist').innerHTML = list;
 }
 
-function updateNowPlaying(json, player) {
+function updateNowPlaying(json, player, selected_player, players_list) {
 	if (json) {
 		nowPlaying = '';
 		if (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0) {
@@ -404,7 +404,31 @@ function updateNowPlaying(json, player) {
 	} else {
 		nowPlaying = 'nothing playing';
 	}
+
+	if (playlist_pane == 0) { // we do not have a playlist selected
+		nowPlaying += '<div><br />Player: <form id="player" action="" '
+		+ 'onSubmit="javascript:changePlayer(this.player.value); return false;">'
+		+ '<select id="player">';
+
+		for (var item in players_list) {
+			nowPlaying += '<option value="' + players_list[item] + '"';
+			if (selected_player == players_list[item]) nowPlaying += ' selected="selected"';
+			nowPlaying += '>' + players_list[item] + '</option>';
+		}
+
+		nowPlaying += '</select><input type="submit" /></form></div>';
+	}
+
 	goog.dom.$('currentsong').innerHTML = nowPlaying;
+}
+
+function changePlayer(player_id) {
+	goog.net.XhrIo.send(
+		jsonSource + '?mode=change_player;player_id=' + player_id,
+		function() {
+			handlePlayerStateRequest(this.getResponseJson());
+		}
+	);
 }
 
 function lastLinkSong(artist, title)

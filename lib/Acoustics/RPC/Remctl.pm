@@ -48,26 +48,17 @@ sub do_call {
 	my $action    = shift;
 
 	for (qw(host)) {
-		die "Config entry {rpc}{$_} not defined"
-			unless $acoustics->config->{rpc}{$_};
+		die "Config entry {player.@{[$acoustics->player_id]}}{$_} not defined"
+			unless $acoustics->config->{player}{$_};
 	}
 
 	system('kinit', '-kt', '/etc/www.keytab', 'websvc') == 0 or die "bleh";
 	system(
 		'remctl', '-p', 4373,
-		$acoustics->config->{rpc}{host},
+		$acoustics->config->{player}{host},
 		'acoustics',
-		$action, @_,
+		$acoustics->player_id, $action, @_,
 	) == 0 or die "couldn't run remctl: $!,$?,@{[$? >> 8]}";
-
-#	system(
-#		'/usr/bin/k5start', '-t', '-f', '/etc/krb5.keytab', '-K', 120,
-#		'akreher2',
-#		'/usr/bin/remctl',
-#		$acoustics->config->{rpc}{host},
-#		'acoustics',
-#		$action,
-#	) == 0 or die "couldn't run remctl: $!,$?,@{[$? >> 8]}";
 }
 
 1;

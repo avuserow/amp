@@ -48,19 +48,19 @@ sub do_call {
 	my $action    = shift;
 
 	for (qw(user private_key host player_remote)) {
-		die "Config entry {rpc}{$_} not defined"
-			unless $acoustics->config->{rpc}{$_};
+		die "Config entry {player.@{[$acoustics->player_id]}}{$_} not defined"
+			unless $acoustics->config->{player}{$_};
 	}
 
 	system(
 		'ssh',
-		-l => $acoustics->config->{rpc}{user},
-		-i => $acoustics->config->{rpc}{private_key},
+		-l => $acoustics->config->{player}{user},
+		-i => $acoustics->config->{player}{private_key},
 		-o => 'StrictHostKeyChecking=no',
 		-o => 'GSSAPIAuthentication=no',
-		$acoustics->config->{rpc}{host},
-		$acoustics->config->{rpc}{player_remote},
-		$action, @_,
+		$acoustics->config->{player}{host},
+		$acoustics->config->{player}{player_remote},
+		$acoustics->player_id, $action, @_,
 	) == 0 or die "couldn't run ssh: $!,$?,@{[$? >> 8]}";
 }
 
