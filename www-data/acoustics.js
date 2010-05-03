@@ -37,11 +37,13 @@ function sendPlayerCommand(mode) {
 	);
 }
 
-function zapPlayer(player) {
-	goog.net.XhrIo.send(
+function zapPlayer() {
+	if (player){
+		goog.net.XhrIo.send(
 			jsonSource + '?mode=zap;value=' + '"' + player +'"',
 			function () {handlePlayerStateRequest(this.getResponseJson());}
-	);
+		);
+	}
 }
 
 function setVolume(value) {
@@ -406,9 +408,9 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 	}
 
 	if (playlist_pane == 0) { // we do not have a playlist selected
-		nowPlaying += '<div><br />Player: <form id="player" action="" '
-		+ 'onSubmit="javascript:changePlayer(this.player.value); return false;">'
-		+ '<select id="player">';
+		nowPlaying += '<div><br /><form id="player" action=""> Player: '
+		+ '<select onChange="javascript:changePlayer(this.value); return false;"'
+		+ ' id="player">';
 
 		for (var item in players_list) {
 			nowPlaying += '<option value="' + players_list[item] + '"';
@@ -416,10 +418,11 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 			nowPlaying += '>' + players_list[item] + '</option>';
 		}
 
-		nowPlaying += '</select><input type="submit" /></form></div>';
+		nowPlaying += '</select></form></div>';
 	}
 
 	goog.dom.$('currentsong').innerHTML = nowPlaying;
+	goog.dom.$('zap').innerHTML = '<a href="javascript:zapPlayer(' + selected_player + ')"><img src="www-data/icons/wrench_orange.png" alt="zap"/> Zap The Player</a>';
 }
 
 function changePlayer(player_id) {
