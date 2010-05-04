@@ -198,7 +198,7 @@ sub get_history {
 	my $amount = shift;
 	my $voter  = shift;
 
-	my %where;
+	my %where = (player_id => $self->player_id);
 	$where{who} = $voter if $voter;
 	my @times = $self->query(
 		'get_time_from_history', {%where, -limit => $amount},
