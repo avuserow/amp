@@ -2,7 +2,7 @@
 
 #/usr/bin/perl /afs/acm.uiuc.edu/project/acoustics/bin/player-remote.pl ${1+"$@"}
 
-if [ $2 = 'start' ]; then
+if [ "$2" = 'start' ]; then
 	BGOPT=-b
 fi
 

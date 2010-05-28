@@ -18,13 +18,17 @@ my $acoustics = Acoustics->new({
 });
 
 print "command: $player $command @ARGV\n";
-if($command eq 'update')
+# FIXME: make the options for this command better somehow
+# probably by adding a web interface to update
+if($player eq 'update')
 {
+	unshift @ARGV, $command;
 	my ($path) = $0 =~ m{(.+)/};
 	system("$path/scanner.pl", @ARGV);
 }
-elsif ($command eq 'prune')
+elsif ($player eq 'prune')
 {
+	unshift @ARGV, $command;
 	my ($path) = $0 =~ m{(.+)/};
 	system("$path/garbage-collect.pl", @ARGV);
 }

@@ -46,6 +46,13 @@ function zapPlayer(player) {
 	}
 }
 
+function login() {
+	goog.net.XhrIo.send(
+		'www-data/auth',
+		function () {playerStateRequest();}
+	);
+}
+
 function setVolume(value) {
 	if (!currentUser) {
 		alert("You must log in first.");
