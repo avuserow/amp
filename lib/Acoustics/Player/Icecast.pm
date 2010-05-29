@@ -142,6 +142,9 @@ sub song_iterate {
 	my $player = $acoustics->query('select_players',
 		{player_id => $acoustics->player_id});
 
+	my $hint = JSON::DWIW->new->from_json($player->{queue_hint});
+	$acoustics->queue->deserialize($hint);
+
 	if ($player->{song_id}) {
 		my $song = $acoustics->query('select_songs',
 			{song_id => $player->{song_id}});
