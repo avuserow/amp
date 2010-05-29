@@ -3,6 +3,7 @@ closure-compiler
 conf/acoustics.ini
 conf/id_rsa*
 conf/lastfm
+conf/ezstream.xml
 bin/tagreader
 *.swp
 .backup
