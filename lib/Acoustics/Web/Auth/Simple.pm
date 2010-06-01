@@ -14,8 +14,6 @@ extends 'Mouse::Object', 'Acoustics::Web::Auth';
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
 has 'cgi'       => (is => 'ro', isa => 'Object');
 
-has 'player_id' => (is => 'ro', isa => 'Str', default => 'default player');
-
 sub authenticate {
 	my $self = shift;
 
