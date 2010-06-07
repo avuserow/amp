@@ -8,6 +8,8 @@ use IPC::Open2 'open2';
 use Module::Load 'load';
 use JSON::DWIW ();
 
+use constant COMPONENT => 'player';
+
 sub start {
 	my $class     = shift;
 	my $acoustics = shift;
@@ -121,6 +123,8 @@ sub start_player {
 		volume    => -1,
 	});
 
+	$acoustics->ext_hook(COMPONENT, 'start');
+
 	local $SIG{TERM} = local $SIG{INT} = sub {
 		WARN "Exiting player $$";
 		$acoustics->query('delete_players', {player_id => $acoustics->player_id});
@@ -130,8 +134,6 @@ sub start_player {
 	local $SIG{CHLD} = 'IGNORE';
 	local $SIG{USR1} = 'IGNORE';
 	local $SIG{USR2} = 'IGNORE';
-
-	$acoustics->plugin_call('player', 'start_player'); # load the plugins
 
 	$acoustics->get_current_song; # populate the playlist
 
@@ -147,8 +149,7 @@ sub player_loop {
 
 	my $song_start_time = time;
 	my $skipped         = 0;
-	if(-e $song->{path})
-	{
+	if(-e $song->{path}) {
 		$acoustics->queue->song_start($song);
 		my $queue_hint = $acoustics->queue->serialize;
 		$acoustics->query('update_players',
@@ -189,32 +190,34 @@ sub player_loop {
 			my $player = $acoustics->query(
 				'select_players', {player_id => $acoustics->player_id},
 			);
-			$player->{volume}  = 100 if $player->{volume} > 100;
-			$player->{volume} *= .7;
-			WARN "changing volume to $player->{volume}";
-			print $child_in "volume $player->{volume} 1\n";
+			my $volume = $player->{volume};
+			$volume = 100 if $volume > 100;
+			$volume = 0   if $volume < 0;
+			my @vols = $acoustics->ext_hook(COMPONENT, 'volume_change',
+				{player => $player, volume => $volume});
+			$volume = $vols[0];
+			WARN "changing volume to $volume";
+			print $child_in "volume $volume 1\n";
 			print $child_in "get_volume\n";
 		};
 
 		local $SIG{__DIE__} = local $SIG{TERM} = local $SIG{INT} = sub {
 			WARN "Exiting player $$";
 			print $child_in "quit\n";
+			$acoustics->ext_hook(COMPONENT, 'stop',
+				{player => $player, song => $song});
 			$acoustics->query('delete_players', {player_id => $acoustics->player_id});
 			exit;
 		};
 
-		$acoustics->plugin_call('player', 'start_song', $player, $song);
+		$acoustics->ext_hook(COMPONENT, 'song_start',
+			{player => $player, song => $song});
 
 		# loop until mplayer ends
 		while (<$child_out>) {}
 
 		close $child_out; close $child_in;
-
-		my $event = $skipped ? 'skip_song' : 'stop_song';
-		$acoustics->plugin_call('player', $event, $player, $song);
-	}
-	else
-	{
+	} else {
 		ERROR "Song '$song->{path}' is invalid, (not yet) deleting";
 	}
 
@@ -229,6 +232,13 @@ sub player_loop {
 			player_id => $acoustics->player_id,
 		});
 	}
+
+	my $player = $acoustics->query(
+		'select_players', {player_id => $acoustics->player_id},
+	);
+	my $event = $skipped ? 'song_skip' : 'song_stop';
+	$acoustics->ext_hook(COMPONENT, $event,
+		{player => $player, song => $song});
 
 	# Go to the next voter, and remove votes for this song
 	$acoustics->queue->song_stop($song);

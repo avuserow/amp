@@ -10,6 +10,7 @@ use DBI;
 use Log::Log4perl;
 use Date::Parse 'str2time';
 use Config::Tiny;
+use Storable 'dclone';
 use Try::Tiny;
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
@@ -280,32 +281,6 @@ sub test {
 	}
 }
 
-sub plugin_call {
-	my $self      = shift;
-	my $component = shift;
-	my $message   = shift;
-	my @args      = @_;
-
-	die 'component must be "player" currently!' if $component ne 'player';
-	die 'no message sent' unless $message;
-
-	my @plugins = split /\s*,\s*/, $self->config->{$component}{plugins};
-	for my $plugin (@plugins) {
-		next if !$plugin || $plugin =~ /[^\w:]/; # ignore invalid string
-		$component = ucfirst $component;
-		my $class  = "Acoustics::$component\::Plugin::$plugin";
-		try {
-			load $class;
-			my $method = $class->can($message);
-			$method->($self, @args) if $method;
-		} catch {
-			$logger->error("Plugin '$class' is broken: $_");
-			# remove the plugin to supress a large number of errors
-			$self->config->{$component}{plugins} =~ s/$plugin//;
-		};
-	}
-}
-
 sub reinit {
 	my $self = shift;
 
@@ -346,6 +321,88 @@ sub dedupe
 
 
 	return sort {$a->{album} cmp $b->{album}} (sort {$a->{track} <=> $b->{track}} (values %songs));
+}
+
+=head1 EXTENSION SYSTEM
+
+Acoustics provides a system for writing extensions that affect existing
+behavior and add new behavior.
+
+=head2 ext_hook(COMPONENT, 'event', \%parameters)
+
+This method is called when a part of Acoustics wants to provide a hook for an
+extension here. It represents when an event is called.
+
+COMPONENT should be a string that defines your component, such as 'player' or
+'web'. It is recommended that a constant is used for this within your file,
+since it should be consistent.
+
+'event' is a string that defines the event name. This should be unique within
+COMPONENT. Examples of this parameter are 'start' and 'stop' within the player
+component.
+
+COMPONENT and 'event' are joined by an underscore and then used as a function
+name within each plugin. Thus, this must form a valid function name.
+
+This function is called with $acoustics as the first argument, followed by the
+parameters hashref. The parameter hashref's contents vary depending on the
+method calling.
+
+The list of items returned by the extensions are returned in list context. See
+C<ext_return> below.
+
+=cut
+
+{
+my @ext_returns;
+
+sub ext_hook {
+	my $self      = shift;
+	my $component = shift;
+	my $event     = shift;
+	my $params    = shift;
+	$params     ||= {};
+
+	my $routine = join '_', $component, $event;
+
+	my @extensions = split /\s*,\s*/, $self->config->{_}{extensions};
+
+	# Yes, in fact, you can do this. It is only meaningful due to our use of
+	# try/catch below and prevents the player from exiting instantly.
+	local $SIG{__DIE__} = 'IGNORE';
+	for my $ext (@extensions) {
+		my $class = "Acoustics::Extension::$ext";
+		last if try {
+			load $class;
+			my $code = $class->can($routine);
+			my $rv   = $code ? $code->($self, dclone($params)) : undef;
+			
+			# test for our magic value
+			return ref($rv) =~ /Acoustics::INTERNAL::ext_stop/;
+		} catch {
+			$logger->error($_);
+		};
+	}
+
+	my @return = @ext_returns;
+	@ext_returns = ();
+	return @return;
+}
+
+sub ext_return {
+	my $self  = shift;
+	my $value = shift;
+
+	push @ext_returns, $value;
+}
+
+sub ext_stop {
+	my $self = shift;
+
+	# TODO: do this better...
+	bless [], 'Acoustics::INTERNAL::ext_stop';
+}
+
 }
 
 1;
