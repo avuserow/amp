@@ -14,7 +14,7 @@ require_prefix=/path/to/my/music
 [player.default]
 name=default
 player=Acoustics::Player::MPlayer
-plugins= # optional, specify player plugins
+extensions= # optional, specify player plugins
 ## pick one:
 # rpc=Acoustics::RPC::SSH_PrivateKey
 # host=musicalbox
