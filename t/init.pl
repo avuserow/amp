@@ -11,7 +11,6 @@ push @modules, map {"Acoustics::$_"} qw(
 	Web::Auth Web::Auth::Kerberos Web::Auth::Simple
 	Queue Queue::RoundRobin Queue::TimeSlice
 	Player::MPlayer
-	Player::Plugin::LastFM
 	RPC::SSH_PrivateKey RPC::Local RPC::Remctl
 );
 

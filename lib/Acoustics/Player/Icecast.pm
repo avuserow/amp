@@ -8,6 +8,8 @@ use IPC::Open2 'open2';
 use Module::Load 'load';
 use JSON::DWIW ();
 
+use constant COMPONENT => 'player';
+
 sub start {
 	my $class     = shift;
 	my $acoustics = shift;
@@ -100,6 +102,8 @@ sub start_player {
 		volume    => -1,
 	});
 
+	$acoustics->ext_hook(COMPONENT, 'start');
+
 	local $SIG{HUP}  = 'IGNORE';
 	local $SIG{CHLD} = 'IGNORE';
 	local $SIG{USR1} = 'IGNORE';
@@ -114,6 +118,7 @@ sub start_player {
 	local $SIG{__DIE__} = local $SIG{TERM} = local $SIG{INT} = sub {
 		WARN "Exiting player $$";
 		$exit = 1;
+		return;
 	};
 
 	# routine called when the web interface wants us to skip a song. To do this,
@@ -124,13 +129,14 @@ sub start_player {
 		return;
 	};
 
-	# TODO: calling the plugin system in signal handlers sounds like a great way
-	# to introduce a race condition. Need to think about how to handle plugins
-	# with this, since it does not match the pattern of the typical
-	# (MPlayer/VLC) model.
-
 	sleep 1 until $exit;
 	kill TERM => $pid;
+	my $player = $acoustics->query('select_players',
+		{player_id => $acoustics->player_id});
+	my $song = $acoustics->query('select_songs',
+		{song_id => $player->{song_id});
+	$acoustics->ext_hook(COMPONENT, 'stop',
+		{player => $player, song => $song});
 	$acoustics->query('delete_players', {player_id => $acoustics->player_id});
 }
 
