@@ -193,7 +193,7 @@ function updatePlaylist(json)
 		}
 	}
 	list += 'Total Time: '+readableTime(totalTime);
-	goog.dom.$('playlist').innerHTML = buildPlaylist(from_json);
+	goog.dom.$('playlist').innerHTML = buildPlaylist(json_items);
 	fillPurgeDropDown(dropdown);
 }
 
