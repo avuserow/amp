@@ -4,10 +4,12 @@
 		<title>Acoustics</title>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" >
 		<link title="Acoustics" rel="stylesheet" href="www-data/acoustics.css" />
-	<link rel="SHORTCUT ICON" href="www-data/icons/favicon.ico"/>
+		<link rel="SHORTCUT ICON" href="www-data/icons/favicon.ico"/>
 		<script src="www-data/deps-compiled.js"></script>
-		<script src="www-data/acoustics.js"></script>
 		<script src="www-data/sprintf.js"></script>
+		<script src="www-data/mustache.js"></script>
+		<script src="www-data/underscore.js"></script>
+		<script src="www-data/acoustics.js"></script>
 	</head>
 	<body>
 		<div id="container">
@@ -44,16 +46,16 @@
 					<div id="userstats"></div>
 
 					<br />
-				<span id="result_title"></span>
-				<div id="voterand">(<a href="javascript:voteRandom()"><img src="www-data/icons/database_lightning.png" alt="" /> pick one from this list</a>)</div>
+					<span id="result_title"></span>
+					<div id="voterand">(<a href="javascript:voteRandom()"><img src="www-data/icons/database_lightning.png" alt="" /> pick one from this list</a>)</div>
 				</div>
-				</div>
-				<div id="songresults" class="ruled"></div>
-				<div id="voteall"><a href="javascript:voteAll()"><img src="www-data/icons/bomb.png" alt="" /> Vote them all up</a></div>
 			</div>
-			
-			<div id="right" class="column">
-				<div id="nowplaying">
+			<div id="songresults" class="ruled"></div>
+			<div id="voteall"><a href="javascript:voteAll()"><img src="www-data/icons/bomb.png" alt="" /> Vote them all up</a></div>
+		</div>
+
+		<div id="right" class="column">
+			<div id="nowplaying">
 				<div id="currentsong">
 				</div>
 				<div id="playcontrols">
@@ -64,42 +66,42 @@
 					</ul>
 				</div>
 			</div>
-				<img src="www-data/icons/sound.png" alt="" /> volume
-				<div id="volume"></div>
-				<br />
-				<img src="www-data/icons/music.png" alt="" />
-				<form action="" onSubmit="return false" style="display: inline">
-					<select onChange="selectPlaylist(this.value)" id="playlistchooser" name="playlistchooser">
-						<option value="">Queue</option>
-					</select>
-				</form>
-				(<span id="playlist_action"><a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a></span>)
-				<div id="playlist">
-				</div>
-				<br />
-				<br />
-				(<span id="playlist_remove"><a href="javascript:purgeSongs(currentUser)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a></span>)
-				<div id="purgeuser">
-					<form action="" onSubmit="javascript:purgeSongs(this.user.value); return false;">
-						Purge User:
-						<select id="user" size='1'></select>
-						<input type="submit" value="Purge" />
-					</form>
-				</div>
-				<div id="zap">
-					<a href="javascript:zapPlayer()"><img src="www-data/icons/wrench_orange.png" alt="zap" /> Zap The Player</a>
-				</div>
+			<img src="www-data/icons/sound.png" alt="" /> volume
+			<div id="volume"></div>
+			<br />
+			<img src="www-data/icons/music.png" alt="" />
+			<form action="" onSubmit="return false" style="display: inline">
+				<select onChange="selectPlaylist(this.value)" id="playlistchooser" name="playlistchooser">
+					<option value="">Queue</option>
+				</select>
+			</form>
+			(<span id="playlist_action"><a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a></span>)
+			<div id="playlist">
 			</div>
-			<div id="footer"></div>
+			<br />
+			<br />
+			(<span id="playlist_remove"><a href="javascript:purgeSongs(currentUser)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a></span>)
+			<div id="purgeuser">
+				<form action="" onSubmit="javascript:purgeSongs(this.user.value); return false;">
+					Purge User:
+					<select id="user" size='1'></select>
+					<input type="submit" value="Purge" />
+				</form>
+			</div>
+			<div id="zap">
+				<a href="javascript:zapPlayer()"><img src="www-data/icons/wrench_orange.png" alt="zap" /> Zap The Player</a>
+			</div>
 		</div>
-		<script>
-			startPlayerStateTimer();
-			startPlayingTimer();
-			loadRandomSongs(20);
-		</script>
-		<p>Acoustics's code is available at <a
-			href="http://github.com/avuserow/amp">GitHub</a>. Please report
-		bugs to our <a href="http://github.com/avuserow/amp/issues">GitHub
-			issue tracker</a>.</p>
-	</body>
+		<div id="footer"></div>
+	</div>
+	<script>
+		startPlayerStateTimer();
+		startPlayingTimer();
+		loadRandomSongs(20);
+	</script>
+	<p>Acoustics's code is available at <a
+		href="http://github.com/avuserow/amp">GitHub</a>. Please report
+	bugs to our <a href="http://github.com/avuserow/amp/issues">GitHub
+		issue tracker</a>.</p>
+</body>
 </html>

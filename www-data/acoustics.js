@@ -167,32 +167,20 @@ function updateCurrentUser (who) {
 function updatePlaylist(json)
 {
 	var totalTime = 0;
-	list = '<ul>';
 	var dropdown = [];
+	var json_items = [];
 	for (var item in json)
 	{
-		list += '<li>';
-		if (json[item].who && json[item].who.indexOf(currentUser) != -1) {
-			list += '<a title="Remove your vote for this" href="javascript:unvoteSong('
-				+ json[item].song_id
-				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> '
-				+ ' <a title="Vote To Top" href="javascript:voteToTop('
-				+ json[item].song_id
-				+ ')"><img src="www-data/icons/lightning_go.png" '
-				+ 'alt="vote to top" /></a> ';
-		} else {
-			list += '<a title="Vote for this" href="javascript:voteSong('
-				+ json[item].song_id
-				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
-		}
-		title = titleOrPath(json[item]);
-		list += '<a title="See who voted for this" '
-			+ 'href="javascript:getSongDetails('
-			+ qsencode(json[item].song_id) + ')">' + title
-			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
-			+ qsencode(json[item].artist) + '\')">' + json[item].artist
-			+ '</a>&nbsp;('
-			+ readableTime(json[item].length) +') ('+json[item].who.length+')</li>';
+		json_items.push({
+			voted:(json[item].who && json[item].who.indexOf(currentUser) != -1),
+			song_id = json[item].song_id,
+			coded_song_id = qsencode(json[item].song_id),
+			title: titleOrPath(json[item]),
+			artist: json[item].artist,
+			coded_artest: qsencode(json[item].song_id),
+			time: readableTime(json[item].length),
+			voters: json[item].who.length
+		});
 		totalTime = totalTime + parseInt(json[item].length);
 		var voters = [];
 		for (var voter in json[item].who)
@@ -204,11 +192,27 @@ function updatePlaylist(json)
 			}
 		}
 	}
-	list += '</ul>';
 	list += 'Total Time: '+readableTime(totalTime);
-	goog.dom.$('playlist').innerHTML = list;
+	goog.dom.$('playlist').innerHTML = buildPlaylist(from_json);
 	fillPurgeDropDown(dropdown);
 }
+
+function buildPlaylist(json_items) {
+	var list_template =
+	'<li>{{#voted}}<a title="Remove your vote for this" href="javascript:unvoteSong({{song_id}})">'
+	+'<img src="www-data/icons/delete.png" alt="unvote"/></a>'
+	+ '<a title="Vote To Top" href="javascript:voteToTop({{song_id}})">'
+	+ '<img src="www-data/icons/lightning_go.png" alt="vote to top"/></a>{{/voted}}'
+	+ '{{^voted}}<a title="Vote for this" href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a>{{/voted}}'
+	+ '<a title="See who voted for this" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by'
+	+ '<a href="javascript:selectRequest(\'artist\',{{coded_artist}})">{{artist}}</a>'
+	+ '&nbsp;({{time}}) ({{voters}})</li>';
+	var item_to_html = function(item){ return Mustache.to_html(list_item, item) };
+	var rendered_items = { items: _.map(json_items, item_to_html) };
+	var whole_template = '<ul>{{%IMPLICIT-ITERATOR}}{{#items}}{{.}}{{/items}}</ul>';
+	return Mustache.to_html(whole_template,rendered_items);
+}
+
 
 function fillPurgeDropDown(options)
 {
