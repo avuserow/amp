@@ -389,46 +389,37 @@ function showPlaylist(json) {
 }
 
 function updateNowPlaying(json, player, selected_player, players_list) {
-	if (json) {
-		nowPlaying = '';
-		if (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0) {
-			nowPlaying += '<a href="javascript:unvoteSong(' + json.song_id
-				+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> ';
-		} else {
-			nowPlaying += '<a href="javascript:voteSong(' + json.song_id
-				+ ')"><img src="www-data/icons/add.png" alt="vote" /></a> ';
-		}
-		title = titleOrPath(json);
-		nowPlaying += '<a href="javascript:getSongDetails('+json.song_id+')">' + title
-			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
-			+ qsencode(json.artist) + '\')">' + json.artist + '</a>';
-		if (json.album) {
-			nowPlaying += ' (from <a href="javascript:selectRequest(\'album\', \''
-				+ qsencode(json.album) + '\')">' + json.album + '</a>)';
-		}
-		nowPlaying += '&nbsp;('+readableTime(json.length)+')';
-		rem_time = parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
-		if (rem_time < 0) rem_time = 0;
-		nowPlaying += '&nbsp;(<span id="playingTime">'+readableTime(rem_time)+'</span> remaining)';
-	} else {
-		nowPlaying = 'nothing playing';
-	}
+	var json_item = {
+		exist: !!json,
+		song_id: json && json.song_id,
+		voted: json && (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0),
+		title: json && titleOrPath(json),
+		artist: json && json.artist,
+		coded_artist: json && qsencode(json.artist),
+		album: json && json.album,
+		coded_album: json && qsencode(json.album),
+		length: json && readableTime(json.length),
+		remaining: json && function(){ var rem = parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000)); return readableTime((rem < 0) ? 0 : rem) }
+	};
 
-	if (playlist_pane == 0) { // we do not have a playlist selected
-		nowPlaying += '<div><br /><form id="player" action=""> Player: '
-		+ '<select onChange="javascript:changePlayer(this.value); return false;"'
-		+ ' id="player">';
+	var player_model = {
+		pane: (playlist_pane == 0),
+		players: _.map(players_list,function(item){ return ({player: item, selected: (selected_player == item)})})
+	};
 
-		for (var item in players_list) {
-			nowPlaying += '<option value="' + players_list[item] + '"';
-			if (selected_player == players_list[item]) nowPlaying += ' selected="selected"';
-			nowPlaying += '>' + players_list[item] + '</option>';
-		}
+	var now_template =
+	'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="www-data/icons/delete.png" alt="unvote" /></a>{{/voted}}'
+	+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote" /></a>{{/voted}}'
+	+ ' <a href="javascript:getSongDetails({{song_id}})">{{title}}</a> by <a href="javascript:selectRequest(\'artist\'\'{{{coded_artist}}}\')">{{artist}}</a>'
+	+ '{{#album}} (from <a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>){{/album}}'
+	+ '&nbsp;({{length}})&nbsp;(<span id="playingTime">{{remaining}}</span> remaining){{/exist}}{{^exist}}nothing playing{{/exist}}';
 
-		nowPlaying += '</select></form></div>';
-	}
+	var pane_template =
+	'{{#pane}}<div><br /><form id="player" action=""> Player: <select onChange="javascript:changePlayer(this.value); return false;" id="player">'
+	+ '{{#players}}<option value="{{player}}" {{#selected}}selected="selected"{{/selected}}>{{player}}</option>{{/players}}'
+	+ '</select></form></div>{{/pane}}';
 
-	goog.dom.$('currentsong').innerHTML = nowPlaying;
+	goog.dom.$('currentsong').innerHTML = Mustache.to_html(now_template, json_item) + Mustache.to_html(pane_template,player_model);
 	goog.dom.$('zap').innerHTML = '<a href="javascript:zapPlayer(\'' + selected_player + '\')"><img src="www-data/icons/wrench_orange.png" alt="zap"/> Zap The Player</a>';
 }
 
@@ -525,29 +516,36 @@ function getSongDetails(song_id) {
 		jsonSource + '?mode=get_details;song_id='+song_id,
 		function() {
 			var json = this.getResponseJson().song;
-			var table = '<table id="result_table"><thead><tr><th>Vote</th>'
-				+ '<th>Track</th><th>Title</th><th>Album</th><th>Artist</th>'
-				+ '<th>Length</th></tr></thead><tbody>'
-				+ '<tr><td style="text-align: center"><a href="javascript:voteSong('
-				+ json.song_id + ')"><img src="www-data/icons/add.png" alt="vote" />'
-				+ '</a></td><td>' + json.track + '</td><td>'
-				+ '<a href="javascript:selectRequest(\'title\', \''
-				+ qsencode(json.title) + '\')">' + json.title + '</a>'+lastLinkSong(json.artist, json.title)+wikiLinkSong(json.title)+'</td><td>'
-				+ '<a href="javascript:selectRequest(\'album\', \''
-				+ qsencode(json.album) + '\')">' + json.album + '</a>'+lastLinkAlbum(json.artist, json.album)+wikiLinkAlbum(json.album)+'</td><td>'
-				+ '<a href="javascript:selectRequest(\'artist\', \''
-				+ qsencode(json.artist) + '\')">' + json.artist + '</a>'+lastLinkArtist(json.artist)+wikiLinkArtist(json.artist)+'</td><td>'
-				+ readableTime(json.length) + '</td></tr>'
-				+ '<tr><th colspan=2>Path:</th><td colspan=4>'
-				+ json.path + '</td></tr>'
-				+ '<tr><th colspan=2>Voters:</th><td colspan=4>';
-			if (json.who.length) {
-				for(var who in json.who) table += '<a href=javascript:loadVotesFromVoter("' + json.who[who] + '")>' + json.who[who] + '</a>&nbsp;';
-			} else {
-				table += 'no one';
-			}
-			table += "</td></tr></tbody></table>";
-			goog.dom.$('songresults').innerHTML = table;
+			var table_template =
+			'<table id="result_table"><thead><tr><th>Vote</th><th>Track</th><th>Title</th><th>Album</th>'
+			+ '<th>Artist</th><th>Length</th></tr></thead><tbody>{{#items}}{{{.}}}{{/items}}</tbody></table>';
+			var row_template =
+			'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a></td>'
+			+ '<td>{{track}}</td><td><a href="javascript:selectRequest(\'title\',\'{{{coded_title}}}\')">{{title}}</a>{{{last_song}}}{{{wiki_song}}}</td>'
+			+ '<td><a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>{{{last_album}}}{{{wiki_album}}}</td>'
+			+ '<td><a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>{{{last_artist}}}{{{wiki_artist}}}</td>'
+			+ '<td>{{time}}</td></tr><tr><th colspan=2>Path:</th><td colspan=4>{{path}}</td></tr>'
+			+ '<tr><th colspan=2>Voters:</th><td colspan=4>{{#voters}}<a href=javascript:loadVotesFromVoter("{{.}}")>{{.}}</a>&nbsp;{{/voters}}{{^voters}}no one{{/voters}}</td></tr>';
+			var json_item = {
+				track: json.track,
+				song_id: json.song_id,
+				title: json.title,
+				coded_title: qsencode(json.title),
+				last_song: lastLinkSong(json.artist, json.title),
+				wiki_song: wikiLinkSong(json.title),
+				album: json.album,
+				coded_album: qsencode(json.album),
+				last_album: lastLinkAlbum(json.artist, json.album),
+				wiki_album: wikiLinkAlbum(json.album),
+				artist: json.artist,
+				coded_artist: qsencode(json.artist),
+				last_artist: lastLinkArtist(json.artist),
+				wiki_artist: wikiLinkArtist(json.artist),
+				time: readableTime(json.length),
+				path: json.path,
+				voters: json.who
+			};
+			goog.dom.$('songresults').innerHTML = tableBuilder(table_template, row_template, [json_item]);
 			goog.dom.$('result_title').innerHTML = "Details for this song";
 			hideVoting();
 		}
@@ -556,16 +554,21 @@ function getSongDetails(song_id) {
 
 function fillHistoryTable(json) {
 	this.songIDs = [];
-	var table = '<table id="result_table"><thead><tr><th>Vote</th><th>Name</th><th>Played at</th></tr></thead>';
+	var json_items = [];
+	var table_template = '<table id="result_table"><thead><tr><th>Vote</th><th>Name</th><th>Played at</th></tr></thead><tbody>{{#items}}{{{.}}}{{/items}}</tbody></table>';
+	var row_template =
+	'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png alt=""/></a></td>'
+	+ '<td><a href="javascript:getSongDetails({{song_id}})">{{pretty_name}}</a></td><td>{{time}}</td></tr>';
 	for (var item in json)
 	{
-		table += '<tr><td style="text-align: center">'
-		+		 '<a href="javascript:voteSong('+json[item].song_id+')"><img src="www-data/icons/add.png" alt=""/></a>'
-		+		 '</td><td><a href="javascript:getSongDetails('+json[item].song_id+')">'+json[item].pretty_name+'</a></td><td>'+json[item].time+'</td></tr>';
+		json_items.push({
+			song_id: json[item].song_id,
+			pretty_name: json[item].pretty_name,
+			time: json[item].time
+		});
 		this.songIDs.push(json[item].song_id);
 	}
-	table += '</table>';
-	goog.dom.$('songresults').innerHTML = table;
+	goog.dom.$('songresults').innerHTML = tableBuilder(table_template, row_template, json_items);
 }
 
 function fillStatsTable(json) {
