@@ -134,7 +134,7 @@ sub start_player {
 	my $player = $acoustics->query('select_players',
 		{player_id => $acoustics->player_id});
 	my $song = $acoustics->query('select_songs',
-		{song_id => $player->{song_id});
+		{song_id => $player->{song_id}});
 	$acoustics->ext_hook(COMPONENT, 'stop',
 		{player => $player, song => $song});
 	$acoustics->query('delete_players', {player_id => $acoustics->player_id});
