@@ -389,6 +389,8 @@ function showPlaylist(json) {
 }
 
 function updateNowPlaying(json, player, selected_player, players_list) {
+	rem_time = json && parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
+	if (rem_time < 0) rem_time = 0;
 	var json_item = {
 		exist: !!json,
 		song_id: json && json.song_id,
@@ -399,12 +401,12 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 		album: json && json.album,
 		coded_album: json && qsencode(json.album),
 		length: json && readableTime(json.length),
-		remaining: json && function(){ var rem = parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000)); return readableTime((rem < 0) ? 0 : rem) }
+		remaining: readableTime(rem_time)
 	};
 
 	var player_model = {
 		pane: (playlist_pane == 0),
-		players: _.map(players_list,function(item){ return ({player: item, selected: (selected_player == item)})})
+		players: _.map(players_list,function(item){ return { player: item, selected: (selected_player == item) } })
 	};
 
 	var now_template =
