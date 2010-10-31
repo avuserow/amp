@@ -177,7 +177,7 @@ function updatePlaylist(json)
 			coded_song_id : qsencode(json[item].song_id),
 			title: titleOrPath(json[item]),
 			artist: json[item].artist,
-			coded_artest: qsencode(json[item].song_id),
+			coded_artist: qsencode(json[item].artist),
 			time: readableTime(json[item].length),
 			voters: json[item].who.length
 		});
@@ -198,8 +198,8 @@ function updatePlaylist(json)
 	+ '<a title="Vote To Top" href="javascript:voteToTop({{song_id}})">'
 	+ '<img src="www-data/icons/lightning_go.png" alt="vote to top"/></a>{{/voted}}'
 	+ '{{^voted}}<a title="Vote for this" href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a>{{/voted}}'
-	+ '&nbsp;<a title="See who voted for this" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by '
-	+ '<a href="javascript:selectRequest(\'artist\',{{coded_artist}})">{{artist}}</a>'
+	+ '&nbsp;<a title="See who voted for this" href="javascript:getSongDetails({{{coded_song_id}}})">{{title}}</a> by '
+	+ '<a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>'
 	+ '&nbsp;({{time}}) ({{voters}})</li>';
 	var whole_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
 	var time = 'Total Time: '+readableTime(totalTime);
@@ -371,7 +371,7 @@ function showPlaylist(json) {
 	'<li><a title="Remove from your playlist" href="javascript:unvoteSong({{song_id}})">'
 	+ '<img src="www-data/icons/delete.png" alt="unvote" /></a> '
 	+ '<a title="View Song Details" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by '
-	+ '<a href="javascript:selectRequest(\'artist\', \'{{coded_artist}}\')">{{artist}}</a>&nbsp;({{time}})';
+	+ '<a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a>&nbsp;({{time}})';
 	var json_items = [];
 	for (var item in json) {
 		json_items.push({
@@ -519,17 +519,6 @@ function loadVotesFromVoter(voter){
 	);
 }
 
-function browseSongs(field)
-{
-	goog.net.XhrIo.send(
-			jsonSource + '?mode=browse;field=' + field,
-			function () {
-				goog.dom.$('result_title').innerHTML = 'Browse by ' + field;
-				fillResultList(this.getResponseJson(), field);
-			}
-	);
-}
-
 function getSongDetails(song_id) {
 	this.songIDs = [song_id];
 	goog.net.XhrIo.send(
@@ -565,17 +554,6 @@ function getSongDetails(song_id) {
 	);
 }
 
-function fillResultList(json, field) {
-	list = '<ul>';
-	for (var item in json) {
-		list += '<li><a href="javascript:selectRequest(\'' + field
-			+ '\',\'' + qsencode(json[item]) + '\')">'
-			+ json[item] + '</a></li>';
-	}
-	list += '</ul>';
-	goog.dom.$('songresults').innerHTML = list;
-}
-
 function fillHistoryTable(json) {
 	this.songIDs = [];
 	var table = '<table id="result_table"><thead><tr><th>Vote</th><th>Name</th><th>Played at</th></tr></thead>';
@@ -591,44 +569,53 @@ function fillHistoryTable(json) {
 }
 
 function fillStatsTable(json) {
-	table = '<table id="result_table">'
-			+'<tr><th>Total Songs</th><td>'+json.total_songs+'</td></tr>'
-			+'<tr><th colspan=2>Most Played Artists:</th></tr>';
-			for(var item in json.top_artists)
-			{
-				table += '<tr><td>'+'<a href="javascript:selectRequest(\'artist\',\'' + json.top_artists[item].artist +'\')">' + json.top_artists[item].artist + '</a></td><td>'+json.top_artists[item].count+'</td></tr>'
-			}
-			table +='</table>';
-	goog.dom.$('songresults').innerHTML = table;
+	var table_template = '<table id="result_table">'
+			+'<tr><th>Total Songs</th><td>{{total_songs}}</td></tr>'
+			+'<tr><th colspan=2>Most Played Artists:</th></tr>{{#items}}{{{.}}}{{/items}}</table>';
+	var row_template = '<tr><td><a href="javascript:selectRequest(\'artist\',{{{artist}}})">{{artist}}</a></td><td>{{count}}</td><tr>';
+	var json_items = [];
+	for(var item in json.top_artists)
+	{
+		json_items.push({
+			artist: json.top_artists[item].artist,
+			count: json.top_artists[item].count
+		});
+	}
+	goog.dom.$('songresults').innerHTML = tableBuilder(table_template, row_template, json_items);
 	goog.dom.$('userstats').innerHTML = "";
 }
 
 function fillResultTable(json) {
 	this.songIDs = [];
-	table = '<table id="result_table"><thead><tr><th>vote</th>'
-		+  '<th>Track</th>'
-		+  '<th>Title</th>'
-		+  '<th>Album</th>'
-		+  '<th>Artist</th><th>Length</th></tr></thead><tbody>';
+	var json_items = [];
+	var table_template =
+	'<table id="result_table"><thead><tr><th>vote</th>'
+	+ '<th>Track</th>'
+	+ '<th>Title</th>'
+	+ '<th>Album</th>'
+	+ '<th>Artist</th><th>Length</th></tr></thead><tbody>'
+	+ '{{#items}}{{{.}}}{{/items}}</tbody></table>';
+	var row_template =
+	'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})">'
+	+ '<img src="www-data/icons/add.png" alt=vote"/></a></td>'
+	+ '<td>{{track}}</td><td class="datacol"><a href="javascript:getSongDetails({{song_id}})">{{title}}</a></td>'
+	+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \'{{{coded_album}}}\')">{{album}}</a></td>'
+	+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a></td>'
+	+ '<td>{{time}}</td></tr>';
 	for (var item in json) {
-		title = titleOrPath(json[item]);
-		table += '<tr>'
-		+ '<td style="text-align: center"><a href="javascript:voteSong('
-		+ json[item].song_id
-		+ ')"><img src="www-data/icons/add.png" alt="vote" /></a></td>'
-		+ '<td>' + json[item].track + '</td>'
-		+ '<td class="datacol"><a href="javascript:getSongDetails('
-		+ json[item].song_id + ')">' + title + '</a></td>'
-		+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \''
-		+ qsencode(json[item].album) + '\')">' + json[item].album + '</a></td>'
-		+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \''
-		+ qsencode(json[item].artist) + '\')">' + json[item].artist + '</a></td>'
-		+ '<td>'+readableTime(json[item].length)+'</td>'
-		+ '</tr>';
+		json_items.push({
+			title: titleOrPath(json[item]),
+			song_id: json[item].song_id,
+			track: json[item].track,
+			album: json[item].album,
+			coded_album: qsencode(json[item].album),
+			artist: json[item].artist,
+			coded_artist: qsencode(json[item].artist),
+			time: readableTime(json[item].length)
+		});
 		this.songIDs.push(json[item].song_id);
 	};
-	table += '</tbody></table>';
-	goog.dom.$('songresults').innerHTML = table;
+	goog.dom.$('songresults').innerHTML = tableBuilder(table_template, row_template, json_items);
 
 	var component = new goog.ui.TableSorter();
 	component.decorate(goog.dom.$('result_table'));
