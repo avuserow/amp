@@ -173,8 +173,8 @@ function updatePlaylist(json)
 	{
 		json_items.push({
 			voted:(json[item].who && json[item].who.indexOf(currentUser) != -1),
-			song_id = json[item].song_id,
-			coded_song_id = qsencode(json[item].song_id),
+			song_id : json[item].song_id,
+			coded_song_id : qsencode(json[item].song_id),
 			title: titleOrPath(json[item]),
 			artist: json[item].artist,
 			coded_artest: qsencode(json[item].song_id),
@@ -192,27 +192,20 @@ function updatePlaylist(json)
 			}
 		}
 	}
-	list += 'Total Time: '+readableTime(totalTime);
-	goog.dom.$('playlist').innerHTML = buildPlaylist(json_items);
-	fillPurgeDropDown(dropdown);
-}
-
-function buildPlaylist(json_items) {
 	var list_template =
 	'<li>{{#voted}}<a title="Remove your vote for this" href="javascript:unvoteSong({{song_id}})">'
-	+'<img src="www-data/icons/delete.png" alt="unvote"/></a>'
+	+'<img src="www-data/icons/delete.png" alt="unvote"/></a>&nbsp;'
 	+ '<a title="Vote To Top" href="javascript:voteToTop({{song_id}})">'
 	+ '<img src="www-data/icons/lightning_go.png" alt="vote to top"/></a>{{/voted}}'
 	+ '{{^voted}}<a title="Vote for this" href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a>{{/voted}}'
-	+ '<a title="See who voted for this" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by'
+	+ '&nbsp;<a title="See who voted for this" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by '
 	+ '<a href="javascript:selectRequest(\'artist\',{{coded_artist}})">{{artist}}</a>'
 	+ '&nbsp;({{time}}) ({{voters}})</li>';
-	var item_to_html = function(item){ return Mustache.to_html(list_item, item) };
-	var rendered_items = { items: _.map(json_items, item_to_html) };
-	var whole_template = '<ul>{{%IMPLICIT-ITERATOR}}{{#items}}{{.}}{{/items}}</ul>';
-	return Mustache.to_html(whole_template,rendered_items);
+	var whole_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
+	var time = 'Total Time: '+readableTime(totalTime);
+	goog.dom.$('playlist').innerHTML = tableBuilder(whole_template, list_template, json_items) + time;
+	fillPurgeDropDown(dropdown);
 }
-
 
 function fillPurgeDropDown(options)
 {
@@ -373,23 +366,26 @@ function enqueuePlaylist () {
 
 function showPlaylist(json) {
 	var totalTime = 0;
-	var list = '<ul>';
+	var playlist_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
+	var item_template =
+	'<li><a title="Remove from your playlist" href="javascript:unvoteSong({{song_id}})">'
+	+ '<img src="www-data/icons/delete.png" alt="unvote" /></a> '
+	+ '<a title="View Song Details" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by '
+	+ '<a href="javascript:selectRequest(\'artist\', \'{{coded_artist}}\')">{{artist}}</a>&nbsp;({{time}})';
+	var json_items = [];
 	for (var item in json) {
-		title = titleOrPath(json[item]);
-		list += '<li>'
-			+ '<a title="Remove from your playlist" href="javascript:unvoteSong('
-			+ json[item].song_id
-			+ ')"><img src="www-data/icons/delete.png" alt="unvote" /></a> '
-			+ '<a title="View Song Details" href="javascript:getSongDetails('
-			+ qsencode(json[item].song_id) + ')">' + title
-			+ '</a> by <a href="javascript:selectRequest(\'artist\', \''
-			+ qsencode(json[item].artist) + '\')">' + json[item].artist
-			+ '</a>&nbsp;(' + readableTime(json[item].length) +')';
+		json_items.push({
+			title: titleOrPath(json[item]),
+			song_id: json[item].song_id,
+			coded_song_id: qsencode(json[item].song_id),
+			artist: json[item].artist,
+			coded_artist: qsencode(json[item].artist),
+			time: readableTime(json[item].length)
+		});
 		totalTime += parseInt(json[item].length);
 	}
-	list += '</ul>';
-	list += 'Total Time: '+readableTime(totalTime);
-	goog.dom.$('playlist').innerHTML = list;
+	var time = 'Total Time: '+readableTime(totalTime);
+	goog.dom.$('playlist').innerHTML = tableBuilder(playlist_template, item_template, json_items) + time;
 }
 
 function updateNowPlaying(json, player, selected_player, players_list) {
@@ -640,6 +636,12 @@ function fillResultTable(json) {
 	component.setSortFunction(1, goog.ui.TableSorter.numericSort);
 	component.setSortFunction(5, timeSorter);
 }
+
+/* table_template should contain {{#items}}{{{.}}}{{/items}} */
+function tableBuilder(table_template, row_template, items) {
+	var rendered_items = { items: _.map(items, function(item){ return Mustache.to_html(row_template, item) }) };
+	return Mustache.to_html(table_template,rendered_items);
+};
 
 timeSorter = function(a, b) {
 	var a_ = a.split(":");
