@@ -1,15 +1,13 @@
-goog.require('goog.net.XhrIo');
 goog.require('goog.ui.TableSorter');
 goog.require('goog.ui.Slider');
 goog.require('goog.ui.Component');
-goog.require('goog.Throttle');
-goog.require('goog.Timer');
-goog.require('goog.async.Delay');
 
 playlist_pane = 0;
 vc_modifiable = false;
 currentUser = '';
 rem_time = 0;
+stateTimer = 0;
+playingTimer = 0;
 jsonSource = '/acoustics/json.pl';
 
 if (typeof $ !== "function") {
@@ -100,9 +98,8 @@ function selectRequest(field, value)
 }
 
 function startPlayingTimer() {
-	var tim = new goog.Timer(1000);
-	tim.start();
-	goog.events.listen(tim, goog.Timer.TICK, function () {updatePlayingTime()});
+	if (playingTimer) clearInterval(playingTimer);
+	playingTimer = setInterval(function() { updatePlayingTime() }, 1000);
 }
 
 function statsRequest(who)
@@ -125,9 +122,8 @@ function updatePlayingTime()
 
 function startPlayerStateTimer () {
 	playerStateRequest();
-	var timer = new goog.Timer(15000);
-	timer.start();
-	goog.events.listen(timer, goog.Timer.TICK, function () {playerStateRequest()});
+	if (stateTimer) clearInterval(stateTimer);
+	stateTimer = setInterval(function() { playerStateRequest() }, 15000);
 }
 
 function playerStateRequest () {
@@ -634,7 +630,7 @@ function tableBuilder(table_template, row_template, items) {
 	return Mustache.to_html(table_template,rendered_items);
 };
 
-timeSorter = function(a, b) {
+function timeSorter (a, b) {
 	var a_ = a.split(":");
 	a = 0;
 	for (var i=0; i<a_.length; i++) {
