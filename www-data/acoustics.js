@@ -1,7 +1,3 @@
-goog.require('goog.ui.TableSorter');
-goog.require('goog.ui.Slider');
-goog.require('goog.ui.Component');
-
 playlist_pane = 0;
 vc_modifiable = false;
 currentUser = '';
@@ -589,7 +585,7 @@ function fillResultTable(json) {
 	this.songIDs = [];
 	var json_items = [];
 	var table_template =
-	'<table id="result_table"><thead><tr><th>vote</th>'
+	'<table id="result_table" class="tablesorter"><thead><tr><th>vote</th>'
 	+ '<th>Track</th>'
 	+ '<th>Title</th>'
 	+ '<th>Album</th>'
@@ -617,31 +613,13 @@ function fillResultTable(json) {
 	};
 	$('songresults').innerHTML = tableBuilder(table_template, row_template, json_items);
 
-	var component = new goog.ui.TableSorter();
-	component.decorate($('result_table'));
-	component.setDefaultSortFunction(goog.ui.TableSorter.alphaSort);
-	component.setSortFunction(1, goog.ui.TableSorter.numericSort);
-	component.setSortFunction(5, timeSorter);
+	jQuery("#result_table").tablesorter();
 }
 
 /* table_template should contain {{#items}}{{{.}}}{{/items}} */
 function tableBuilder(table_template, row_template, items) {
 	var rendered_items = { items: _.map(items, function(item){ return Mustache.to_html(row_template, item) }) };
 	return Mustache.to_html(table_template,rendered_items);
-};
-
-function timeSorter (a, b) {
-	var a_ = a.split(":");
-	a = 0;
-	for (var i=0; i<a_.length; i++) {
-		a = a * 100 + parseFloat(a_[i]);
-	}
-	a_ = b.split(":");
-	b = 0;
-	for (var i=0; i<a_.length; i++) {
-		b = b * 100 + parseFloat(a_[i]);
-	}
-	return parseFloat(a) - parseFloat(b);
 };
 
 function voteSong(song_id) {
