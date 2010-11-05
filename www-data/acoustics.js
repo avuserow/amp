@@ -269,9 +269,7 @@ function playlistRequest (who) {
 			$('#result_title').html((who === "" ? "All" : who + "'s") + " playlists");
 			var list_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
 			var item_template = '<li><a href="javascript:playlistTableRequest({{playlist_id}},\'{{{codedtitle}}}\')">{{title}}</a> by {{who}}</li>';
-			for (var i = 0; i < json.length; i++) {
-				json[i].codedtitle = qsencode(json[i].title);
-			}
+			_.each(json, function(item) { item.codedtitle = qsencode(item.title) });
 			$('#songresults').html(tableBuilder(list_template, item_template, json));
 		}
 	);
