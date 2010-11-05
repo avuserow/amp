@@ -268,7 +268,10 @@ function playlistRequest (who) {
 			hideVoting();
 			$('#result_title').html((who === "" ? "All" : who + "'s") + " playlists");
 			var list_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
-			var item_template = '<li><a href="javascript:playlistTableRequest({{playlist_id}},\'{{title}}\')">{{title}}</a> by {{who}}</li>';
+			var item_template = '<li><a href="javascript:playlistTableRequest({{playlist_id}},\'{{{codedtitle}}}\')">{{title}}</a> by {{who}}</li>';
+			for (var i = 0; i < json.length; i++) {
+				json[i].codedtitle = qsencode(json[i].title);
+			}
 			$('#songresults').html(tableBuilder(list_template, item_template, json));
 		}
 	);
