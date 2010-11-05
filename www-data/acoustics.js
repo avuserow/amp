@@ -693,12 +693,12 @@ function updateVolumeScale(volume) {
 }
 
 function qsencode(str) {
-	str = str.replace(/\\/, '\\\\');
-	str = str.replace(/\'/, '\\\'');
-	str = str.replace(/\"/, '\\\"');
-	str = str.replace('&', '%2526');
-	str = str.replace('+', '%252B');
-	str = str.replace('#', '%2523');
+	str = str.replace(/\\/g, '\\\\');
+	str = str.replace(/\'/g, '\\\'');
+	str = str.replace(/\"/g, '\\\"');
+	str = str.replace(/&/g, '%2526');
+	str = str.replace(/\+/g, '%252B');
+	str = str.replace(/#/g, '%2523');
 	return str;
 }
 
