@@ -194,7 +194,7 @@ sub player_loop {
 			$volume = 0   if $volume < 0;
 			my @vols = $acoustics->ext_hook(COMPONENT, 'volume_change',
 				{player => $player, volume => $volume});
-			$volume = $vols[0];
+			$volume = $vols[0] if @vols;
 			WARN "changing volume to $volume";
 			print $child_in "volume $volume 1\n";
 			print $child_in "get_volume\n";
