@@ -120,7 +120,7 @@ sub start_player {
 	$acoustics->query('insert_players', {
 		player_id => $acoustics->player_id,
 		local_id  => $$,
-		volume    => -1,
+		volume    => 20,
 	});
 
 	$acoustics->ext_hook(COMPONENT, 'start');
@@ -165,7 +165,6 @@ sub player_loop {
 		my $player = $acoustics->query(
 			'select_players', {player_id => $acoustics->player_id},
 		);
-		$player->{volume} ||= -1;
 
 		# General plan: open both input and output of the mplayer process
 		# then continually read from input so we know it's still running
