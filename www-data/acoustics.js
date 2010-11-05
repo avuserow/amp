@@ -129,10 +129,10 @@ function handlePlayerStateRequest (json) {
 	if (json.who) updateCurrentUser(json.who);
 
 	// skip link
-	if (json.can_skip) $('#skip_link').hide();
+	if (json.can_skip) $('#skip_link').show();
 	else $('#skip_link').hide();
 	// Admin Dequeue && zap
-	if (json.is_admin){
+	if (json.is_admin) {
 		$('#purgeuser').show();
 		$('#zap').show();
 	}
