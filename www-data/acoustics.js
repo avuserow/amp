@@ -605,14 +605,27 @@ function fillResultTable(json) {
 	};
 	$('#songresults').html(tableBuilder(table_template, row_template, json_items));
 
-	$("#result_table").tablesorter();
+	$("#result_table").tablesorter({
+		headers: {
+			5: {
+				sorter: 'sortbytime'
+			}
+		}
+	});
 }
+
+$.tablesorter.addParser({
+	id: 'sortbytime',
+	is: function(){return false},
+	format: function(s) { return _.reduce(s.split(":"), function(memo, num){ return memo*60 + parseFloat(num) }, 0) },
+	type: 'numeric'
+});
 
 /* table_template should contain {{#items}}{{{.}}}{{/items}} */
 function tableBuilder(table_template, row_template, items) {
 	var rendered_items = { items: _.map(items, function(item){ return Mustache.to_html(row_template, item) }) };
 	return Mustache.to_html(table_template,rendered_items);
-};
+}
 
 function voteSong(song_id) {
 	if (!currentUser) {
