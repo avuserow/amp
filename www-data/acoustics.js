@@ -560,7 +560,7 @@ function fillStatsTable(json) {
 	var table_template = '<table id="result_table">'
 			+'<tr><th>Total Songs</th><td>{{total_songs}}</td></tr>'
 			+'<tr><th colspan=2>Most Played Artists:</th></tr>{{#items}}{{{.}}}{{/items}}</table>';
-	var row_template = '<tr><td><a href="javascript:selectRequest(\'artist\',{{{artist}}})">{{artist}}</a></td><td>{{count}}</td><tr>';
+	var row_template = '<tr><td><a href="javascript:selectRequest(\'artist\',\'{{{artist}}}\')">{{artist}}</a></td><td>{{count}}</td><tr>';
 	var json_items = [];
 	for(var item in json.top_artists)
 	{
