@@ -159,30 +159,25 @@ function updatePlaylist(json)
 {
 	var totalTime = 0;
 	var dropdown = [];
-	var json_items = [];
-	for (var item in json)
-	{
-		json_items.push({
-			voted:(json[item].who && json[item].who.indexOf(currentUser) != -1),
-			song_id : json[item].song_id,
-			coded_song_id : qsencode(json[item].song_id),
-			title: titleOrPath(json[item]),
-			artist: json[item].artist,
-			coded_artist: qsencode(json[item].artist),
-			time: readableTime(json[item].length),
-			voters: json[item].who.length
-		});
-		totalTime = totalTime + parseInt(json[item].length);
-		var voters = [];
-		for (var voter in json[item].who)
-		{
-			var index = json[item].who[voter];
-			if (dropdown.indexOf(index) == -1)
+	var json_items = _.map(json, function(item) {
+		_.every(item.who, function(voter) {
+			if (dropdown.indexOf(voter) == -1)
 			{
-				dropdown.push(index);
+				dropdown.push(voter);
 			}
+		});
+		totalTime = totalTime + parseInt(item.length);
+		return {
+			voted:(item.who && item.who.indexOf(currentUser) != -1),
+			song_id : item.song_id,
+			coded_song_id : qsencode(item.song_id),
+			title: titleOrPath(item),
+			artist: item.artist,
+			coded_artist: qsencode(item.artist),
+			time: readableTime(item.length),
+			voters: item.who.length
 		}
-	}
+	});
 	var list_template =
 	'<li>{{#voted}}<a title="Remove your vote for this" href="javascript:unvoteSong({{song_id}})">'
 	+'<img src="www-data/icons/delete.png" alt="unvote"/></a>&nbsp;'
@@ -355,18 +350,17 @@ function showPlaylist(json) {
 	+ '<img src="www-data/icons/delete.png" alt="unvote" /></a> '
 	+ '<a title="View Song Details" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by '
 	+ '<a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a>&nbsp;({{time}})';
-	var json_items = [];
-	for (var item in json) {
-		json_items.push({
-			title: titleOrPath(json[item]),
-			song_id: json[item].song_id,
-			coded_song_id: qsencode(json[item].song_id),
-			artist: json[item].artist,
-			coded_artist: qsencode(json[item].artist),
-			time: readableTime(json[item].length)
-		});
-		totalTime += parseInt(json[item].length);
-	}
+	var json_items = _.map(json, function(item) {
+		totalTime += parseInt(item.length);
+		return {
+			title: titleOrPath(item),
+			song_id: item.song_id,
+			coded_song_id: qsencode(item.song_id),
+			artist: item.artist,
+			coded_artist: qsencode(item.artist),
+			time: readableTime(item.length)
+		}
+	});
 	var time = 'Total Time: '+readableTime(totalTime);
 	$('#playlist').html(tableBuilder(playlist_template, item_template, json_items) + time);
 }
@@ -560,22 +554,14 @@ function fillStatsTable(json) {
 	var table_template = '<table id="result_table">'
 			+'<tr><th>Total Songs</th><td>{{total_songs}}</td></tr>'
 			+'<tr><th colspan=2>Most Played Artists:</th></tr>{{#items}}{{{.}}}{{/items}}</table>';
-	var row_template = '<tr><td><a href="javascript:selectRequest(\'artist\',\'{{{artist}}}\')">{{artist}}</a></td><td>{{count}}</td><tr>';
-	var json_items = [];
-	for(var item in json.top_artists)
-	{
-		json_items.push({
-			artist: json.top_artists[item].artist,
-			count: json.top_artists[item].count
-		});
-	}
+	var row_template = '<tr><td><a href="javascript:selectRequest(\'artist\',\'{{artist}}\')">{{artist}}</a></td><td>{{count}}</td><tr>';
+	var json_items = _.map(json.top_artists, function(item) { return { artist: item.artist, count: item.count } });
 	$('#songresults').html(tableBuilder(table_template, row_template, json_items));
 	$('#userstats').html("");
 }
 
 function fillResultTable(json) {
 	this.songIDs = [];
-	var json_items = [];
 	var table_template =
 	'<table id="result_table" class="tablesorter"><thead><tr><th>vote</th>'
 	+ '<th>Track</th>'
@@ -590,19 +576,20 @@ function fillResultTable(json) {
 	+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \'{{{coded_album}}}\')">{{album}}</a></td>'
 	+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a></td>'
 	+ '<td>{{time}}</td></tr>';
-	for (var item in json) {
-		json_items.push({
-			title: titleOrPath(json[item]),
-			song_id: json[item].song_id,
-			track: json[item].track,
-			album: json[item].album,
-			coded_album: qsencode(json[item].album),
-			artist: json[item].artist,
-			coded_artist: qsencode(json[item].artist),
-			time: readableTime(json[item].length)
+	var json_items = _.map(json,
+		function(item) {
+			this.songIDs.push(item.song_id);
+			return {
+				title: titleOrPath(item),
+				song_id: item.song_id,
+				track: item.track,
+				album: item.album,
+				coded_album: qsencode(item.album),
+				artist: item.artist,
+				coded_artist: qsencode(item.artist),
+				time: readableTime(item.length)
+			}
 		});
-		this.songIDs.push(json[item].song_id);
-	};
 	$('#songresults').html(tableBuilder(table_template, row_template, json_items));
 
 	$("#result_table").tablesorter({
