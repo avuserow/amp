@@ -9,11 +9,12 @@ Features
 
 - Modularized Design
     - The player, indexer, and website can all be on different machines, or in one.
+    - Multiple player support
     - Extensible plugin system (*under heavy development*)
     - Backends for Mplayer and Icecast (*more to come maybe*)
     - MySQL backend (*Postgres and SQLite planned to come*)
     - Multiple authentication schemes
-    - Runs on anything with a CGI layer (*Apache, lighttpd, nginx*), with either mod\_cgi or fastcgi
+    - Runs on anything with a CGI layer (*Apache, lighttpd, nginx, Cherokee*), with either mod\_cgi or fastcgi
 
 - Multiplayer Voting
     - Vote up songs others have voted for
