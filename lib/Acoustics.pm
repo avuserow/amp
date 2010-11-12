@@ -3,6 +3,8 @@ package Acoustics;
 use strict;
 use warnings;
 
+our $VERSION = '0.01';
+
 use Acoustics::Database;
 use Mouse;
 use Module::Load 'load';
