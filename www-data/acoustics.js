@@ -5,6 +5,69 @@ rem_time = 0;
 stateTimer = 0;
 playingTimer = 0;
 jsonSource = '/acoustics/json.pl';
+templates = {
+	updatePlaylist: {
+		list_template:
+		'<li>{{#voted}}<a title="Remove your vote for this" href="javascript:unvoteSong({{song_id}})">'
+		+'<img src="www-data/icons/delete.png" alt="unvote"/></a>&nbsp;'
+		+ '<a title="Vote To Top" href="javascript:voteToTop({{song_id}})">'
+		+ '<img src="www-data/icons/lightning_go.png" alt="vote to top"/></a>{{/voted}}'
+		+ '{{^voted}}<a title="Vote for this" href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a>{{/voted}}'
+		+ '&nbsp;<a title="See who voted for this" href="javascript:getSongDetails({{{coded_song_id}}})">{{title}}</a> by '
+		+ '<a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>'
+		+ '&nbsp;({{time}}) ({{voters}})</li>',
+		whole_template:'<ul>{{#items}}{{{.}}}{{/items}}</ul>'
+	},
+	showPlaylist: {
+		playlist_template: '<ul>{{#items}}{{{.}}}{{/items}}</ul>',
+		item_template:
+		'<li><a title="Remove from your playlist" href="javascript:unvoteSong({{song_id}})">'
+		+ '<img src="www-data/icons/delete.png" alt="unvote" /></a> '
+		+ '<a title="View Song Details" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by '
+		+ '<a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a>&nbsp;({{time}})'
+	},
+	updateNowPlaying: {
+		now_template:
+		'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="www-data/icons/delete.png" alt="unvote" /></a>{{/voted}}'
+		+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote" /></a>{{/voted}}'
+		+ ' <a href="javascript:getSongDetails({{song_id}})">{{title}}</a> by <a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>'
+		+ '{{#album}} (from <a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>){{/album}}'
+		+ '&nbsp;({{length}})&nbsp;(<span id="playingTime">{{remaining}}</span> remaining){{/exist}}{{^exist}}nothing playing{{/exist}}',
+
+		pane_template:
+		'{{#pane}}<div><br /><form id="player" action=""> Player: <select onChange="javascript:changePlayer(this.value); return false;" id="player">'
+		+ '{{#players}}<option value="{{player}}" {{#selected}}selected="selected"{{/selected}}>{{player}}</option>{{/players}}'
+		+ '</select></form></div>{{/pane}}'
+	},
+	getSongDetails: {
+		table_template:
+		'<table id="result_table"><thead><tr><th>Vote</th><th>Track</th><th>Title</th><th>Album</th>'
+		+ '<th>Artist</th><th>Length</th></tr></thead><tbody>{{#items}}{{{.}}}{{/items}}</tbody></table>',
+		row_template:
+		'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a></td>'
+		+ '<td>{{track}}</td><td><a href="javascript:selectRequest(\'title\',\'{{{coded_title}}}\')">{{title}}</a>{{{last_song}}}{{{wiki_song}}}</td>'
+		+ '<td><a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>{{{last_album}}}{{{wiki_album}}}</td>'
+		+ '<td><a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>{{{last_artist}}}{{{wiki_artist}}}</td>'
+		+ '<td>{{time}}</td></tr><tr><th colspan=2>Path:</th><td colspan=4>{{path}}</td></tr>'
+		+ '<tr><th colspan=2>Voters:</th><td colspan=4>{{#voters}}<a href=javascript:loadVotesFromVoter("{{.}}")>{{.}}</a>&nbsp;{{/voters}}{{^voters}}no one{{/voters}}</td></tr>'
+	},
+	fillResultTable: {
+		table_template:
+		'<table id="result_table" class="tablesorter"><thead><tr><th>vote</th>'
+		+ '<th>Track</th>'
+		+ '<th>Title</th>'
+		+ '<th>Album</th>'
+		+ '<th>Artist</th><th>Length</th></tr></thead><tbody>'
+		+ '{{#items}}{{{.}}}{{/items}}</tbody></table>',
+		row_template:
+		'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})">'
+		+ '<img src="www-data/icons/add.png" alt=vote"/></a></td>'
+		+ '<td>{{track}}</td><td class="datacol"><a href="javascript:getSongDetails({{song_id}})">{{title}}</a></td>'
+		+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \'{{{coded_album}}}\')">{{album}}</a></td>'
+		+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a></td>'
+		+ '<td>{{time}}</td></tr>'
+	}
+};
 
 function readableTime(length)
 {
@@ -178,18 +241,8 @@ function updatePlaylist(json)
 			voters: item.who.length
 		}
 	});
-	var list_template =
-	'<li>{{#voted}}<a title="Remove your vote for this" href="javascript:unvoteSong({{song_id}})">'
-	+'<img src="www-data/icons/delete.png" alt="unvote"/></a>&nbsp;'
-	+ '<a title="Vote To Top" href="javascript:voteToTop({{song_id}})">'
-	+ '<img src="www-data/icons/lightning_go.png" alt="vote to top"/></a>{{/voted}}'
-	+ '{{^voted}}<a title="Vote for this" href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a>{{/voted}}'
-	+ '&nbsp;<a title="See who voted for this" href="javascript:getSongDetails({{{coded_song_id}}})">{{title}}</a> by '
-	+ '<a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>'
-	+ '&nbsp;({{time}}) ({{voters}})</li>';
-	var whole_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
 	var time = 'Total Time: '+readableTime(totalTime);
-	$('#playlist').html(tableBuilder(whole_template, list_template, json_items) + time);
+	$('#playlist').html(tableBuilder(templates.updatePlaylist.whole_template, templates.updatePlaylist.list_template, json_items) + time);
 	fillPurgeDropDown(dropdown);
 }
 
@@ -198,10 +251,7 @@ function fillPurgeDropDown(options)
 	var purgelist = document.getElementById('user');
 	purgelist.options.length = 0;
 	purgelist.options.add(new Option("Pick one",''));
-	for (var i in options)
-	{
-		purgelist.options.add(new Option(options[i],options[i]));
-	}
+	_.every(options, function(option){ purgelist.options.add(new Option(option,option)) });
 }
 
 function updatePlaylistSelector(who) {
@@ -213,11 +263,7 @@ function updatePlaylistSelector(who) {
 			selector.options.add(new Option('Queue', 0));
 			selector.options.add(new Option('New playlist...', -1));
 			selector.options.add(new Option('---', 0));
-			for (var i in json) {
-				selector.options.add(
-					new Option(json[i].title, json[i].playlist_id)
-				);
-			}
+			_.every(json, function(item){ selector.options.add(new Option(item, item)) });
 		}
 	);
 }
@@ -323,10 +369,7 @@ function enqueuePlaylist () {
 		$.getJSON(
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_pane,
 			function(json) {
-				var block = "";
-				for (var i in json) {
-					block += "song_id=" + json[i].song_id + ";";
-				}
+				var block = Mustache.to_html("{{#items}}song_id={{song_id}};{{/items}}",{items:json});
 				if (block != ""){
 					$.getJSON(
 							jsonSource + '?mode=vote;' + block,
@@ -344,12 +387,6 @@ function enqueuePlaylist () {
 
 function showPlaylist(json) {
 	var totalTime = 0;
-	var playlist_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
-	var item_template =
-	'<li><a title="Remove from your playlist" href="javascript:unvoteSong({{song_id}})">'
-	+ '<img src="www-data/icons/delete.png" alt="unvote" /></a> '
-	+ '<a title="View Song Details" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by '
-	+ '<a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a>&nbsp;({{time}})';
 	var json_items = _.map(json, function(item) {
 		totalTime += parseInt(item.length);
 		return {
@@ -362,43 +399,34 @@ function showPlaylist(json) {
 		}
 	});
 	var time = 'Total Time: '+readableTime(totalTime);
-	$('#playlist').html(tableBuilder(playlist_template, item_template, json_items) + time);
+	$('#playlist').html(tableBuilder(templates.showPlaylist.playlist_template, templates.showPlaylist.item_template, json_items) + time);
 }
 
 function updateNowPlaying(json, player, selected_player, players_list) {
 	rem_time = json && parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
 	if (rem_time < 0) rem_time = 0;
-	var json_item = {
-		exist: !!json,
-		song_id: json && json.song_id,
-		voted: json && (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0),
-		title: json && titleOrPath(json),
-		artist: json && json.artist,
-		coded_artist: json && qsencode(json.artist),
-		album: json && json.album,
-		coded_album: json && qsencode(json.album),
-		length: json && readableTime(json.length),
-		remaining: readableTime(rem_time)
-	};
+	var json_item = { exist: !!json };
+	if (json) {
+		_.extend(json_item,
+			{
+				song_id: json.song_id,
+				voted: (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0),
+				title: titleOrPath(json),
+				artist: json.artist,
+				coded_artist: qsencode(json.artist),
+				album: json.album,
+				coded_album: qsencode(json.album),
+				length: readableTime(json.length),
+				remaining: readableTime(rem_time)
+			});
+	}
 
 	var player_model = {
 		pane: (playlist_pane == 0),
-		players: _.map(players_list,function(item){ return { player: item, selected: (selected_player == item) } })
+		players: _.map(players_list, function(item){ return { player: item, selected: (selected_player == item) } })
 	};
 
-	var now_template =
-	'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="www-data/icons/delete.png" alt="unvote" /></a>{{/voted}}'
-	+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote" /></a>{{/voted}}'
-	+ ' <a href="javascript:getSongDetails({{song_id}})">{{title}}</a> by <a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>'
-	+ '{{#album}} (from <a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>){{/album}}'
-	+ '&nbsp;({{length}})&nbsp;(<span id="playingTime">{{remaining}}</span> remaining){{/exist}}{{^exist}}nothing playing{{/exist}}';
-
-	var pane_template =
-	'{{#pane}}<div><br /><form id="player" action=""> Player: <select onChange="javascript:changePlayer(this.value); return false;" id="player">'
-	+ '{{#players}}<option value="{{player}}" {{#selected}}selected="selected"{{/selected}}>{{player}}</option>{{/players}}'
-	+ '</select></form></div>{{/pane}}';
-
-	$('#currentsong').html(Mustache.to_html(now_template, json_item) + Mustache.to_html(pane_template,player_model));
+	$('#currentsong').html(Mustache.to_html(templates.updateNowPlaying.now_template, json_item) + Mustache.to_html(templates.updateNowPlaying.pane_template,player_model));
 	$('#zap').html('<a href="javascript:zapPlayer(\'' + selected_player + '\')"><img src="www-data/icons/wrench_orange.png" alt="zap"/> Zap The Player</a>');
 }
 
@@ -495,16 +523,6 @@ function getSongDetails(song_id) {
 		jsonSource + '?mode=get_details;song_id='+song_id,
 		function(json) {
 			json = json.song;
-			var table_template =
-			'<table id="result_table"><thead><tr><th>Vote</th><th>Track</th><th>Title</th><th>Album</th>'
-			+ '<th>Artist</th><th>Length</th></tr></thead><tbody>{{#items}}{{{.}}}{{/items}}</tbody></table>';
-			var row_template =
-			'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a></td>'
-			+ '<td>{{track}}</td><td><a href="javascript:selectRequest(\'title\',\'{{{coded_title}}}\')">{{title}}</a>{{{last_song}}}{{{wiki_song}}}</td>'
-			+ '<td><a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>{{{last_album}}}{{{wiki_album}}}</td>'
-			+ '<td><a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>{{{last_artist}}}{{{wiki_artist}}}</td>'
-			+ '<td>{{time}}</td></tr><tr><th colspan=2>Path:</th><td colspan=4>{{path}}</td></tr>'
-			+ '<tr><th colspan=2>Voters:</th><td colspan=4>{{#voters}}<a href=javascript:loadVotesFromVoter("{{.}}")>{{.}}</a>&nbsp;{{/voters}}{{^voters}}no one{{/voters}}</td></tr>';
 			var json_item = {
 				track: json.track,
 				song_id: json.song_id,
@@ -524,7 +542,7 @@ function getSongDetails(song_id) {
 				path: json.path,
 				voters: json.who
 			};
-			$('#songresults').html(tableBuilder(table_template, row_template, [json_item]));
+			$('#songresults').html(tableBuilder(templates.getSongDetails.table_template, templates.getSongDetails.row_template, [json_item]));
 			$('#result_title').html("Details for this song");
 			hideVoting();
 		}
@@ -562,20 +580,6 @@ function fillStatsTable(json) {
 
 function fillResultTable(json) {
 	this.songIDs = [];
-	var table_template =
-	'<table id="result_table" class="tablesorter"><thead><tr><th>vote</th>'
-	+ '<th>Track</th>'
-	+ '<th>Title</th>'
-	+ '<th>Album</th>'
-	+ '<th>Artist</th><th>Length</th></tr></thead><tbody>'
-	+ '{{#items}}{{{.}}}{{/items}}</tbody></table>';
-	var row_template =
-	'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})">'
-	+ '<img src="www-data/icons/add.png" alt=vote"/></a></td>'
-	+ '<td>{{track}}</td><td class="datacol"><a href="javascript:getSongDetails({{song_id}})">{{title}}</a></td>'
-	+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \'{{{coded_album}}}\')">{{album}}</a></td>'
-	+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a></td>'
-	+ '<td>{{time}}</td></tr>';
 	var json_items = _.map(json,
 		function(item) {
 			this.songIDs.push(item.song_id);
@@ -590,8 +594,7 @@ function fillResultTable(json) {
 				time: readableTime(item.length)
 			}
 		});
-	$('#songresults').html(tableBuilder(table_template, row_template, json_items));
-
+	$('#songresults').html(tableBuilder(templates.fillResultTable.table_template, templates.fillResultTable.row_template, json_items));
 	$("#result_table").tablesorter({
 		headers: {
 			5: {
