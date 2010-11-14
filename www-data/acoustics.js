@@ -389,7 +389,7 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 	var now_template =
 	'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="www-data/icons/delete.png" alt="unvote" /></a>{{/voted}}'
 	+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote" /></a>{{/voted}}'
-	+ ' <a href="javascript:getSongDetails({{song_id}})">{{title}}</a> by <a href="javascript:selectRequest(\'artist\'\'{{{coded_artist}}}\')">{{artist}}</a>'
+	+ ' <a href="javascript:getSongDetails({{song_id}})">{{title}}</a> by <a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>'
 	+ '{{#album}} (from <a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>){{/album}}'
 	+ '&nbsp;({{length}})&nbsp;(<span id="playingTime">{{remaining}}</span> remaining){{/exist}}{{^exist}}nothing playing{{/exist}}';
 
