@@ -223,7 +223,7 @@ function updatePlaylist(json)
 	var totalTime = 0;
 	var dropdown = [];
 	var json_items = _.map(json, function(item) {
-		_.every(item.who, function(voter) {
+		_.each(item.who, function(voter) {
 			if (dropdown.indexOf(voter) == -1)
 			{
 				dropdown.push(voter);
@@ -251,7 +251,7 @@ function fillPurgeDropDown(options)
 	var purgelist = document.getElementById('user');
 	purgelist.options.length = 0;
 	purgelist.options.add(new Option("Pick one",''));
-	_.every(options, function(option){ purgelist.options.add(new Option(option,option)) });
+	_.each(options, function(option){ purgelist.options.add(new Option(option,option)) });
 }
 
 function updatePlaylistSelector(who) {
@@ -263,7 +263,9 @@ function updatePlaylistSelector(who) {
 			selector.options.add(new Option('Queue', 0));
 			selector.options.add(new Option('New playlist...', -1));
 			selector.options.add(new Option('---', 0));
-			_.every(json, function(item){ selector.options.add(new Option(item, item)) });
+			_.each(json, function(item){
+				selector.options.add(new Option(item.title, item.playlist_id));
+			});
 		}
 	);
 }
