@@ -1,0 +1,83 @@
+#!/usr/bin/env perl
+################################################################################
+# acoustics                                                                    #
+################################################################################
+# main script. invoked for nearly all non-web requests.                        #
+# run 'perldoc acoustics' for help.                                            #
+################################################################################
+
+use strict;
+use warnings;
+
+use lib ($0 =~ m{(.+/)?})[0] . '../lib';
+
+use Acoustics;
+use Module::Load 'load';
+use Pod::Find 'pod_where';
+use Pod::Usage 'pod2usage';
+
+my $HELP_TAGLINE = join '', 'Acoustics ', $Acoustics::VERSION,
+	', the community jukebox';
+
+my $command = shift;
+$command  ||= 'help';
+
+my %modules = (
+	scan => 'Acoustics::Scanner',
+	gc   => 'Acoustics::GarbageCollect',
+);
+
+load $modules{$command} if exists $modules{$command};
+
+if ($command eq 'scan') {
+	Acoustics::Scanner::scan(@ARGV);
+} elsif ($command eq 'gc') {
+	Acoustics::GarbageCollect::prune(@ARGV);
+} elsif ($command eq 'help') {
+	my $subcommand = shift;
+	if ($subcommand && exists $modules{$subcommand}) {
+		load $modules{$subcommand};
+		pod2usage(
+			-message => $HELP_TAGLINE,
+			-input => pod_where({-inc => 1}, $modules{$subcommand}),
+		);
+	} else {
+		pod2usage($HELP_TAGLINE);
+	}
+} else {
+	pod2usage($HELP_TAGLINE);
+}
+
+__END__
+
+=head1 NAME
+
+acoustics - main script for the Acoustics Music Player
+
+=head1 SYNOPSIS
+
+    acoustics COMMAND [ARGUMENTS]
+    where COMMAND is one of:
+
+    help COMMAND: get help on the given command
+    scan FILES: add or update the given files
+    garbage-collect PREFIX: remove invalid files beginning with given prefix
+
+    Run 'acoustics help COMMAND' for specific usage on a given command,
+    or 'perldoc acoustics' for more information.
+
+=head1 DESCRIPTION
+
+This script is the frontend to many functions that Acoustics provides, such as
+those called by RPC and cronjobs. These commands are not meant to by run
+directly by users (or admins, in most cases).
+
+=head1 SEE ALSO
+
+L<Acoustics>
+
+=head1 COPYRIGHT & AUTHORS
+
+The Acoustics Team. See L<Acoustics>.
+
+=cut
