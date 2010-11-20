@@ -20,7 +20,7 @@ extensions= # optional, specify player plugins
 # host=musicalbox
 # user=aparsons
 # private_key=conf/id_rsa
-# player_remote=/home/aparsons/projects/acoustics/bin/player-remote.pl
+# player_remote=/home/aparsons/projects/acoustics/bin/acoustics
 # rpc=Acoustics::RPC::Remctl
 # host=musicalbox
 ## queue ("playlist") module to use (defaults to RoundRobin)

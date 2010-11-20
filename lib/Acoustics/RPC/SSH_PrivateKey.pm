@@ -39,7 +39,7 @@ sub zap {
 	my $acoustics = shift;
 	my $zap_player = shift;
 	
-	$class->do_call($acoustics,'zap',$zap_player);
+	$class->do_call($acoustics, 'zap', $zap_player);
 }
 
 sub do_call {
@@ -47,8 +47,9 @@ sub do_call {
 	my $acoustics = shift;
 	my $action    = shift;
 
+	my $player_id = $acoustics->player_id;
 	for (qw(user private_key host player_remote)) {
-		die "Config entry {player.@{[$acoustics->player_id]}}{$_} not defined"
+		die "Config entry {player.$player_id}{$_} not defined"
 			unless $acoustics->config->{player}{$_};
 	}
 
@@ -60,7 +61,7 @@ sub do_call {
 		-o => 'GSSAPIAuthentication=no',
 		$acoustics->config->{player}{host},
 		$acoustics->config->{player}{player_remote},
-		$acoustics->player_id, $action, @_,
+		"player-$action", $acoustics->player_id, @_,
 	) == 0 or die "couldn't run ssh: $!,$?,@{[$? >> 8]}";
 }
 
