@@ -10,6 +10,26 @@ use List::MoreUtils qw(uniq);
 use Log::Log4perl ':easy';
 use Cwd qw(abs_path);
 
+sub prune {
+	my @files = @_;
+	die "Usage: $0 path1 path2 ..." unless @files;
+
+	for my $path (@files) {
+		for my $song ($acoustics->query('select_songs', {path => {-like => "$path%"}})) {
+			my $state = $song->{online};
+			$song->{online} = -e $song->{path} ? 1 : 0;
+			if ($song->{online} != $state) {
+				if ($song->{online}) {
+					WARN "Setting $song->{path} online";
+				} else {
+					ERROR "Setting $song->{path} offline";
+				}
+				$acoustics->query('update_songs', $song, {path => $song->{path}});
+			}
+		}
+	}
+}
+
 1;
 
 __END__
