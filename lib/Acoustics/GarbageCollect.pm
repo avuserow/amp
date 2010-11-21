@@ -14,6 +14,10 @@ sub prune {
 	my @files = @_;
 	die "Usage: $0 path1 path2 ..." unless @files;
 
+	my $acoustics = Acoustics->new({
+		config_file => ($0 =~ m{(.+)/})[0] . '/../conf/acoustics.ini',
+	});
+
 	for my $path (@files) {
 		for my $song ($acoustics->query('select_songs', {path => {-like => "$path%"}})) {
 			my $state = $song->{online};
