@@ -13,8 +13,8 @@ templates = {
 		+ '<a title="Vote To Top" href="javascript:voteToTop({{song_id}})">'
 		+ '<img src="www-data/icons/lightning_go.png" alt="vote to top"/></a>{{/voted}}'
 		+ '{{^voted}}<a title="Vote for this" href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a>{{/voted}}'
-		+ '&nbsp;<a title="See who voted for this" href="javascript:getSongDetails({{{coded_song_id}}})">{{title}}</a> by '
-		+ '<a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>'
+		+ '&nbsp;<a title="See who voted for this" href="#SongDetails/{{coded_song_id}}">{{title}}</a> by '
+		+ '<a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>'
 		+ '&nbsp;({{time}}) ({{voters}})</li>',
 		whole_template:'<ul>{{#items}}{{{.}}}{{/items}}</ul>'
 	},
@@ -23,15 +23,15 @@ templates = {
 		item_template:
 		'<li><a title="Remove from your playlist" href="javascript:unvoteSong({{song_id}})">'
 		+ '<img src="www-data/icons/delete.png" alt="unvote" /></a> '
-		+ '<a title="View Song Details" href="javascript:getSongDetails({{coded_song_id}})">{{title}}</a> by '
-		+ '<a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a>&nbsp;({{time}})'
+		+ '<a title="View Song Details" href="#SongDetails/{{coded_song_id}}">{{title}}</a> by '
+		+ '<a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>&nbsp;({{time}})'
 	},
 	updateNowPlaying: {
 		now_template:
 		'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="www-data/icons/delete.png" alt="unvote" /></a>{{/voted}}'
 		+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote" /></a>{{/voted}}'
-		+ ' <a href="javascript:getSongDetails({{song_id}})">{{title}}</a> by <a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>'
-		+ '{{#album}} (from <a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>){{/album}}'
+		+ ' <a href="#SongDetails/{{song_id}}">{{title}}</a> by <a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>'
+		+ '{{#album}} (from <a href="#SelectRequest/album/{{coded_album}}">{{album}}</a>){{/album}}'
 		+ '&nbsp;({{length}})&nbsp;(<span id="playingTime">{{remaining}}</span> remaining){{/exist}}{{^exist}}nothing playing{{/exist}}',
 
 		pane_template:
@@ -45,9 +45,9 @@ templates = {
 		+ '<th>Artist</th><th>Length</th></tr></thead><tbody>{{#items}}{{{.}}}{{/items}}</tbody></table>',
 		row_template:
 		'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a></td>'
-		+ '<td>{{track}}</td><td><a href="javascript:selectRequest(\'title\',\'{{{coded_title}}}\')">{{title}}</a>{{{last_song}}}{{{wiki_song}}}</td>'
-		+ '<td><a href="javascript:selectRequest(\'album\',\'{{{coded_album}}}\')">{{album}}</a>{{{last_album}}}{{{wiki_album}}}</td>'
-		+ '<td><a href="javascript:selectRequest(\'artist\',\'{{{coded_artist}}}\')">{{artist}}</a>{{{last_artist}}}{{{wiki_artist}}}</td>'
+		+ '<td>{{track}}</td><td><a href="#SelectRequest/title/{{coded_title}}">{{title}}</a>{{{last_song}}}{{{wiki_song}}}</td>'
+		+ '<td><a href="#SelectRequest/album/{{coded_album}}">{{album}}</a>{{{last_album}}}{{{wiki_album}}}</td>'
+		+ '<td><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>{{{last_artist}}}{{{wiki_artist}}}</td>'
 		+ '<td>{{time}}</td></tr><tr><th colspan=2>Path:</th><td colspan=4>{{path}}</td></tr>'
 		+ '<tr><th colspan=2>Voters:</th><td colspan=4>{{#voters}}<a href=javascript:loadVotesFromVoter("{{.}}")>{{.}}</a>&nbsp;{{/voters}}{{^voters}}no one{{/voters}}</td></tr>'
 	},
@@ -62,15 +62,14 @@ templates = {
 		row_template:
 		'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})">'
 		+ '<img src="www-data/icons/add.png" alt=vote"/></a></td>'
-		+ '<td>{{track}}</td><td class="datacol"><a href="javascript:getSongDetails({{song_id}})">{{title}}</a></td>'
-		+ '<td class="datacol"><a href="javascript:selectRequest(\'album\', \'{{{coded_album}}}\')">{{album}}</a></td>'
-		+ '<td class="datacol"><a href="javascript:selectRequest(\'artist\', \'{{{coded_artist}}}\')">{{artist}}</a></td>'
+		+ '<td>{{track}}</td><td class="datacol"><a href="#SongDetails/{{song_id}}">{{title}}</a></td>'
+		+ '<td class="datacol"><a href="#SelectRequest/album/{{coded_album}}">{{album}}</a></td>'
+		+ '<td class="datacol"><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a></td>'
 		+ '<td>{{time}}</td></tr>'
 	}
 };
 
-function readableTime(length)
-{
+function readableTime(length) {
 	if (length < 0) {length = 0;}
 	var seconds = length % 60;
 	var minutes = Math.floor(length / 60) % 60;
@@ -233,10 +232,10 @@ function updatePlaylist(json)
 		return {
 			voted:(item.who && item.who.indexOf(currentUser) != -1),
 			song_id : item.song_id,
-			coded_song_id : qsencode(item.song_id),
+			coded_song_id : uriencode(item.song_id),
 			title: titleOrPath(item),
 			artist: item.artist,
-			coded_artist: qsencode(item.artist),
+			coded_artist: uriencode(item.artist),
 			time: readableTime(item.length),
 			voters: item.who.length
 		}
@@ -311,8 +310,8 @@ function playlistRequest (who) {
 			hideVoting();
 			$('#result_title').html((who === "" ? "All" : who + "'s") + " playlists");
 			var list_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
-			var item_template = '<li><a href="javascript:playlistTableRequest({{playlist_id}},\'{{{codedtitle}}}\')">{{title}}</a> by {{who}}</li>';
-			_.each(json, function(item) { item.codedtitle = qsencode(item.title) });
+			var item_template = '<li><a href="#PlaylistTable/{{playlist_id}}/{{codedtitle}}">{{title}}</a> by {{who}}</li>';
+			_.each(json, function(item) { item.codedtitle = uriencode(item.title) });
 			$('#songresults').html(tableBuilder(list_template, item_template, json));
 		}
 	);
@@ -394,9 +393,9 @@ function showPlaylist(json) {
 		return {
 			title: titleOrPath(item),
 			song_id: item.song_id,
-			coded_song_id: qsencode(item.song_id),
+			coded_song_id: uriencode(item.song_id),
 			artist: item.artist,
-			coded_artist: qsencode(item.artist),
+			coded_artist: uriencode(item.artist),
 			time: readableTime(item.length)
 		}
 	});
@@ -415,9 +414,9 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 				voted: (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0),
 				title: titleOrPath(json),
 				artist: json.artist,
-				coded_artist: qsencode(json.artist),
+				coded_artist: uriencode(json.artist),
 				album: json.album,
-				coded_album: qsencode(json.album),
+				coded_album: uriencode(json.album),
 				length: readableTime(json.length),
 				remaining: readableTime(rem_time)
 			});
@@ -529,15 +528,15 @@ function getSongDetails(song_id) {
 				track: json.track,
 				song_id: json.song_id,
 				title: json.title,
-				coded_title: qsencode(json.title),
+				coded_title: uriencode(json.title),
 				last_song: lastLinkSong(json.artist, json.title),
 				wiki_song: wikiLinkSong(json.title),
 				album: json.album,
-				coded_album: qsencode(json.album),
+				coded_album: uriencode(json.album),
 				last_album: lastLinkAlbum(json.artist, json.album),
 				wiki_album: wikiLinkAlbum(json.album),
 				artist: json.artist,
-				coded_artist: qsencode(json.artist),
+				coded_artist: uriencode(json.artist),
 				last_artist: lastLinkArtist(json.artist),
 				wiki_artist: wikiLinkArtist(json.artist),
 				time: readableTime(json.length),
@@ -551,31 +550,12 @@ function getSongDetails(song_id) {
 	);
 }
 
-function fillHistoryTable(json) {
-	this.songIDs = [];
-	var json_items = [];
-	var table_template = '<table id="result_table"><thead><tr><th>Vote</th><th>Name</th><th>Played at</th></tr></thead><tbody>{{#items}}{{{.}}}{{/items}}</tbody></table>';
-	var row_template =
-	'<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png alt=""/></a></td>'
-	+ '<td><a href="javascript:getSongDetails({{song_id}})">{{pretty_name}}</a></td><td>{{time}}</td></tr>';
-	for (var item in json)
-	{
-		json_items.push({
-			song_id: json[item].song_id,
-			pretty_name: json[item].pretty_name,
-			time: json[item].time
-		});
-		this.songIDs.push(json[item].song_id);
-	}
-	$('#songresults').html(tableBuilder(table_template, row_template, json_items));
-}
-
 function fillStatsTable(json) {
 	var table_template = '<table id="result_table">'
 			+'<tr><th>Total Songs</th><td>{{total_songs}}</td></tr>'
 			+'<tr><th colspan=2>Most Played Artists:</th></tr>{{#items}}{{{.}}}{{/items}}</table>';
-	var row_template = '<tr><td><a href="javascript:selectRequest(\'artist\',\'{{artist}}\')">{{artist}}</a></td><td>{{count}}</td><tr>';
-	var json_items = _.map(json.top_artists, function(item) { return { artist: item.artist, count: item.count } });
+	var row_template = '<tr><td><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a></td><td>{{count}}</td><tr>';
+	var json_items = _.map(json.top_artists, function(item) { return { coded_artist: uriencode(item.artist), artist: item.artist, count: item.count } });
 	$('#songresults').html(tableBuilder(table_template, row_template, json_items));
 	$('#userstats').html("");
 }
@@ -590,9 +570,9 @@ function fillResultTable(json) {
 				song_id: item.song_id,
 				track: item.track,
 				album: item.album,
-				coded_album: qsencode(item.album),
+				coded_album: uriencode(item.album),
 				artist: item.artist,
-				coded_artist: qsencode(item.artist),
+				coded_artist: uriencode(item.artist),
 				time: readableTime(item.length)
 			}
 		});
@@ -708,6 +688,10 @@ function qsencode(str) {
 	return str;
 }
 
+function uriencode(str) {
+	return encodeURIComponent(str);
+}
+
 function formencode(str) {
 	str = str.replace('&', '%26');
 	str = str.replace('+', '%2B');
@@ -783,3 +767,38 @@ function shuffle(array) {
 
 	return array;
 }
+
+function formSearch(key, value) {
+	$.address.value("SearchRequest/" + key + "/" + value);
+}
+
+function pageLoadChange(hash) {
+	hash = hash.replace(/^\//, '');
+	var args = hash.split('/');
+	var action = args.shift();
+	if (!args[0]) args[0] = '';
+	if (!args[1]) args[1] = '';
+	if (action == '') {
+		loadRandomSongs(20);
+	} else if (action == 'RandomSongs') {
+		loadRandomSongs(args[0]);
+	} else if (action == 'RecentSongs') {
+		loadRecentSongs(args[0]);
+	} else if (action == 'PlayHistory') {
+		loadPlayHistory(args[0], args[1]);
+	} else if (action == 'StatsRequest') {
+		statsRequest(args[0]);
+	} else if (action == 'SelectRequest') {
+		selectRequest(args[0], args[1]);
+	} else if (action == 'SearchRequest') {
+		searchRequest(args[0], args[1]);
+	} else if (action == 'SongDetails') {
+		getSongDetails(args[0]);
+	} else if (action == 'PlaylistTable') {
+		playlistTableRequest(args[0], args[1]);
+	} else {
+		alert("FALLBACK: got " + action + ", with args: " + args);
+	}
+}
+
+$.address.change(function(e) {pageLoadChange(e.value);});
