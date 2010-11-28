@@ -22,6 +22,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* Copyright (C) 2009-2010 the Acoustics development team.
+ * We only made small changes. Many thanks to the taglib developers.
+ *
+ * See https://github.com/avuserow/amp and
+ * https://github.com/avuserow/taglib
+ * */
+
 #include <iostream>
 #include <stdio.h>
 
@@ -45,7 +52,9 @@ int main(int argc, char *argv[])
       cout << "title:" << (tag->title()).toCString(true)   << endl;
       cout << "artist:" << (tag->artist()).toCString(true) << endl;
       cout << "album:" << (tag->album()).toCString(true)   << endl;
-      cout << "track:" << tag->track()   << endl;
+      cout << "albumartist:" << (tag->albumArtist()).toCString(true) << endl;
+      cout << "track:" << tag->track() << endl;
+      cout << "disc:"  << tag->cdNr() << endl;
     }
 
     if(!f.isNull() && f.audioProperties()) {
