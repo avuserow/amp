@@ -56,8 +56,8 @@ sub do_call {
 	system(
 		'remctl', '-p', 4373,
 		$acoustics->config->{player}{host},
-		'acoustics',
-		$acoustics->player_id, $action, @_,
+		'acoustics', "player-$action",
+		$acoustics->player_id, @_,
 	) == 0 or die "couldn't run remctl: $!,$?,@{[$? >> 8]}";
 }
 
