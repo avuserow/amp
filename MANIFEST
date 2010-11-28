@@ -55,10 +55,8 @@ www-data/jquery.tablesorter.min.js
 www-data/sprintf-min.js
 bin/streaming-next-song.sh
 bin/initdb-pgsql.pl
-bin/player-remote.pl
 bin/tagreader.cpp
 bin/initdb-mysql.pl
 bin/Makefile
 bin/k5start-wrapper.sh
-bin/garbage-collect.pl
-bin/scanner.pl
+bin/acoustics

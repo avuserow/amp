@@ -9,15 +9,14 @@ test_requires 'Test::More';
 
 #install_script 'bin/streaming-next-song.sh';
 #install_script 'bin/initdb-pgsql.pl';
-install_script 'bin/player-remote.pl';
 install_script 'bin/initdb-mysql.pl';
 install_script 'bin/k5start-wrapper.sh';
-install_script 'bin/garbage-collect.pl';
-install_script 'bin/scanner.pl';
+install_script 'bin/acoustics';
+install_script 'bin/tagreader';
 
 install_share 'www-data';
 
 auto_install;
 
+makemaker_args(PL_FILES => {'acoustics-tagreader.PL' => 'bin/tagreader'});
 WriteAll;
-
