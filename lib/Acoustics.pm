@@ -141,8 +141,9 @@ sub initdb_mysql {
 sub get_random_song {
 	my $self  = shift;
 	my $count = shift;
+	my $seed = shift;
 	return $self->query(
-		'get_random_songs', {-limit => $count}, {random => $self->rand},
+		'get_random_songs', {-limit => $count}, {random => $self->rand($seed)},
 	);
 }
 
@@ -296,9 +297,10 @@ sub reinit {
 # TODO: Make this a stored procedure
 sub rand {
 	my $self = shift;
+	my $seed = shift;
 	my $db = $self->config->{database}{data_source};
 	if ($db =~ m{^dbi:mysql}i) {
-		return "RAND()";
+		return "RAND($seed)";
 	}
 	elsif ($db =~ m{^dbi:(pg|sqlite)}i) {
 		return "RANDOM()";

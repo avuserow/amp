@@ -495,10 +495,11 @@ function loadRecentSongs(amount) {
 	);
 }
 
-function loadRandomSongs(amount) {
+function loadRandomSongs(amount,seed) {
 	$.getJSON(
-		jsonSource + '?mode=random;amount=' + amount,
+		jsonSource + '?mode=random;amount=' + amount+';seed='+seed,
 		function (data) {
+			$('#randomlink').attr('href', '#RandomSongs/20/' + (new Date()).getTime());
 			$('#result_title').html(amount + ' Random Songs');
 			fillResultTable(data);
 			showVoting();
@@ -779,9 +780,9 @@ function pageLoadChange(hash) {
 	if (!args[0]) args[0] = '';
 	if (!args[1]) args[1] = '';
 	if (action == '') {
-		loadRandomSongs(20);
+		loadRandomSongs(20, (new Date()).getTime());
 	} else if (action == 'RandomSongs') {
-		loadRandomSongs(args[0]);
+		loadRandomSongs(args[0], args[1]);
 	} else if (action == 'RecentSongs') {
 		loadRecentSongs(args[0]);
 	} else if (action == 'PlayHistory') {
