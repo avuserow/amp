@@ -298,6 +298,7 @@ sub reinit {
 sub rand {
 	my $self = shift;
 	my $seed = shift;
+	$seed = rand() if $seed =~ /\D/;
 	my $db = $self->config->{database}{data_source};
 	if ($db =~ m{^dbi:mysql}i) {
 		return "RAND($seed)";
