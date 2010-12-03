@@ -38,6 +38,7 @@ sub player_song_start {
 			sk => $acoustics->config->{lastfm}{sk},
 			artist => $song->{artist},
 			track => $song->{title},
+			duration => $song->{length},
 		);
 	}
 }
