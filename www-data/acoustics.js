@@ -30,7 +30,7 @@ templates = {
 		now_template:
 		'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="www-data/icons/delete.png" alt="unvote" /></a>{{/voted}}'
 		+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote" /></a>{{/voted}}'
-		+ ' <a href="#SongDetails/{{song_id}}">{{title}}</a> by <a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>'
+		+ '&nbsp;<a href="#SongDetails/{{song_id}}">{{title}}</a> by <a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>'
 		+ '{{#album}} (from <a href="#SelectRequest/album/{{coded_album}}">{{album}}</a>){{/album}}'
 		+ '&nbsp;({{length}})&nbsp;(<span id="playingTime">{{remaining}}</span> remaining){{/exist}}{{^exist}}nothing playing{{/exist}}',
 
