@@ -4,7 +4,7 @@ currentUser = '';
 rem_time = 0;
 stateTimer = 0;
 playingTimer = 0;
-jsonSource = '../json.pl';
+jsonSource = 'json.pl';
 templates = {
 	updatePlaylist: {
 		list_template:
