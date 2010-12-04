@@ -5,17 +5,15 @@ use warnings;
 
 use Net::LastFM;
 use Data::Dumper;
-use LWP::UserAgent;
-use Log::Log4perl ':easy';
+use JSON::DWIW ();
 
 sub handshake {
 	my $acoustics = shift;
 
-#	my $ua = LWP::UserAgent->new;
-#	my $proxy = $acoustics->config->{proxy}{http};
-#	$ua->proxy('http' => $proxy) if $proxy;
-
-	# TODO: proxy
+	# Net::LastFM calls env_proxy within LWP::UserAgent
+	# so we can just put our proxy in the environment somehow
+	my $proxy = $acoustics->config->{proxy}{http};
+	$ENV{HTTP_PROXY} = $proxy if $proxy;
 
 	my $lastfm = Net::LastFM->new(
 		api_key => $acoustics->config->{lastfm}{apikey},
@@ -25,11 +23,26 @@ sub handshake {
 	return $lastfm;
 }
 
+sub get_scrobblers {
+	my $file = ($0 =~ m{(.+/)?})[0] . '../conf/scrobblers.json';
+
+	open my $fh, '<', $file or die "couldn't open '$file': $!";
+	my $data = join '', <$fh>;
+	close $fh;
+
+	return JSON::DWIW::deserialize($data);
+}
+
 sub player_song_start {
 	my $acoustics = shift;
 	my $params    = shift;
 	my $song      = $params->{song};
 	my $lastfm    = handshake($acoustics);
+	my $scrobble  = get_scrobblers();
+
+	# We don't get the voters. Ask the database!
+	my @votes = $acoustics->query('select_votes', {song_id => $song->{song_id},
+			player_id => $params->{player}{player_id}},);
 
 	if ($song->{artist} && $song->{title}) {
 		$lastfm->request_signed(
@@ -39,7 +52,19 @@ sub player_song_start {
 			artist => $song->{artist},
 			track => $song->{title},
 			duration => $song->{length},
-		);
+		) if $acoustics->config->{lastfm}{sk};
+		for my $voter (map {$_->{who}} @votes) {
+			if ($scrobble->{$voter}) {
+				$lastfm->request_signed(
+					"_method" => "POST",
+					method => "track.updateNowPlaying",
+					sk => $_,
+					artist => $song->{artist},
+					track => $song->{title},
+					duration => $song->{length},
+				) for keys %{$scrobble->{$voter}};
+			}
+		}
 	}
 }
 
@@ -72,6 +97,10 @@ sub scrobble_song {
 	my $player    = shift;
 	my $song      = shift;
 	my $lastfm    = handshake($acoustics);
+	my $scrobble  = get_scrobblers();
+
+	my @votes = $acoustics->query('select_votes', {song_id => $song->{song_id},
+			player_id => $player->{player_id}},);
 
 	if ($song->{artist} && $song->{title}) {
 		$lastfm->request_signed(
@@ -81,7 +110,19 @@ sub scrobble_song {
 			artist => $song->{artist},
 			track => $song->{title},
 			timestamp => $player->{song_start},
-		);
+		) if $acoustics->config->{lastfm}{sk};
+		for my $voter (map {$_->{who}} @votes) {
+			if ($scrobble->{$voter}) {
+				$lastfm->request_signed(
+					"_method" => "POST",
+					method => "track.scrobble",
+					sk => $_,
+					artist => $song->{artist},
+					track => $song->{title},
+					timestamp => $player->{song_start},
+				) for keys %{$scrobble->{$voter}};
+			}
+		}
 	}
 }
 
