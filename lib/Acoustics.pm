@@ -234,10 +234,18 @@ sub vote {
 	my $maxvotes = $self->config->{player}{max_votes} || 0;
 	$maxvotes = 0 if $maxvotes < 0;
 	if ($num_votes < $maxvotes || !$maxvotes){
-		$sth = $self->db->prepare(
-			'INSERT IGNORE INTO votes (song_id, time, player_id, who, priority)
-			VALUES (?, now(), ?, ?, ?)'
-		);
+		my $db = $self->config->{database}{data_source};
+		if ($db =~ m{^dbi:mysql}i) {
+			$sth = $self->db->prepare(
+				'INSERT IGNORE INTO votes (song_id, time, player_id, who, priority)
+				VALUES (?, now(), ?, ?, ?)'
+			);
+		} else {
+			$sth = $self->db->prepare(
+				'INSERT INTO votes (song_id, time, player_id, who, priority)
+				VALUES (?, date(\'now\'), ?, ?, ?)'
+			);
+		}
 		$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
 	}
 }
