@@ -23,7 +23,7 @@ Features
 
 - JSON API
     - Very structured and clean output
-    - [https://github.com/avuserow/amp/wiki/json-api](Detailed on the wiki page)
+    - [Detailed on the wiki page](https://github.com/avuserow/amp/wiki/json-api)
 
 Future Plans
 ------------
