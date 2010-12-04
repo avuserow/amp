@@ -1,5 +1,6 @@
 ## Specify what players you want
 players=default
+webroot=/acoustics/
 [database]
 data_source=dbi:mysql:host=localhost;database=acoustics
 user=acoustics
@@ -13,7 +14,7 @@ require_prefix=/path/to/my/music
 ## Name each player [player.XXX], fill in from players list at the top
 [player.default]
 name=default
-player=Acoustics::Player::MPlayer
+module=Acoustics::Player::MPlayer
 extensions= # optional, specify player plugins
 ## pick one:
 # rpc=Acoustics::RPC::SSH_PrivateKey

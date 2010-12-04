@@ -33,7 +33,7 @@ sub authenticate {
 	$session->param(who => $user);
 	$session->flush;
 
-	print $session->header(-status => 302, -location => '/');
+	print $session->header(-status => 302, -location => $self->acoustics->config->{_}{webroot});
 }
 
 sub player_id {
