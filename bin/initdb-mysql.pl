@@ -18,8 +18,8 @@ $db->do("DROP TABLE IF EXISTS playlists");
 $db->do("DROP TABLE IF EXISTS playlist_contents");
 
 $db->do("CREATE TABLE songs (song_id INT UNSIGNED AUTO_INCREMENT, path
-    VARCHAR(1024) NOT NULL, artist VARCHAR(256), album VARCHAR(256), title
-    VARCHAR(256), length INT UNSIGNED NOT NULL, track INT UNSIGNED, online
+    VARCHAR(1024) NOT NULL, artist VARCHAR(256), albumartist VARCHAR(256), album VARCHAR(256), title
+    VARCHAR(256), disc INT UNSIGNED, length INT UNSIGNED NOT NULL, track INT UNSIGNED, online
     TINYINT(1) UNSIGNED, PRIMARY KEY (song_id))");
 
 $db->do("CREATE TABLE votes (song_id INT UNSIGNED, who VARCHAR(256), player_id
