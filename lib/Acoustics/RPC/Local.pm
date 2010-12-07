@@ -9,7 +9,7 @@ sub start {
 	my $self      = shift;
 	my $acoustics = shift;
 
-	$acoustics->player('start');
+	$acoustics->player('start', 1);
 }
 
 sub skip {
