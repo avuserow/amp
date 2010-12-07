@@ -557,7 +557,7 @@ function fillStatsTable(json) {
 			+'<tr><th colspan=2>Most Played Artists:</th></tr>{{#items}}{{{.}}}{{/items}}</table>';
 	var row_template = '<tr><td><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a></td><td>{{count}}</td><tr>';
 	var json_items = _.map(json.top_artists, function(item) { return { coded_artist: uriencode(item.artist), artist: item.artist, count: item.count } });
-	$('#songresults').html(tableBuilder(table_template, row_template, json_items));
+	$('#songresults').html(tableBuilder(table_template, row_template, json_items, {total_songs: json.total_songs}));
 	$('#userstats').html("");
 }
 
@@ -595,8 +595,9 @@ $.tablesorter.addParser({
 });
 
 /* table_template should contain {{#items}}{{{.}}}{{/items}} */
-function tableBuilder(table_template, row_template, items) {
+function tableBuilder(table_template, row_template, items, table_extras) {
 	var rendered_items = { items: _.map(items, function(item){ return Mustache.to_html(row_template, item) }) };
+	if (table_extras) _.extend(rendered_items,table_extras);
 	return Mustache.to_html(table_template,rendered_items);
 }
 
