@@ -4,6 +4,7 @@ currentUser = '';
 rem_time = 0;
 stateTimer = 0;
 playingTimer = 0;
+playlists = [];
 jsonSource = 'json.pl';
 templates = {
 	updatePlaylist: {
@@ -50,6 +51,9 @@ templates = {
 		+ '<td><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>{{{last_artist}}}{{{wiki_artist}}}</td>'
 		+ '<td>{{time}}</td></tr><tr><th colspan=2>Path:</th><td colspan=4>{{path}}</td></tr>'
 		+ '<tr><th colspan=2>Voters:</th><td colspan=4>{{#voters}}<a href=javascript:loadVotesFromVoter("{{.}}")>{{.}}</a>&nbsp;{{/voters}}{{^voters}}no one{{/voters}}</td></tr>'
+		+ '<tr><th colspan=2>Add to playlist:</th><td colspan=4><form id="songdetailsplaylist" onSubmit="javascript:addSongToPlaylist({{song_id}}, this.sdplaylist.value); return false;">'
+		+ '<select name="sdplaylist" id="sdplaylist"><option value="0">---</option>{{#playlists}}<option value="{{playlist_id}}">{{title}}</option>{{/playlists}}</select> '
+		+ '<input type="submit" value="add" /></form> {{^playlists}}<b>You have no playlists</b>{{/playlists}}</td></tr>'
 	},
 	fillResultTable: {
 		table_template:
@@ -262,9 +266,22 @@ function updatePlaylistSelector(who) {
 			selector.options.add(new Option('Queue', 0));
 			selector.options.add(new Option('New playlist...', -1));
 			selector.options.add(new Option('---', 0));
+			playlists = json;
 			_.each(json, function(item){
 				selector.options.add(new Option(item.title, item.playlist_id));
 			});
+		}
+	);
+}
+
+function addSongToPlaylist(song_id, playlist_id) {
+	$.getJSON(
+		jsonSource + '?mode=add_to_playlist;playlist_id=' + playlist_id +
+		';song_id=' + song_id,
+		function (data) {
+			if (playlist_pane == playlist_id) {
+				showPlaylist(data);
+			}
 		}
 	);
 }
@@ -524,29 +541,43 @@ function getSongDetails(song_id) {
 	$.getJSON(
 		jsonSource + '?mode=get_details;song_id='+song_id,
 		function(json) {
-			json = json.song;
-			var json_item = {
-				track: json.track,
-				song_id: json.song_id,
-				title: json.title,
-				coded_title: uriencode(json.title),
-				last_song: lastLinkSong(json.artist, json.title),
-				wiki_song: wikiLinkSong(json.title),
-				album: json.album,
-				coded_album: uriencode(json.album),
-				last_album: lastLinkAlbum(json.artist, json.album),
-				wiki_album: wikiLinkAlbum(json.album),
-				artist: json.artist,
-				coded_artist: uriencode(json.artist),
-				last_artist: lastLinkArtist(json.artist),
-				wiki_artist: wikiLinkArtist(json.artist),
-				time: readableTime(json.length),
-				path: json.path,
-				voters: json.who
+			var formPage = function(json) {
+				json = json.song;
+				var json_item = {
+					track: json.track,
+					song_id: json.song_id,
+					title: json.title,
+					coded_title: uriencode(json.title),
+					last_song: lastLinkSong(json.artist, json.title),
+					wiki_song: wikiLinkSong(json.title),
+					album: json.album,
+					coded_album: uriencode(json.album),
+					last_album: lastLinkAlbum(json.artist, json.album),
+					wiki_album: wikiLinkAlbum(json.album),
+					artist: json.artist,
+					coded_artist: uriencode(json.artist),
+					last_artist: lastLinkArtist(json.artist),
+					wiki_artist: wikiLinkArtist(json.artist),
+					time: readableTime(json.length),
+					path: json.path,
+					playlists: playlists,
+					voters: json.who
+				};
+				$('#songresults').html(tableBuilder(templates.getSongDetails.table_template, templates.getSongDetails.row_template, [json_item]));
+				$('#result_title').html("Details for this song");
+				hideVoting();
 			};
-			$('#songresults').html(tableBuilder(templates.getSongDetails.table_template, templates.getSongDetails.row_template, [json_item]));
-			$('#result_title').html("Details for this song");
-			hideVoting();
+			if (playlists.length == 0 && currentUser != '') {
+				$.getJSON(
+					jsonSource + '?mode=playlists;who=' + currentUser,
+					function (playlistjson) {
+						playlists = playlistjson;
+						formPage(json);
+					}
+				);
+			} else {
+				formPage(json);
+			}
 		}
 	);
 }
