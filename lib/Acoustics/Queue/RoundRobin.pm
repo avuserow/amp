@@ -5,9 +5,9 @@ use warnings;
 
 use List::Util 'first';
 use List::MoreUtils 'uniq';
-use Mouse;
+use Moose;
 
-extends 'Acoustics::Queue', 'Mouse::Object';
+extends 'Acoustics::Queue', 'Moose::Object';
 has 'acoustics'   => (is => 'ro', isa => 'Acoustics');
 has 'voter_order' => (is => 'rw', isa => 'Maybe[ArrayRef[Str]]', default => sub {[]});
 

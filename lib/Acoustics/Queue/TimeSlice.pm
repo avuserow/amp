@@ -5,10 +5,10 @@ use warnings;
 
 use List::Util 'reduce';
 use List::MoreUtils 'uniq';
-use Mouse;
+use Moose;
 use v5.010;
 
-extends 'Acoustics::Queue', 'Mouse::Object';
+extends 'Acoustics::Queue', 'Moose::Object';
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
 has 'debt'      => (is => 'rw', isa => 'HashRef[Item]', default => sub {{}});
 

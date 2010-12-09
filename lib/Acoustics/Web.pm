@@ -5,7 +5,7 @@ use strict;
 
 use Log::Log4perl ':easy';
 use Time::HiRes 'sleep';
-use Mouse;
+use Moose;
 use Module::Load 'load';
 use List::Util 'shuffle';
 

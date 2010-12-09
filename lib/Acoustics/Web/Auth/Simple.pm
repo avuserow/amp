@@ -5,11 +5,9 @@ use warnings;
 
 use CGI::Session;
 use Memoize;
-use Mouse;
+use Moose;
 
-# XXX: Mouse as of version 0.4501 does not leave Mouse::Object in its
-# superclass list, so we manually include it to make Mouse work.
-extends 'Mouse::Object', 'Acoustics::Web::Auth';
+extends 'Acoustics::Web::Auth';
 
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
 has 'cgi'       => (is => 'ro', isa => 'Object');

@@ -4,4 +4,4 @@
 # if you want to change the name, copy this file, change that value
 # and edit your ezstream configuration to point to the new file.
 
-`dirname $0`/player-remote.pl stream song_iterate | tail -1
+`dirname $0`/acoustics player-song_iterate stream | tail -1

@@ -9,7 +9,7 @@ use Data::Phrasebook;
 use SQL::Abstract;
 use Try::Tiny;
 
-use Mouse;
+use Moose;
 
 has 'phrasebook' => (is => 'rw', isa => 'Str', required => 1);
 has 'db'   => (is => 'ro', required => 1);

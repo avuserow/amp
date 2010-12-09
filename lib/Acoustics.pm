@@ -6,7 +6,7 @@ use warnings;
 our $VERSION = '0.01';
 
 use Acoustics::Database;
-use Mouse;
+use Moose;
 use Module::Load 'load';
 use DBI;
 use Log::Log4perl;
