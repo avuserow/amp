@@ -85,10 +85,6 @@ function readableTime(length) {
 }
 
 function sendPlayerCommand(mode) {
-	if (!currentUser) {
-		alert("You must log in first.");
-		return;
-	}
 	$.getJSON(
 			jsonSource + '?mode=' + mode,
 			function (data) {handlePlayerStateRequest(data);}
@@ -105,17 +101,13 @@ function zapPlayer(player) {
 }
 
 function login() {
-	$.getJSON(
+	$.get(
 		'www-data/auth',
 		function () {playerStateRequest();}
 	);
 }
 
 function setVolume(value) {
-	if (!currentUser) {
-		alert("You must log in first.");
-		return;
-	}
 	$.getJSON(
 			jsonSource + '?mode=volume;value=' + value,
 			function (data) {handlePlayerStateRequest(data);}
@@ -376,7 +368,7 @@ function enqueuePlaylistShuffled (amount) {
 			}
 		);
 	} else {
-		alert('should not happen (enqueuePlaylistShuffled)!');
+		alertBox('should not happen (enqueuePlaylistShuffled)!');
 	}
 
 }
@@ -398,7 +390,7 @@ function enqueuePlaylist () {
 			}
 		);
 	} else {
-		alert('should not happen (enqueuePlaylist)!');
+		alertBox('should not happen (enqueuePlaylist)!');
 	}
 }
 
@@ -632,10 +624,6 @@ function tableBuilder(table_template, row_template, items, table_extras) {
 }
 
 function voteSong(song_id) {
-	if (!currentUser) {
-		alert("You must log in first.");
-		return;
-	}
 	if (playlist_pane != 0) {
 		$.getJSON(
 			jsonSource + '?mode=add_to_playlist;playlist_id='
@@ -651,10 +639,6 @@ function voteSong(song_id) {
 }
 
 function unvoteSong(song_id) {
-	if (!currentUser) {
-		alert("You must log in first.");
-		return;
-	}
 	if (playlist_pane != 0) {
 		$.getJSON(
 			jsonSource + '?mode=remove_from_playlist;playlist_id='
@@ -670,10 +654,6 @@ function unvoteSong(song_id) {
 }
 
 function shuffleVotes() {
-	if (!currentUser) {
-		alert("You must log in first.");
-		return;
-	}
 	$.getJSON(
 			jsonSource + '?mode=shuffle_votes',
 			function (data) {handlePlayerStateRequest(data);}
@@ -681,10 +661,6 @@ function shuffleVotes() {
 }
 
 function voteToTop(song_id) {
-	if (!currentUser) {
-		alert("You must log in first.");
-		return;
-	}
 	$.getJSON(
 			jsonSource + '?mode=vote_to_top;song_id=' + song_id,
 			function (data) {handlePlayerStateRequest(data);}
@@ -834,8 +810,45 @@ function pageLoadChange(hash) {
 	} else if (action == 'PlaylistTable') {
 		playlistTableRequest(args[0], args[1]);
 	} else {
-		alert("FALLBACK: got " + action + ", with args: " + args);
+		alertBox("FALLBACK: got " + action + ", with args: " + args);
 	}
 }
 
 $.address.change(function(e) {pageLoadChange(e.value);});
+
+$("#messageBox").ready(function() {
+	$("#messageBox").dialog({
+		autoOpen: false,
+		modal: true,
+		buttons: {"ok": function() {
+			$(this).dialog("close");
+			// set the text back to default
+			// (so we know if someone forgot to set it in another call)
+			$(this).html("no text... why?");
+		}}
+	});
+
+	$("#messageBox").ajaxError(function (e, xhr, opts, err) {
+		$(this).dialog('option', 'title', 'Communication Error');
+		$(this).html(xhr.responseText);
+		$(this).dialog('open');
+	});
+});
+
+// fires for every ajax request
+$(document).ajaxSend(function(e, xhr, opts) {
+});
+
+$(document).ajaxComplete(function(e, xhr, opts) {
+});
+
+// a generic alternative to alert()
+function alertBox(message) {
+	var box = $("#messageBox");
+	box.dialog('option', 'title', 'Alert');
+	box.html(message);
+	box.dialog('open');
+}
+
+function notify() {
+}
