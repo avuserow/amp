@@ -1,5 +1,4 @@
 playlist_pane = 0;
-vc_modifiable = false;
 currentUser = '';
 rem_time = 0;
 stateTimer = 0;
@@ -722,6 +721,11 @@ function qsencode(str) {
 }
 
 function uriencode(str) {
+	str = str.replace(/\&/g, '%26');
+	str = str.replace(/\+/g, '%2b');
+	str = str.replace(/\#/g, '%23');
+	str = str.replace(/\//g, '%2f');
+
 	return encodeURIComponent(str);
 }
 
