@@ -23,7 +23,7 @@ sub file_to_info {
 		$hash{$key} =~ s/^\s+//;
 		$hash{$key} =~ s/\s+$//;
 	}
-	delete $hash{bitrate}; # no bitrate field in the database yet
+	%hash = map {$_ => $hash{$_}} qw(path artist album title length track);
 	$hash{online} = 1; # set the online bit
 	return %hash;
 }
