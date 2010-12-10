@@ -78,6 +78,14 @@ ul li { display: inline; }
 	height: 32px;
 	background-color: #033;
 }
+	.toolbar ul li {
+		display: block;
+		float: left;
+		margin: 0;
+		padding: 0 5px 0 5px;
+		height: 32px;
+		margin-top: 7px;
+	}
 
 .statusbar {
 	position: absolute;
