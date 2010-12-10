@@ -144,5 +144,26 @@ ul li { display: inline; }
 			left: 0;
 			right: 0;
 			bottom: 0;
-			background-color: #D0D;
+			background-color: #000;
 		}
+
+			.queue-song {
+				background-color: #fff;
+				border-bottom: 1px solid black;
+			}
+				.queue-song-handle {
+					width: 20px;
+					float: left;
+				}
+				.queue-song-info {
+					float: left;
+				}
+				.queue-song-bottomrow {
+					width: 280px;
+				}
+				.queue-song-time {
+					float: right;
+				}
+				.queue-song-clear {
+					clear: both;
+				}
