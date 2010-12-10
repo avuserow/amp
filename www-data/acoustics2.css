@@ -10,19 +10,21 @@ ul li { display: inline; }
 	width: 100%;
 	height: 40px;
 	background-color: #222222;
-	display: table;
 	background-image: url(amp_images/header.png);
 }
 	#header-bar-logo {
-		display: table-cell;
+		float: left;
 		width: 100px;
 		vertical-align: center;
 		text-align: center;
+		padding-top: 10px;
+	}
+	#header-bar-spacer {
+		float: left;
+		width: 100px;
 	}
 	#header-bar-menu {
-		display: table-cell;
-		text-align: center;
-		width: 100%;
+		float: left;
 	}
 		/*
 		 * from Listamatic
@@ -40,16 +42,31 @@ ul li { display: inline; }
 			text-align: center;
 		}
 		#header-bar-menu-container ul li {
-			display: inline;
+			display: block;
+			float: left;
 			text-align: center;
-			padding: 0;
 			margin: 0;
+			padding: 0;
+		}
+		#header-bar-menu-container ul li a {
+			background-color: #FFF;
+			padding: 10px 10px 0 10px;
+			height: 40px;
+			display: block;
+			background-color: #FFF;
+		}
+		#header-bar-menu-container ul li a:hover {
+			background-color: #000;
+		}
+		.header-bar-menu-selected {
+			background-color: #444 !important;
 		}
 
 	#header-bar-user {
-		display: table-cell;
 		float: right;
 		width: 100px;
+		padding-top: 10px;
+		margin: 0 0 0 0;
 	}
 
 
@@ -78,6 +95,7 @@ ul li { display: inline; }
 	left: 0;
 	right: 0;
 	background-color: #404;
+	overflow: auto;
 }
 
 #main-content {
