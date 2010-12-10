@@ -155,6 +155,11 @@ ul li { display: inline; }
 			background-color: #000;
 		}
 
+		#queue-list {
+			padding: 0;
+			margin: 0;
+		}
+
 			.queue-song {
 				background-color: #fff;
 				border-bottom: 1px solid black;
