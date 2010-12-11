@@ -285,9 +285,15 @@ ul li { display: inline; }
 				text-align: center;
 				padding-top: 13px;
 				outline: none !important;
+				text-decoration: none;
+				color: #000;
+				font-weight: bold;
+				text-shadow: 0px 1px 1px #666;
 			}
 			#controls div a:hover {
 				background-color: #000;
+				text-shadow: 0px 1px 1px #ccc;
+				color: #fff;
 			}
 
 		#queue {
