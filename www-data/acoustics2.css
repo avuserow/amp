@@ -1,6 +1,12 @@
 body {
+	position: absolute;
 	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
 	height: 100%;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
 }
 
 ul { display: inline; }
@@ -133,6 +139,7 @@ ul li { display: inline; }
 		right: 0px;
 		width: 300px;
 		bottom: 0px;
+		height: 100%;
 	}
 
 		#now-playing-panel {
