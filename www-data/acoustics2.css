@@ -218,6 +218,7 @@ ul li { display: inline; }
 				background-color: #fff;
 				border-bottom: 1px solid black;
 				height: 40px;
+				overflow: hidden;
 			}
 				.queue-song-handle {
 					width: 20px;
