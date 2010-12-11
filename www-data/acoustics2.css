@@ -149,7 +149,7 @@ ul li { display: inline; }
 			#now-playing-info {
 				background: #fff;
 				float: left;
-				padding-left: 10px;
+				padding-left: 24px;
 			}
 				#now-playing-metadata {
 					padding: 0;
@@ -161,6 +161,16 @@ ul li { display: inline; }
 				#now-playing-title {
 					font-weight: bold;
 				}
+			#now-playing-progress-container {
+				position: absolute;
+				top: 80px;
+				height: 20px;
+				width: 100%;
+			}
+			#now-playing-progress {
+				margin-top: 4px;
+				height: 10px;
+			}
 
 		#controls {
 			position: relative;
