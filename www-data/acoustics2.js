@@ -81,6 +81,7 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 	}
+	$("#now-playing-album-art-img").reflect({height: 16});
 
 	// the queue
 	$("#queue-list").empty();
