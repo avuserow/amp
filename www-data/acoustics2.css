@@ -151,6 +151,9 @@ ul li { display: inline; }
 		}
 			#nothing-playing-info {
 				text-align: center;
+				width: 300px;
+				height: 100px;
+				vertical-align: center;
 			}
 			#now-playing-album-art {
 				height: 80px;
@@ -164,15 +167,16 @@ ul li { display: inline; }
 				width: 236px;
 				height: 80px;
 				overflow: hidden;
+				font-family: sans-serif;
+				font-size: 14px;
 			}
-				#now-playing-metadata {
-					padding: 0;
-					margin: 0;
-				}
-				#now-playing-metadata li {
-					display: block;
-					width: 100%;
+				#now-playing-info div {
+					white-space: nowrap;
+					width: 236px;
 					overflow: hidden;
+					/* Ellipse [...] on overflow */
+					text-overflow: ellipsis;
+					text-overflow-mode: ellipsis;
 				}
 				#now-playing-title {
 					font-weight: bold;
