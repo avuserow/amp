@@ -101,11 +101,10 @@ function handlePlayerStateRequest(json) {
 		entry.appendTo("#queue-list");
 	}
 	var length = $("#queue-list").contents().length;
-	$("#queue-song-count-num").html(length);
 	if (length == 1) {
-		$("#queue-song-count-plural").html("");
+		$("#queue-song-count").html("One song");
 	} else {
-		$("#queue-song-count-plural").html("s");
+		$("#queue-song-count").html(length + " songs");
 	}
 	var days    = Math.floor(total_length / 86400);
 	var hours   = Math.floor(total_length / 3600);
