@@ -109,25 +109,7 @@ function handlePlayerStateRequest(json) {
 	} else {
 		$("#queue-song-count").html(length + " songs");
 	}
-	var days    = Math.floor(total_length / 86400);
-	var hours   = Math.floor(total_length / 3600);
-	var minutes = Math.floor(total_length / 60);
-	var seconds = '' + total_length % 60;
-	if (days > 1) {
-		$("#queue-length").html(days + " days, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds.");
-	} else if (days == 1) {
-		$("#queue-length").html(days + " day, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds.");
-	} else if (hours > 1) {
-		$("#queue-length").html(hours + " hours, " + minutes + " minutes, " + seconds + " seconds.");
-	} else if (hours == 1) {
-		$("#queue-length").html(hours + " hour, " + minutes + " minutes, " + seconds + " seconds.");
-	} else if (minutes > 1) {
-		$("#queue-length").html(minutes + " minutes, " + seconds + " seconds.");
-	} else if (minutes == 1) {
-		$("#queue-length").html(minutes + " minute, " + seconds + " seconds.");
-	} else {
-		$("#queue-length").html(seconds + " seconds.");
-	}
+	$("#queue-length").html(readableTime(total_length));
 }
 
 function controlPlayPause() {

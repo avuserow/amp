@@ -138,7 +138,7 @@ ul li { display: inline; }
 	}
 	.toolbar ul li a:hover {
 		color: #fff;
-		text-shadow: 1px -1px -1px #333;
+		text-shadow: 1px 1px 1px #333;
 	}
 
 .statusbar {
