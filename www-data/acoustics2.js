@@ -2,6 +2,9 @@ var volume;
 var stateTimer;
 var templates = {};
 var jsonSource = 'json.pl';
+var playingTimer;
+var elapsedTime = 0;
+var totalTime = 0;
 
 $(document).ready(function() {
 	$("#queue-list").sortable({
@@ -18,6 +21,29 @@ $(document).ready(function() {
 	if (stateTimer) clearInterval(stateTimer);
 	stateTimer = setInterval(function() {playerStateRequest();}, 15000)
 });
+
+function readableTime(length) {
+	if (length < 0) {length = 0;}
+	var seconds = length % 60;
+	var minutes = Math.floor(length / 60) % 60;
+	var hours = Math.floor(length / 3600);
+	if (hours) {
+		return sprintf("%d:%02d:%02d",hours,minutes,seconds);
+	} else {
+		return sprintf("%d:%02d",minutes,seconds);
+	}
+}
+
+function startPlayingTimer() {
+	if (playingTimer) clearInterval(playingTimer);
+	playingTimer = setInterval(function() { updatePlayingTime() }, 1000);
+}
+
+function updatePlayingTime() {
+	if(elapsedTime < totalTime) {
+		$('#now-playing-time').html(readableTime(++elapsedTime));
+	}
+}
 
 function playerStateRequest() {
 	$.getJSON(
@@ -43,9 +69,11 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-title", nowPlayingPanel).html(nowPlaying.title);
 		$("#now-playing-album", nowPlayingPanel).html(nowPlaying.album);
 		$("#now-playing-artist", nowPlayingPanel).html(nowPlaying.artist);
-		$("#now-playing-total", nowPlayingPanel).html(nowPlaying.length);
-		var elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
-		$("#now-playing-time", nowPlayingPanel).html(elapsedTime);
+		$("#now-playing-total", nowPlayingPanel).html(readableTime(nowPlaying.length));
+		totalTime = nowPlaying.length;
+		startPlayingTimer();
+		elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
+		$("#now-playing-time", nowPlayingPanel).html(readableTime(elapsedTime));
 		$("#nothing-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 	} else {
