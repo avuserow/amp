@@ -138,6 +138,7 @@ ul li { display: inline; }
 		#now-playing-panel {
 			position: relative;
 			height: 100px;
+			width: 300px;
 			background-color: #0DD;
 			overflow: hidden;
 		}
@@ -153,7 +154,9 @@ ul li { display: inline; }
 			#now-playing-info {
 				background: #fff;
 				float: left;
-				padding-left: 24px;
+				width: 236px;
+				height: 80px;
+				overflow: hidden;
 			}
 				#now-playing-metadata {
 					padding: 0;
@@ -161,6 +164,8 @@ ul li { display: inline; }
 				}
 				#now-playing-metadata li {
 					display: block;
+					width: 100%;
+					overflow: hidden;
 				}
 				#now-playing-title {
 					font-weight: bold;
