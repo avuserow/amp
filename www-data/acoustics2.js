@@ -83,6 +83,7 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-album-art", nowPlayingPanel).remove();
 		$("#now-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
+		totalTime = -1;
 	}
 
 	// the queue
