@@ -227,7 +227,6 @@ ul li { display: inline; }
 			#now-playing-album-art {
 				height: 80px;
 				width: 64px;
-				background-color: #000;
 				float: left;
 			}
 			#now-playing-info {
@@ -244,12 +243,20 @@ ul li { display: inline; }
 					width: 236px;
 					overflow: hidden;
 					padding-left: 4px;
-					/* Ellipse [...] on overflow */
+					/* Ellipse [...] on overflow, where supported */
 					text-overflow: ellipsis;
 					text-overflow-mode: ellipsis;
 				}
 				#now-playing-title {
 					font-weight: bold;
+					font-size: 16px;
+					text-shadow: 0px 1px 1px #888;
+				}
+				#now-playing-album {
+					font-size: 13px;
+				}
+				#now-playing-times {
+					font-style: oblique;
 				}
 			#now-playing-progress-container {
 				position: absolute;
