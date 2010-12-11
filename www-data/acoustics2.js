@@ -3,10 +3,24 @@ var templates = {};
 var jsonSource = 'json.pl';
 
 $(document).ready(function() {
-	templates.queueSong = $("li.queue-song").clone();
-	alert(templates.queueSong.html());
-
+	$("#queue-list").sortable({placeholder: "ui-state-highlight", axis: "y", handle: ".queue-song-handle"});
+	var queueList = $("li.queue-song");
+	templates.queueSong = queueList.first().clone();
 	playerStateRequest();
+	handlePlayerStateRequest({playlist:[
+		{
+			title: "bacon is delicious",
+			artist: "the redditors"
+		},
+		{
+			title: "bacon is deliciousasdf",
+			artist: "the redditors"
+		},
+		{
+			title: "lol",
+			artist: "this is fun"
+		}
+		]});
 //	if (stateTimer) clearInterval(stateTimer);
 //	stateTimer = setInterval(function() {playerStateRequest();}, 15000)
 });
@@ -19,14 +33,12 @@ function playerStateRequest() {
 }
 
 function handlePlayerStateRequest(json) {
-	$("#queue-list").html("");
+	$("#queue-list").empty();
 	for (var i in json.playlist) {
-		//alert(i);
 		var song = json.playlist[i];
-		var entry = $(templates.queueSong).clone();
+		var entry = templates.queueSong.clone();
 		$(".queue-song-title", entry).html(song.title);
-		//alert(entry.html());
+		$(".queue-song-artist", entry).html(song.artist);
 		entry.appendTo("#queue-list");
-		//alert(entry);
 	}
 }
