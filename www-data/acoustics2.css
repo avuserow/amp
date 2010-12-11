@@ -203,6 +203,17 @@ a:hover {
 		padding-left: 0px;
 		margin-left: 0px;
 	}
+		#search-box {
+			-webkit-border-radius: 6px;
+			-moz-border-radius: 6px;
+			border-radius: 6px;
+			border: 1px solid #000;
+			background-color: #888;
+			width: 400px;
+		}
+		#search-box:focus {
+			background-color: #fff;
+		}
 		#search-results-table {
 			width: 100%;
 		}
