@@ -332,7 +332,10 @@ ul li { display: inline; }
 				overflow: hidden;
 			}
 				.queue-song-handle {
-					width: 20px;
+					width: 8px;
+					height: 40px;
+					background: url(images/ui2/handle.png);
+					margin-right: 4px;
 					float: left;
 				}
 				.queue-song-info {
