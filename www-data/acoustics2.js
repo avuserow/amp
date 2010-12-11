@@ -42,6 +42,7 @@ function startPlayingTimer() {
 function updatePlayingTime() {
 	if(elapsedTime < totalTime) {
 		$('#now-playing-time').html(readableTime(++elapsedTime));
+		$('#now-playing-progress').progressbar({value: Math.floor(100 * (elapsedTime/totalTime))});
 	}
 }
 
@@ -76,12 +77,13 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-time", nowPlayingPanel).html(readableTime(elapsedTime));
 		$("#nothing-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
+		$("#now-playing-album-art-img").reflect({height: 16});
+		$("#now-playing-progress").progressbar({value: Math.floor(100 * (elapsedTime/totalTime))});
 	} else {
 		$("#now-playing-album-art", nowPlayingPanel).remove();
 		$("#now-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 	}
-	$("#now-playing-album-art-img").reflect({height: 16});
 
 	// the queue
 	$("#queue-list").empty();

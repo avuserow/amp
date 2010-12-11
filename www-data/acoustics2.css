@@ -255,7 +255,8 @@ ul li { display: inline; }
 				position: absolute;
 				top: 80px;
 				height: 20px;
-				width: 100%;
+				width: 280px;
+				margin-left: 10px;
 			}
 			#now-playing-progress {
 				margin-top: 4px;
