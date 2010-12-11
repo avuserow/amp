@@ -85,18 +85,52 @@ function handlePlayerStateRequest(json) {
 
 	// the queue
 	$("#queue-list").empty();
+	var total_length = 0;
 	for (var i in json.playlist) {
 		var song = json.playlist[i];
 		var entry = templates.queueSong.clone();
 		$(".queue-song-title", entry).html(song.title);
 		$(".queue-song-artist", entry).html(song.artist);
+		var minutes = '' + Math.floor(song.length / 60);
+		var seconds = '' + song.length % 60;
+		while (seconds.length < 2) {
+			seconds = "0" + seconds;
+		}
+		$(".queue-song-time", entry).html(minutes + ":" + seconds);
+		total_length += song.length;
 		entry.appendTo("#queue-list");
+	}
+	var length = $("#queue-list").contents().length;
+	$("#queue-song-count-num").html(length);
+	if (length == 1) {
+		$("#queue-song-count-plural").html("");
+	} else {
+		$("#queue-song-count-plural").html("s");
+	}
+	var days    = Math.floor(total_length / 86400);
+	var hours   = Math.floor(total_length / 3600);
+	var minutes = Math.floor(total_length / 60);
+	var seconds = '' + total_length % 60;
+	if (days > 1) {
+		$("#queue-length").html(days + " days, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds.");
+	} else if (days == 1) {
+		$("#queue-length").html(days + " day, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds.");
+	} else if (hours > 1) {
+		$("#queue-length").html(hours + " hours, " + minutes + " minutes, " + seconds + " seconds.");
+	} else if (hours == 1) {
+		$("#queue-length").html(hours + " hour, " + minutes + " minutes, " + seconds + " seconds.");
+	} else if (minutes > 1) {
+		$("#queue-length").html(minutes + " minutes, " + seconds + " seconds.");
+	} else if (minutes == 1) {
+		$("#queue-length").html(minutes + " minute, " + seconds + " seconds.");
+	} else {
+		$("#queue-length").html(seconds + " seconds.");
 	}
 }
 
 function controlPlayPause() {
 	$.getJSON(
-		jsonSource + '?mode=start',
+			jsonSource + '?mode=start',
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }

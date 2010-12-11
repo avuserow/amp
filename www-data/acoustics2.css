@@ -153,6 +153,10 @@ ul li { display: inline; }
 		color: #fff;
 		text-shadow: 1px 1px 1px #000;
 	}
+	.statusbar-right {
+		float: right !important;
+		text-align: right;
+	}
 
 .container {
 	position: absolute;
@@ -182,7 +186,21 @@ ul li { display: inline; }
 		bottom: 0px;
 		background-color: #444;
 		color: #FFF;
+		padding-left: 0px;
+		margin-left: 0px;
 	}
+		#search-results-table {
+			width: 100%;
+		}
+		.sr-th {
+			font-size: 14px;
+			font-weight: bold;
+			text-shadow: 1px 1px 1px #000;
+			border-bottom: 1px solid #000;
+		}
+		#sr-vote { width: 20px; }
+		#sr-track { width: 20px; }
+		#sr-length { width: 50px; }
 
 	#right-panel {
 		position: absolute;

@@ -44,7 +44,17 @@
 					</ul>
 				</div>
 				<div id="search-results-container" class="container">
-					Table Here<br/>
+					<table id="search-results-table">
+						<tr>
+							<th id="sr-vote"   class="sr-th">+</th>
+							<th id="sr-track"  class="sr-th">Tr</th>
+							<th id="sr-title"  class="sr-th">Title</th>
+							<th id="sr-album"  class="sr-th">Album</th>
+							<th id="sr-artist" class="sr-th">Artist</th>
+							<th id="sr-length" class="sr-th">Time</th>
+						</tr>
+						<tr><td>+</td><td>1</td><td>Never Gonna Give You Up</td><td>Greatest Hits</td><td>Rick Astley</td><td>3:33</td></tr>
+					</table>
 				</div>
 				<div id="search-results-statusbar" class="statusbar">
 					<div id="search-results-count">15 songs</div>
@@ -110,8 +120,8 @@
 						</ul>
 					</div>
 					<div id="queue-statusbar" class="statusbar">
-						<div id="queue-song-count">15 songs</div>
-						<div id="queue-length">1 hour 3 minutes</div>
+						<div id="queue-song-count"><span id="queue-song-count-num">0</span> song<span id="queue-song-count-plural">s</span></div>
+						<div id="queue-length" class="statusbar-right">1 hour 3 minutes</div>
 					</div>
 				</div>
 			</div>
