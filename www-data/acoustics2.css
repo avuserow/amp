@@ -21,14 +21,17 @@ ul li { display: inline; }
 }
 	#header-bar-logo {
 		float: left;
+		padding-left: 20px;
 		width: 100px;
 		vertical-align: center;
 		text-align: center;
-		padding-top: 10px;
 	}
+		#header-bar-logo img {
+			height: 40px;
+		}
 	#header-bar-spacer {
 		float: left;
-		width: 100px;
+		width: 60px;
 	}
 	#header-bar-menu {
 		float: left;
@@ -70,10 +73,19 @@ ul li { display: inline; }
 		}
 
 	#header-bar-user {
+		text-align: right;
 		float: right;
-		width: 100px;
+		width: 200px;
 		padding-top: 10px;
+		padding-right: 20px;
 		margin: 0 0 0 0;
+		font-size: 14px;
+		font-family: sans-serif;
+		color: #bbb;
+		text-shadow: 1px 1px 1px #777;
+	}
+	#header-bar-user span {
+		color: #fff;
 	}
 
 
