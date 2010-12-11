@@ -222,6 +222,15 @@ a:hover {
 		#search-results-table {
 			width: 100%;
 		}
+		#search-results-table tbody tr td {
+			font-size: 12px;
+			height: 14px;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+		.sr-odd td {
+			background-color: #444;
+		}
 		.sr-th {
 			font-size: 14px;
 			font-weight: bold;

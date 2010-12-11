@@ -20,6 +20,7 @@ $(document).ready(function() {
 	playerStateRequest();
 	if (stateTimer) clearInterval(stateTimer);
 	stateTimer = setInterval(function() {playerStateRequest();}, 15000)
+	$("#search-results-table").tablesorter();
 });
 
 function readableTime(length) {
@@ -64,22 +65,30 @@ function doSearch() {
 }
 
 function fillResultTable(json) {
-	this.songIDs = [];
-	var json_items = _.map(json,
-			function(item) {
-			this.songIDs.push(item.song_id);
-			return {
-				title: titleOrPath(item),
-				song_id: item.song_id,
-				track: item.track,
-				album: item.album,
-				coded_album: uriencode(item.album),
-				artist: item.artist,
-				coded_artist: uriencode(item.artist),
-				time: readableTime(item.length)
-			}
-			});
-	$("#search-results-status").html("Yeah, we need to do something here.");
+	$("#search-results-table tbody").empty();
+	if (json.length < 1) {
+		$("#search-results-table tbody").append("<tr><td colspan=\"6\"><center><i>No results.</i></center></td></tr>");
+		$("#search-results-time").html("0 seconds");
+		$("#search-results-count").html("0 songs");
+		return false;
+	}
+	var total_length = 0;
+	for (i in json) {
+		var song = json[i];
+		var tr_class = "";
+		if (i % 2 == 1) {
+			tr_class = "class=\"sr-odd\"";
+		}
+		$("#search-results-table tbody").append("<tr " + tr_class + "><td>+</td><td>"+song.track+"</td><td>"+song.title+"</td><td>"+
+				song.album+"</td><td>"+song.artist+"</td><td>"+readableTime(song.length)+"</td>");
+		total_length += song.length;
+	}
+	$("#search-results-time").html(readableTime(total_length));
+	if (json.length == 1) {
+		$("#search-results-count").html("One song");
+	} else {
+		$("#search-results-count").html(json.length +" songs");
+	}
 }
 
 function handlePlayerStateRequest(json) {
