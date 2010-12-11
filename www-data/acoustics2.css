@@ -135,17 +135,58 @@ ul li { display: inline; }
 		bottom: 0px;
 	}
 
-		#song-panel {
+		#now-playing-panel {
 			position: relative;
 			height: 100px;
 			background-color: #0DD;
 		}
+			#now-playing-album-art {
+				height: 80px;
+				width: 64px;
+				background-color: #F00;
+				float: left;
+			}
+			#now-playing-info {
+				background: #fff;
+				float: left;
+				padding-left: 10px;
+			}
+				#now-playing-metadata {
+					padding: 0;
+					margin: 0;
+				}
+				#now-playing-metadata li {
+					display: block;
+				}
+				#now-playing-title {
+					font-weight: bold;
+				}
 
 		#controls {
 			position: relative;
 			height: 100px;
 			background-color: #DD0;
 		}
+			#controls-top {
+				height: 50px;
+				overflow: hidden;
+			}
+			#controls-bottom {
+				height: 50px;
+				overflow: hidden;
+			}
+			#controls div a {
+				display: block;
+				height: 50px;
+				float: left;
+				width: 99px;
+				background-color: #fff;
+				text-align: center;
+				padding-top: 13px;
+			}
+			#controls div a:hover {
+				background-color: #000;
+			}
 
 		#queue {
 			position: absolute;
