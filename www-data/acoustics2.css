@@ -189,10 +189,11 @@ ul li { display: inline; }
 				display: block;
 				height: 50px;
 				float: left;
-				width: 99px;
+				width: 100px;
 				background-color: #fff;
 				text-align: center;
 				padding-top: 13px;
+				outline: none !important;
 			}
 			#controls div a:hover {
 				background-color: #000;
