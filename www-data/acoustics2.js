@@ -47,11 +47,11 @@ function handlePlayerStateRequest(json) {
 		var elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
 		$("#now-playing-time", nowPlayingPanel).html(elapsedTime);
 		$("#nothing-playing-info", nowPlayingPanel).remove();
-		nowPlayingPanel.appendTo("#now-playing-panel");
+		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 	} else {
 		$("#now-playing-album-art", nowPlayingPanel).remove();
 		$("#now-playing-info", nowPlayingPanel).remove();
-		nowPlayingPanel.appendTo("#now-playing-panel");
+		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 	}
 
 	// the queue
