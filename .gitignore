@@ -20,3 +20,4 @@ lib/pkgconfig
 include
 bin/taglib-config
 .gitignore
+*.sqlite
