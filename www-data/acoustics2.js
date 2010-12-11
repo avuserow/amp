@@ -28,9 +28,9 @@ function playerStateRequest() {
 
 function handlePlayerStateRequest(json) {
 	// volume
-	if (json.player && json.player.volume) {
+	if (json.player && json.player.volume != undefined) {
 		volume = parseInt(json.player.volume);
-		$("#controls-volume").html(volume);
+		$("#controls-volume").html((volume / 10) + 1);
 	} else {
 		$("#controls-volume").html("-");
 	}
@@ -87,7 +87,7 @@ function controlNext() {
 }
 
 function controlVolumeDown() {
-	if (volume) {
+	if (volume != undefined) {
 		volume -= 10;
 		$.getJSON(
 			jsonSource + '?mode=volume;value=' + volume,
@@ -97,7 +97,7 @@ function controlVolumeDown() {
 }
 
 function controlVolumeUp() {
-	if (volume) {
+	if (volume != undefined) {
 		volume += 10;
 		$.getJSON(
 			jsonSource + '?mode=volume;value=' + volume,
