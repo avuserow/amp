@@ -118,6 +118,13 @@ function handlePlayerStateRequest(json) {
 	$("#queue-length").html(readableTime(total_length));
 }
 
+function login() {
+	$.get(
+		'www-data/auth',
+		function () {playerStateRequest();}
+	);
+}
+
 function controlPlayPause() {
 	$.getJSON(
 			jsonSource + '?mode=start',
