@@ -139,6 +139,7 @@ ul li { display: inline; }
 			position: relative;
 			height: 100px;
 			background-color: #0DD;
+			overflow: hidden;
 		}
 			#nothing-playing-info {
 				text-align: center;
@@ -179,6 +180,7 @@ ul li { display: inline; }
 			position: relative;
 			height: 100px;
 			background-color: #DD0;
+			overflow: hidden;
 		}
 			#controls-top {
 				height: 50px;
