@@ -3,7 +3,7 @@ var templates = {};
 var jsonSource = 'json.pl';
 
 $(document).ready(function() {
-	$("#queue-list").sortable({placeholder: "ui-state-highlight", axis: "y", handle: ".queue-song-handle"});
+	$("#queue-list").sortable({placeholder: "queue-song-placeholder", axis: "y", handle: ".queue-song-handle"});
 	var queueList = $("li.queue-song");
 	templates.queueSong = queueList.first().clone();
 	playerStateRequest();

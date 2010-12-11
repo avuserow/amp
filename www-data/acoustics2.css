@@ -206,6 +206,7 @@ ul li { display: inline; }
 			.queue-song {
 				background-color: #fff;
 				border-bottom: 1px solid black;
+				height: 40px;
 			}
 				.queue-song-handle {
 					width: 20px;
@@ -223,3 +224,10 @@ ul li { display: inline; }
 				.queue-song-clear {
 					clear: both;
 				}
+			.queue-song-placeholder {
+				background-color: #ff0;
+				border-bottom: 1px solid black;
+				height: 40px;
+				line-height: 40px;
+				display: block;
+			}
