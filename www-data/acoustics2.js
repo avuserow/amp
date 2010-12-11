@@ -3,9 +3,12 @@ var templates = {};
 var jsonSource = 'json.pl';
 
 $(document).ready(function() {
-	$("#queue-list").sortable({placeholder: "queue-song-placeholder", axis: "y", handle: ".queue-song-handle"});
-	var queueList = $("li.queue-song");
-	templates.queueSong = queueList.first().clone();
+	$("#queue-list").sortable({
+		placeholder: "queue-song-placeholder",
+		axis: "y",
+		handle: ".queue-song-handle"
+	});
+	templates.queueSong = $("li.queue-song").first().clone();
 	playerStateRequest();
 	handlePlayerStateRequest({playlist:[
 		{
@@ -33,6 +36,18 @@ function playerStateRequest() {
 }
 
 function handlePlayerStateRequest(json) {
+	// now playing
+	var nowPlaying = json.now_playing;
+	if (nowPlaying) {
+		$("#now-playing-title").html(nowPlaying.title);
+		$("#now-playing-album").html(nowPlaying.album);
+		$("#now-playing-artist").html(nowPlaying.artist);
+		var elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
+		$("#now-playing-total").html(nowPlaying.length);
+		$("#now-playing-time").html(elapsedTime);
+	}
+
+	// the queue
 	$("#queue-list").empty();
 	for (var i in json.playlist) {
 		var song = json.playlist[i];
