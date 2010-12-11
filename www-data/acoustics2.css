@@ -155,7 +155,9 @@ a:hover {
 	left: 0px;
 	right: 0px;
 	height: 24px;
+	padding-right: 30px;
 	background: url(images/ui2/statusbar.png);
+	vertical-align: text-bottom;
 }
 	.statusbar div {
 		float: left;
@@ -166,6 +168,9 @@ a:hover {
 		font-size: 14px;
 		color: #fff;
 		text-shadow: 1px 1px 1px #000;
+		height: 21px;
+		line-height: 21px;
+		vertical-align: text-bottom;
 	}
 	.statusbar-right {
 		float: right !important;

@@ -53,6 +53,35 @@ function playerStateRequest() {
 	);
 }
 
+function doSearch() {
+	var value = $("#search-box").val();
+	$("#search-results-status").html("Searching for '" + value + "'...");
+	$.getJSON(jsonSource + "?mode=search;field=any;value=" + value, function (data) {
+			$("#search-results-status").html("Search results for '" + value + "'.");
+			fillResultTable(data);
+			});
+	return false;
+}
+
+function fillResultTable(json) {
+	this.songIDs = [];
+	var json_items = _.map(json,
+			function(item) {
+			this.songIDs.push(item.song_id);
+			return {
+				title: titleOrPath(item),
+				song_id: item.song_id,
+				track: item.track,
+				album: item.album,
+				coded_album: uriencode(item.album),
+				artist: item.artist,
+				coded_artist: uriencode(item.artist),
+				time: readableTime(item.length)
+			}
+			});
+	$("#search-results-status").html("Yeah, we need to do something here.");
+}
+
 function handlePlayerStateRequest(json) {
 	// volume
 	if (json.player && json.player.volume != undefined) {

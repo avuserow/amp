@@ -38,7 +38,11 @@
 			<div id="search-results" class="panel">
 				<div id="search-results-toolbar" class="toolbar">
 					<ul id="search-results-toolbar-list" class="toolbar-list">
-						<li id="search-results-search"><form><input id="search-box" placeholder="Search" type="search" /></form></li>
+						<li id="search-results-search">
+							<form onSubmit="return doSearch();">
+								<input id="search-box" placeholder="Search" type="search" />
+							</form>
+						</li>
 						<li id="search-results-new" class="toolbar-right"><a href="#">New</a></li>
 						<li id="search-results-recent" class="toolbar-right"><a href="#">Recent</a></li>
 						<li id="search-results-random" class="toolbar-right"><a href="#">Random</a></li>
@@ -58,8 +62,9 @@
 					</table>
 				</div>
 				<div id="search-results-statusbar" class="statusbar">
-					<div id="search-results-count">15 songs</div>
-					<div id="search-results-time">a bajillion hours</div>
+					<div id="search-results-status"></div>
+					<div id="search-results-time"  class="statusbar-right">a bajillion hours</div>
+					<div id="search-results-count" class="statusbar-right">15 songs</div>
 				</div>
 			</div>
 			<div id="right-panel" class="panel">
