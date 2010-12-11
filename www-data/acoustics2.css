@@ -253,6 +253,13 @@ ul li { display: inline; }
 					width: 260px;
 					white-space: nowrap;
 				}
+				.queue-song-vote-count {
+					float: left;
+					padding-right: 4px;
+				}
+				.queue-song-artist {
+					float: left;
+				}
 				.queue-song-bottomrow {
 					width: 260px;
 					white-space: nowrap;
