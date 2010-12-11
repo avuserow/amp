@@ -14,6 +14,14 @@ body {
 ul { display: inline; }
 ul li { display: inline; }
 
+a, a:visited {
+	color: #ccc;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
 #header-bar {
 	width: 100%;
 	height: 40px;
@@ -90,7 +98,7 @@ ul li { display: inline; }
 		color: #bbb;
 		text-shadow: 1px 1px 1px #777;
 	}
-	#header-bar-user span {
+	#user-name {
 		color: #fff;
 	}
 

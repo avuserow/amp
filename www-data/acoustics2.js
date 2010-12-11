@@ -62,6 +62,12 @@ function handlePlayerStateRequest(json) {
 		$("#controls-volume").html("-");
 	}
 
+	// user
+	if (json.who) {
+		$("#header-bar-user-message").html("logged in as");
+		$("#user-name").html(json.who);
+	}
+
 	// now playing
 	var nowPlaying = json.now_playing;
 	var nowPlayingPanel = templates.nowPlayingPanel.clone();
