@@ -9,25 +9,14 @@ $(document).ready(function() {
 		axis: "y",
 		handle: ".queue-song-handle"
 	});
+
+	// templating
 	templates.queueSong = $("li.queue-song").first().clone();
 	templates.nowPlayingPanel = $("#now-playing-panel").clone();
+
 	playerStateRequest();
-	handlePlayerStateRequest({playlist:[
-		{
-			title: "bacon is delicious",
-			artist: "the redditors"
-		},
-		{
-			title: "bacon is deliciousasdf",
-			artist: "the redditors"
-		},
-		{
-			title: "lol",
-			artist: "this is fun"
-		}
-		]});
-//	if (stateTimer) clearInterval(stateTimer);
-//	stateTimer = setInterval(function() {playerStateRequest();}, 15000)
+	if (stateTimer) clearInterval(stateTimer);
+	stateTimer = setInterval(function() {playerStateRequest();}, 15000)
 });
 
 function playerStateRequest() {
