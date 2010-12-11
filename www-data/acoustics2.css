@@ -64,12 +64,16 @@ ul li { display: inline; }
 			height: 40px;
 			display: block;
 			background-color: #FFF;
+			color: #222;
+			text-decoration: none;
 		}
 		#header-bar-menu-container ul li a:hover {
 			background-color: #000;
+			color: #fff;
 		}
 		.header-bar-menu-selected {
 			background-color: #444 !important;
+			color: #ddd !important;
 		}
 
 	#header-bar-user {
