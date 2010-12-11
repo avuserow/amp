@@ -103,7 +103,8 @@ ul li { display: inline; }
 	left: 0;
 	right: 0;
 	background-color: #404;
-	overflow: auto;
+	overflow-y: scroll;
+	overflow-x: auto;
 }
 
 #main-content {
@@ -153,6 +154,7 @@ ul li { display: inline; }
 			right: 0;
 			bottom: 0;
 			background-color: #000;
+
 		}
 
 		#queue-list {
@@ -172,7 +174,7 @@ ul li { display: inline; }
 					float: left;
 				}
 				.queue-song-bottomrow {
-					width: 280px;
+					width: 260px;
 				}
 				.queue-song-time {
 					float: right;
