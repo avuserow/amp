@@ -9,6 +9,7 @@ $(document).ready(function() {
 		handle: ".queue-song-handle"
 	});
 	templates.queueSong = $("li.queue-song").first().clone();
+	templates.nowPlayingPanel = $("#now-playing-panel").clone();
 	playerStateRequest();
 	handlePlayerStateRequest({playlist:[
 		{
@@ -38,13 +39,21 @@ function playerStateRequest() {
 function handlePlayerStateRequest(json) {
 	// now playing
 	var nowPlaying = json.now_playing;
+	var nowPlayingPanel = templates.nowPlayingPanel.clone();
+	$("#now-playing-panel").empty();
 	if (nowPlaying) {
-		$("#now-playing-title").html(nowPlaying.title);
-		$("#now-playing-album").html(nowPlaying.album);
-		$("#now-playing-artist").html(nowPlaying.artist);
+		$("#now-playing-title", nowPlayingPanel).html(nowPlaying.title);
+		$("#now-playing-album", nowPlayingPanel).html(nowPlaying.album);
+		$("#now-playing-artist", nowPlayingPanel).html(nowPlaying.artist);
+		$("#now-playing-total", nowPlayingPanel).html(nowPlaying.length);
 		var elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
-		$("#now-playing-total").html(nowPlaying.length);
-		$("#now-playing-time").html(elapsedTime);
+		$("#now-playing-time", nowPlayingPanel).html(elapsedTime);
+		$("#nothing-playing-info", nowPlayingPanel).remove();
+		nowPlayingPanel.appendTo("#now-playing-panel");
+	} else {
+		$("#now-playing-album-art", nowPlayingPanel).remove();
+		$("#now-playing-info", nowPlayingPanel).remove();
+		nowPlayingPanel.appendTo("#now-playing-panel");
 	}
 
 	// the queue

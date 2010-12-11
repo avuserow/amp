@@ -140,6 +140,9 @@ ul li { display: inline; }
 			height: 100px;
 			background-color: #0DD;
 		}
+			#nothing-playing-info {
+				text-align: center;
+			}
 			#now-playing-album-art {
 				height: 80px;
 				width: 64px;
