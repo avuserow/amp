@@ -152,3 +152,23 @@ function controlVolumeUp() {
 		);
 	}
 }
+
+$("#messageBox").ready(function() {
+	$("#messageBox").dialog({
+		autoOpen: false,
+		modal: true,
+		buttons: {"ok": function() {
+			$(this).dialog("close");
+			// set the text back to default
+			// (so we know if someone forgot to set it in another call)
+			$(this).html("no text... why?");
+		}}
+	});
+
+	$("#messageBox").ajaxError(function (e, xhr, opts, err) {
+		$(this).dialog('option', 'title', 'Communication Error');
+		$(this).html(xhr.responseText);
+		$(this).dialog('open');
+	});
+});
+
