@@ -79,6 +79,7 @@ function fillResultTable(json) {
 				song.album+"</td><td>"+song.artist+"</td><td>"+readableTime(song.length)+"</td></tr>\n");
 		total_length += song.length;
 	}
+	alert(total_length);
 	$("#search-results-table").tablesorter({widgets: ['zebra']});
 	$("#search-results-time").html(readableTime(total_length));
 	if (json.length == 1) {
