@@ -77,9 +77,8 @@ function fillResultTable(json) {
 		var song = json[i];
 		$("#search-results-table tbody").append("<tr><td><a href=\"javascript:voteSong(" + song.song_id + ")\">+</a></td><td>"+song.track+"</td><td>"+song.title+"</td><td>"+
 				song.album+"</td><td>"+song.artist+"</td><td>"+readableTime(song.length)+"</td></tr>\n");
-		total_length += song.length;
+		total_length += parseInt(song.length);
 	}
-	alert(total_length);
 	$("#search-results-table").tablesorter({widgets: ['zebra']});
 	$("#search-results-time").html(readableTime(total_length));
 	if (json.length == 1) {
