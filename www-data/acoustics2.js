@@ -65,7 +65,7 @@ function doSearch() {
 }
 
 function fillResultTable(json) {
-	$("#search-results-table tbody").empty();
+	$("#search-results-table tbody").html(" ");
 	if (json.length < 1) {
 		$("#search-results-table tbody").append("<tr><td colspan=\"6\"><center><i>No results.</i></center></td></tr>");
 		$("#search-results-time").html("0 seconds");
@@ -75,14 +75,11 @@ function fillResultTable(json) {
 	var total_length = 0;
 	for (i in json) {
 		var song = json[i];
-		var tr_class = "";
-		if (i % 2 == 1) {
-			tr_class = "class=\"sr-odd\"";
-		}
-		$("#search-results-table tbody").append("<tr " + tr_class + "><td>+</td><td>"+song.track+"</td><td>"+song.title+"</td><td>"+
-				song.album+"</td><td>"+song.artist+"</td><td>"+readableTime(song.length)+"</td>");
+		$("#search-results-table tbody").append("<tr><td>+</td><td>"+song.track+"</td><td>"+song.title+"</td><td>"+
+				song.album+"</td><td>"+song.artist+"</td><td>"+readableTime(song.length)+"</td></tr>\n");
 		total_length += song.length;
 	}
+	$("#search-results-table").tablesorter();
 	$("#search-results-time").html(readableTime(total_length));
 	if (json.length == 1) {
 		$("#search-results-count").html("One song");
