@@ -367,6 +367,11 @@ a:hover {
 				height: 40px;
 				overflow: hidden;
 			}
+				.queue-song-data {
+					display: none;
+					height: 0;
+					width: 0;
+				}
 				.queue-song-handle {
 					width: 8px;
 					height: 40px;

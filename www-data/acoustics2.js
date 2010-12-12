@@ -10,7 +10,8 @@ $(document).ready(function() {
 	$("#queue-list").sortable({
 		placeholder: "queue-song-placeholder",
 		axis: "y",
-		handle: ".queue-song-handle"
+		handle: ".queue-song-handle",
+		update: updateQueueOrder
 	});
 
 	// templating
@@ -88,6 +89,11 @@ function fillResultTable(json) {
 	}
 }
 
+function updateQueueOrder(event, ui) {
+	// Do something here.
+	$("#search-results-status").html("The queue was reordered.");
+}
+
 function voteSong(song_id) {
 	$.getJSON(
 		jsonSource + '?mode=vote;song_id=' + song_id,
@@ -147,6 +153,7 @@ function handlePlayerStateRequest(json) {
 	for (var i in json.playlist) {
 		var song = json.playlist[i];
 		var entry = templates.queueSong.clone();
+		$(".queue-song-id", entry).html(song.song_id);
 		$(".queue-song-title", entry).html(song.title);
 		$(".queue-song-artist", entry).html(song.artist);
 		var minutes = '' + Math.floor(song.length / 60);
@@ -155,7 +162,7 @@ function handlePlayerStateRequest(json) {
 			seconds = "0" + seconds;
 		}
 		$(".queue-song-time", entry).html(minutes + ":" + seconds);
-		total_length += song.length;
+		total_length += parseInt(song.length);
 		entry.appendTo("#queue-list");
 	}
 	var length = $("#queue-list").contents().length;
