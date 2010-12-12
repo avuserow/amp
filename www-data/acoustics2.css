@@ -266,9 +266,13 @@ a:hover {
 			color: #fff;
 		}
 			#nothing-playing-info {
+				font-size: 16px;
+				font-weight: bold;
+				text-shadow: 1px 1px 1px #888;
 				text-align: center;
 				width: 300px;
 				height: 100px;
+				line-height: 100px;
 				vertical-align: center;
 			}
 			#now-playing-album-art {
