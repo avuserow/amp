@@ -69,21 +69,20 @@ a:hover {
 			padding: 0;
 		}
 		#header-bar-menu-container ul li a {
-			background-color: #FFF;
-			padding: 10px 10px 0 10px;
+			padding: 12px 10px 0 10px;
 			height: 40px;
 			display: block;
-			background-color: #FFF;
-			color: #222;
+			color: #bbb;
+			font-size: 14px;
 			text-decoration: none;
 		}
 		#header-bar-menu-container ul li a:hover {
-			background-color: #000;
 			color: #fff;
 		}
 		.header-bar-menu-selected {
-			background-color: #444 !important;
-			color: #ddd !important;
+			background-color: #000 !important;
+			color: #fff !important;
+			font-weight: bold;
 		}
 
 	#header-bar-user {
@@ -230,6 +229,11 @@ a:hover {
 			white-space: nowrap;
 			overflow: hidden;
 		}
+		#search-results-table tbody tr:hover td {
+			background-color: #888 !important;
+			color: #000;
+			text-shadow: 0 1px 1px #333;
+		}
 		#search-results-table tbody tr.odd td {
 			background-color: #444;
 		}
@@ -258,6 +262,8 @@ a:hover {
 			height: 100px;
 			width: 300px;
 			overflow: hidden;
+			background-color: #222;
+			color: #fff;
 		}
 			#nothing-playing-info {
 				text-align: center;
@@ -271,7 +277,6 @@ a:hover {
 				float: left;
 			}
 			#now-playing-info {
-				background: #fff;
 				float: left;
 				width: 236px;
 				height: 80px;
@@ -291,7 +296,7 @@ a:hover {
 				#now-playing-title {
 					font-weight: bold;
 					font-size: 16px;
-					text-shadow: 0px 1px 1px #888;
+					text-shadow: 0px 1px 1px #ccc;
 				}
 				#now-playing-album {
 					font-size: 13px;
@@ -314,8 +319,8 @@ a:hover {
 		#controls {
 			position: relative;
 			height: 100px;
-			background-color: #DD0;
 			overflow: hidden;
+			background-color: #222;
 		}
 			#controls-top {
 				height: 50px;
@@ -330,20 +335,17 @@ a:hover {
 				height: 50px;
 				float: left;
 				width: 100px;
-				background-color: #fff;
 				text-align: center;
 				padding-top: 8px;
 				outline: none !important;
 				text-decoration: none;
-				color: #000;
+				color: #fff;
 				font-weight: bold;
 				font-size: 28px;
-				text-shadow: 0px 1px 1px #666;
+				text-shadow: 0px 1px 1px #000;
 			}
 			#controls div a:hover {
-				background-color: #000;
-				text-shadow: 0px 1px 1px #ccc;
-				color: #fff;
+				background-color: #333;
 			}
 
 		#queue {
@@ -362,10 +364,14 @@ a:hover {
 		}
 
 			.queue-song {
-				background-color: #fff;
+				background-color: #555;
+				color: #fff;
 				border-bottom: 1px solid black;
 				height: 40px;
 				overflow: hidden;
+				font-size: 14px;
+				line-height: 20px;
+				vertical-align: baseline;
 			}
 				.queue-song-data {
 					display: none;
@@ -376,7 +382,7 @@ a:hover {
 					width: 8px;
 					height: 40px;
 					background: url(images/ui2/handle.png);
-					margin-right: 4px;
+					margin-right: 2px;
 					float: left;
 				}
 				.queue-song-info {
@@ -385,13 +391,22 @@ a:hover {
 				.queue-song-toprow {
 					width: 260px;
 					white-space: nowrap;
+					overflow: hidden;
+				}
+				.queue-song-vote-button {
+					width: 20px;
+					float: left;
+					text-align: center;
 				}
 				.queue-song-vote-count {
 					float: left;
-					padding-right: 4px;
+					width: 20px;
+					text-align: center;
 				}
 				.queue-song-artist {
 					float: left;
+					width: 200px;
+					overflow: hidden;
 				}
 				.queue-song-bottomrow {
 					width: 260px;
@@ -399,12 +414,15 @@ a:hover {
 				}
 				.queue-song-time {
 					float: right;
+					overflow: hidden;
+					font-size: 12px;
+					text-align: right;
 				}
 				.queue-song-clear {
 					clear: both;
 				}
 			.queue-song-placeholder {
-				background-color: #ff0;
+				background-color: #666;
 				border-bottom: 1px solid black;
 				height: 40px;
 				line-height: 40px;
