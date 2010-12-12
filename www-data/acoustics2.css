@@ -215,6 +215,7 @@ a:hover {
 			border: 1px solid #000;
 			background-color: #888;
 			width: 400px;
+			padding-left: 10px;
 		}
 		#search-box:focus {
 			background-color: #fff;
