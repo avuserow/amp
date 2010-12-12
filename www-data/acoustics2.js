@@ -59,8 +59,14 @@ function doSearch() {
 	var value = $("#search-box").val();
 	$("#search-results-status").html("Searching for '" + value + "'...");
 	$.getJSON(jsonSource + "?mode=search;field=any;value=" + value, function (data) {
-			$("#search-results-status").html("Search results for '" + value + "'.");
+			$("#search-results-status").html("Processing " + data.length + " results.");
+			if (data.length > 1000) {
+				if (!confirm("Your search returned a lot of results (" + data.length +"). Do you still want to continue?")) {
+					return false;
+				}
+			}
 			fillResultTable(data);
+			$("#search-results-status").html("Search results for '" + value + "'.");
 			});
 	return false;
 }
