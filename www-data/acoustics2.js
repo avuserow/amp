@@ -1,3 +1,4 @@
+var currentUser = '';
 var volume;
 var stateTimer;
 var templates = {};
@@ -129,6 +130,7 @@ function handlePlayerStateRequest(json) {
 	if (json.who) {
 		$("#header-bar-user-message").html("logged in as");
 		$("#user-name").html(json.who);
+		currentUser = json.who;
 	}
 
 	// now playing
@@ -164,12 +166,17 @@ function handlePlayerStateRequest(json) {
 		$(".queue-song-id", entry).html(song.song_id);
 		$(".queue-song-title", entry).html(song.title);
 		$(".queue-song-artist", entry).html(song.artist);
-		var minutes = '' + Math.floor(song.length / 60);
-		var seconds = '' + song.length % 60;
-		while (seconds.length < 2) {
-			seconds = "0" + seconds;
+		$(".queue-song-time", entry).html(readableTime(song.length));
+		if (_.indexOf(song.who, currentUser) != -1) {
+			$(".queue-song-vote-link", entry).remove();
+			$(".queue-song-unvote-link", entry).attr("href",
+					"javascript:unvoteSong("+ song.song_id +")");
+		} else {
+			$(".queue-song-vote-link", entry).attr("href",
+					"javascript:voteSong("+ song.song_id +")");
+			$(".queue-song-unvote-link", entry).remove();
 		}
-		$(".queue-song-time", entry).html(minutes + ":" + seconds);
+		$(".queue-song-vote-count", entry).html(song.who.length);
 		total_length += parseInt(song.length);
 		entry.appendTo("#queue-list");
 	}
