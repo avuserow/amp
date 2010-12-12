@@ -75,7 +75,7 @@ function fillResultTable(json) {
 	var total_length = 0;
 	for (i in json) {
 		var song = json[i];
-		$("#search-results-table tbody").append("<tr><td>+</td><td>"+song.track+"</td><td>"+song.title+"</td><td>"+
+		$("#search-results-table tbody").append("<tr><td><a href=\"javascript:voteSong(" + song.song_id + ")\">+</a></td><td>"+song.track+"</td><td>"+song.title+"</td><td>"+
 				song.album+"</td><td>"+song.artist+"</td><td>"+readableTime(song.length)+"</td></tr>\n");
 		total_length += song.length;
 	}
@@ -86,6 +86,20 @@ function fillResultTable(json) {
 	} else {
 		$("#search-results-count").html(json.length +" songs");
 	}
+}
+
+function voteSong(song_id) {
+	$.getJSON(
+		jsonSource + '?mode=vote;song_id=' + song_id,
+		function (data) {handlePlayerStateRequest(data);}
+	);
+}
+
+function unvoteSong(song_id) {
+	$.getJSON(
+		jsonSource + '?mode=unvote;song_id=' + song_id,
+		function (data) {handlePlayerStateRequest(data);}
+	);
 }
 
 function handlePlayerStateRequest(json) {
