@@ -221,6 +221,7 @@ a:hover {
 		}
 		#search-results-table {
 			width: 100%;
+			border-collapse: collapse;
 		}
 		#search-results-table tbody tr td {
 			font-size: 12px;
@@ -228,7 +229,7 @@ a:hover {
 			white-space: nowrap;
 			overflow: hidden;
 		}
-		.sr-odd td {
+		#search-results-table tbody tr.odd td {
 			background-color: #444;
 		}
 		.sr-th {
