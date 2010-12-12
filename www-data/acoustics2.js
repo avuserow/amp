@@ -165,6 +165,7 @@ function handlePlayerStateRequest(json) {
 		$(".queue-song-title", entry).html(song.title);
 		$(".queue-song-artist", entry).html(song.artist);
 		$(".queue-song-vote-count", entry).html(song.who.length);
+		$(".queue-song-vote-button", entry).html("<a href=\"javascript:voteSong(" + song.song_id + ")\">+</a>");
 		var minutes = '' + Math.floor(song.length / 60);
 		var seconds = '' + song.length % 60;
 		while (seconds.length < 2) {
