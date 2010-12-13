@@ -58,10 +58,10 @@ function playerStateRequest() {
 	);
 }
 
-function doSearch() {
-	var value = $("#search-box").val();
+function doSearch(field, value) {
 	$("#search-results-status").html("Searching for '" + value + "'...");
-	$.getJSON(jsonSource + "?mode=search;field=any;value=" + value, function (data) {
+	$.getJSON(jsonSource + "?mode=search;field=" + field + ";value=" + value,
+		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
 			if (data.length > 1000) {
 				if (!confirm("Your search returned a lot of results (" + data.length +"). Do you still want to continue?")) {
@@ -70,7 +70,7 @@ function doSearch() {
 			}
 			fillResultTable(data);
 			$("#search-results-status").html("Search results for '" + value + "'.");
-			});
+	});
 	return false;
 }
 
@@ -256,3 +256,21 @@ $("#messageBox").ready(function() {
 	});
 });
 
+function formSearch() {
+	$.address.value("SearchRequest/any/" + $("#search-box").val());
+	return false;
+}
+
+function pageLoadChange(hash) {
+	hash = hash.replace(/^\//, '');
+	var args = hash.split('/');
+	var action = args.shift();
+	if (!args[0]) args[0] = '';
+	if (!args[1]) args[1] = '';
+	alert("got a " + action + ", with " + args[0] + "/" + args[1]);
+	if (action == 'SearchRequest') {
+		doSearch(args[0], args[1]);
+	}
+}
+
+$.address.change(function(e) {pageLoadChange(e.value);});
