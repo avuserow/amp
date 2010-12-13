@@ -1,5 +1,5 @@
 body {
-	position: absolute;
+	position: fixed;
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
 	height: 100%;
@@ -8,7 +8,7 @@ body {
 	right: 0px;
 	bottom: 0px;
 	font-family: sans-serif;
-	font-size: 16px;
+	font-size: 14px;
 }
 
 ul { display: inline; }
@@ -339,7 +339,7 @@ a img {
 				display: none;
 				width: 0;
 				height: 0;
-				overflow: none;
+				overflow: hidden;
 			}
 
 	#right-panel {
