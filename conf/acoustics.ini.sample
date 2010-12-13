@@ -29,6 +29,8 @@ queue=RoundRobin
 # queue=TimeSlice
 ## Cap votes per voter (optional)
 # max_votes = 50
+## Start with a default volume (20 unless specified) (optional)
+#default_volume = 50
 
 [webauth]
 ## pick one:
