@@ -74,6 +74,17 @@ function doSearch(field, value) {
 	return false;
 }
 
+function selectRequest(field, value) {
+	$("#search-results-status").html("Searching for '" + value + "'...");
+	$.getJSON(jsonSource + "?mode=select;field=" + field + ";value=" + value,
+		function (data) {
+			$("#search-results-status").html("Processing " + data.length + " results.");
+			fillResultTable(data);
+			$("#search-results-status").html("Songs where " + field + " is '"
+				+ value + "'.");
+	});
+}
+
 function loadRandomSongs(amount, seed) {
 	$.getJSON(
 		jsonSource + "?mode=random;amount=" + amount + ";seed=" + seed,
@@ -120,8 +131,16 @@ function fillResultTable(json) {
 	var total_length = 0;
 	for (i in json) {
 		var song = json[i];
-		$("#search-results-table tbody").append("<tr><td><a href=\"javascript:voteSong(" + song.song_id + ")\">+</a></td><td>"+song.track+"</td><td>"+song.title+"</td><td>"+
-				song.album+"</td><td>"+song.artist+"</td><td>"+readableTime(song.length)+"</td></tr>\n");
+		// TODO: template me
+		$("#search-results-table tbody").append(
+			"<tr><td><a href=\"javascript:voteSong(" + song.song_id +
+			")\">+</a></td><td>" + song.track +
+			"</td><td><a href='#SelectRequest/title/" + uriencode(song.title) +
+			"'>" + song.title + "</a></td><td><a href='#SelectRequest/album/" +
+			uriencode(song.album) + "'>" + song.album +
+			"</a></td><td><a href='#SelectRequest/artist/" +
+			uriencode(song.artist) + "'>" + song.artist + "</td><td>"
+			+ readableTime(song.length) + "</td></tr>\n");
 		total_length += parseInt(song.length);
 	}
 	$("#search-results-table").tablesorter({widgets: ['zebra']});
@@ -296,6 +315,15 @@ function formSearch() {
 	return false;
 }
 
+function uriencode(str) {
+	str = str.replace(/\&/g, '%26');
+	str = str.replace(/\+/g, '%2b');
+	str = str.replace(/\#/g, '%23');
+	str = str.replace(/\//g, '%2f');
+
+	return encodeURIComponent(str);
+}
+
 function pageLoadChange(hash) {
 	hash = hash.replace(/^\//, '');
 	var args = hash.split('/');
@@ -310,6 +338,8 @@ function pageLoadChange(hash) {
 		loadRecentSongs(args[0]);
 	} else if (action == 'PlayHistory') {
 		loadPlayHistory(args[0], args[1]);
+	} else if (action == 'SelectRequest') {
+		selectRequest(args[0], args[1]);
 	} else if (action == 'SearchRequest') {
 		doSearch(args[0], args[1]);
 	}
