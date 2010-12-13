@@ -79,6 +79,7 @@ a img {
 			color: #bbb;
 			font-size: 14px;
 			text-decoration: none;
+			outline: none;
 		}
 		#header-bar-menu-container ul li a:hover {
 			color: #fff;
@@ -126,6 +127,7 @@ a img {
 				color: #ddd;
 				height: 40px;
 				padding-bottom: 0px;
+				outline: none;
 			}
 			.header-bar-menu-dropdown li a:hover {
 				color: #fff;

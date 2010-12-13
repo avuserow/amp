@@ -22,7 +22,7 @@ $(document).ready(function() {
 	playerStateRequest();
 	if (stateTimer) clearInterval(stateTimer);
 	stateTimer = setInterval(function() {playerStateRequest();}, 15000)
-	$("#search-results-table").tablesorter();
+	$("#search-results-table").tablesorter({widgets: ['zebra']});
 });
 
 function readableTime(length) {
@@ -125,7 +125,8 @@ function hideShow(what) {
 }
 
 function fillResultTable(json) {
-	$("#search-results-table tbody").html(" ");
+	$("#search-results-table tbody tr").remove();
+	$("#search-results-table").trigger("update");
 	if (json.length < 1) {
 		$("#search-results-table tbody").append("<tr><td colspan=\"6\"><center><i>No results.</i></center></td></tr>");
 		$("#search-results-time").html("0 seconds");
@@ -148,7 +149,8 @@ function fillResultTable(json) {
 			+ readableTime(song.length) + "</td></tr>\n");
 		total_length += parseInt(song.length);
 	}
-	$("#search-results-table").tablesorter({widgets: ['zebra']});
+	$("#search-results-table").trigger("update");
+	$("#search-results-table").trigger("applyWidgets");
 	$("#search-results-time").html(readableTime(total_length));
 	if (json.length == 1) {
 		$("#search-results-count").html("One song");
@@ -243,7 +245,7 @@ function handlePlayerStateRequest(json) {
 
 	// players
 	if (json.players.length > 1) {
-		$("#header-player-list").html(" ");
+		$("#header-player-list li").remove();
 		for (i in json.players) {
 			if (json.players[i] == json.selected_player) {
 				$("#header-player-list").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></b></li>\n");
