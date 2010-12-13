@@ -58,10 +58,10 @@ function playerStateRequest() {
 	);
 }
 
-function doSearch() {
-	var value = $("#search-box").val();
+function doSearch(field, value) {
 	$("#search-results-status").html("Searching for '" + value + "'...");
-	$.getJSON(jsonSource + "?mode=search;field=any;value=" + value, function (data) {
+	$.getJSON(jsonSource + "?mode=search;field=" + field + ";value=" + value,
+		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
 			if (data.length > 1000) {
 				if (!confirm("Your search returned a lot of results (" + data.length +"). Do you still want to continue?")) {
@@ -70,8 +70,54 @@ function doSearch() {
 			}
 			fillResultTable(data);
 			$("#search-results-status").html("Search results for '" + value + "'.");
-			});
+	});
 	return false;
+}
+
+function selectRequest(field, value) {
+	$("#search-results-status").html("Searching for '" + value + "'...");
+	$.getJSON(jsonSource + "?mode=select;field=" + field + ";value=" + value,
+		function (data) {
+			$("#search-results-status").html("Processing " + data.length + " results.");
+			fillResultTable(data);
+			$("#search-results-status").html("Songs where " + field + " is '"
+				+ value + "'.");
+	});
+}
+
+function loadRandomSongs(amount, seed) {
+	$.getJSON(
+		jsonSource + "?mode=random;amount=" + amount + ";seed=" + seed,
+		function (data) {
+			$('#search-results-random a').attr('href',
+				'#RandomSongs/20/' + (new Date()).getTime());
+			fillResultTable(data);
+			$("#search-results-status").html(amount + " Random Songs");
+		}
+	);
+}
+
+function loadRecentSongs(amount) {
+	$.getJSON(
+		jsonSource + '?mode=recent;amount=' + amount,
+		function (data) {
+			fillResultTable(data);
+			$("#search-results-status").html(amount + " Recently Added Songs");
+		}
+	);
+}
+
+function loadPlayHistory(amount, who) {
+	$.getJSON(
+		jsonSource + '?mode=history;amount=' + amount + ";who=" + who,
+		function (data) {
+			fillResultTable(data);
+			var bywho = "";
+			if (who) bywho = " By " + who;
+			$("#search-results-status").html(amount + " Recently Played Songs"
+				+ bywho);
+		}
+	);
 }
 
 function fillResultTable(json) {
@@ -85,8 +131,16 @@ function fillResultTable(json) {
 	var total_length = 0;
 	for (i in json) {
 		var song = json[i];
-		$("#search-results-table tbody").append("<tr><td><a href=\"javascript:voteSong(" + song.song_id + ")\">+</a></td><td>"+song.track+"</td><td>"+song.title+"</td><td>"+
-				song.album+"</td><td>"+song.artist+"</td><td>"+readableTime(song.length)+"</td></tr>\n");
+		// TODO: template me
+		$("#search-results-table tbody").append(
+			"<tr><td><a href=\"javascript:voteSong(" + song.song_id +
+			")\">+</a></td><td>" + song.track +
+			"</td><td><a href='#SelectRequest/title/" + uriencode(song.title) +
+			"'>" + song.title + "</a></td><td><a href='#SelectRequest/album/" +
+			uriencode(song.album) + "'>" + song.album +
+			"</a></td><td><a href='#SelectRequest/artist/" +
+			uriencode(song.artist) + "'>" + song.artist + "</td><td>"
+			+ readableTime(song.length) + "</td></tr>\n");
 		total_length += parseInt(song.length);
 	}
 	$("#search-results-table").tablesorter({widgets: ['zebra']});
@@ -256,3 +310,39 @@ $("#messageBox").ready(function() {
 	});
 });
 
+function formSearch() {
+	$.address.value("SearchRequest/any/" + $("#search-box").val());
+	return false;
+}
+
+function uriencode(str) {
+	str = str.replace(/\&/g, '%26');
+	str = str.replace(/\+/g, '%2b');
+	str = str.replace(/\#/g, '%23');
+	str = str.replace(/\//g, '%2f');
+
+	return encodeURIComponent(str);
+}
+
+function pageLoadChange(hash) {
+	hash = hash.replace(/^\//, '');
+	var args = hash.split('/');
+	var action = args.shift();
+	if (!args[0]) args[0] = '';
+	if (!args[1]) args[1] = '';
+	if (action == '') {
+		loadRandomSongs(20, (new Date()).getTime());
+	} else if (action == 'RandomSongs') {
+		loadRandomSongs(args[0], args[1]);
+	} else if (action == 'RecentSongs') {
+		loadRecentSongs(args[0]);
+	} else if (action == 'PlayHistory') {
+		loadPlayHistory(args[0], args[1]);
+	} else if (action == 'SelectRequest') {
+		selectRequest(args[0], args[1]);
+	} else if (action == 'SearchRequest') {
+		doSearch(args[0], args[1]);
+	}
+}
+
+$.address.change(function(e) {pageLoadChange(e.value);});
