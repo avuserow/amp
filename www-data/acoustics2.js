@@ -267,7 +267,6 @@ function pageLoadChange(hash) {
 	var action = args.shift();
 	if (!args[0]) args[0] = '';
 	if (!args[1]) args[1] = '';
-	alert("got a " + action + ", with " + args[0] + "/" + args[1]);
 	if (action == 'SearchRequest') {
 		doSearch(args[0], args[1]);
 	}
