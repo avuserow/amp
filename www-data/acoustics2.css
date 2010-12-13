@@ -432,6 +432,7 @@ a img {
 				font-size: 14px;
 				line-height: 20px;
 				vertical-align: baseline;
+				list-style-type: none;
 			}
 				.queue-song-data {
 					display: none;
@@ -485,6 +486,8 @@ a img {
 				background-color: #666;
 				border-bottom: 1px solid black;
 				height: 40px;
+				overflow: hidden;
 				line-height: 40px;
 				display: block;
+				list-style-type: none;
 			}
