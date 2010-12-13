@@ -137,7 +137,8 @@ function fillResultTable(json) {
 		var song = json[i];
 		// TODO: template me
 		$("#search-results-table tbody").append(
-			"<tr><td><a href=\"javascript:voteSong(" + song.song_id +
+			"<tr><td><div class=\"search-song-id\">" + song.song_id +
+			"</div><a href=\"javascript:voteSong(" + song.song_id +
 			")\">+</a></td><td>" + song.track +
 			"</td><td><a href='#SelectRequest/title/" + uriencode(song.title) +
 			"'>" + song.title + "</a></td><td><a href='#SelectRequest/album/" +
@@ -179,6 +180,48 @@ function changePlayer(player_id) {
 	$.getJSON(
 		jsonSource + "?mode=change_player;player_id="+player_id,
 		function(data) { handlePlayerStateRequest(data);}
+	);
+}
+
+function voteAll() {
+	var block = "";
+	$("#search-results-table tbody tr").each(function(index) {
+		block += "song_id=" + $(".search-song-id",this).text() + ";";
+	});
+	var command = "?mode=vote;";
+	$.getJSON(
+			jsonSource + command + block,
+			function(data){handlePlayerStateRequest(data);}
+	);
+}
+
+function voteOne() {
+	var block = "";
+	var length = $("#search-results-table tbody tr").length;
+	var randomSelection = Math.floor(Math.random() * length);
+	// FIXME: I have no idea what I'm doing here.
+	//        Can I index these guys?
+	$("#search-results-table tbody tr").each(function(index) {
+		if (index == randomSelection) {
+			block += "song_id=" + $(".search-song-id",this).text() + ";";
+		}
+	});
+	var command = "?mode=vote;";
+	$.getJSON(
+			jsonSource + command + block,
+			function(data){handlePlayerStateRequest(data);}
+	);
+}
+
+function clearQueue() {
+	block = "";
+	$("#queue-list .queue-song").each(function(index) {
+		block += "song_id=" + $(".queue-song-id",this).text() + ";";
+	});
+	var command = "?mode=unvote;";
+	$.getJSON(
+			jsonSource + command + block,
+			function(data){handlePlayerStateRequest(data);}
 	);
 }
 
