@@ -120,7 +120,7 @@ sub start_player {
 	$acoustics->query('insert_players', {
 		player_id => $acoustics->player_id,
 		local_id  => $$,
-		volume    => 20,
+		volume    => $acoustics->config->{player}{default_volume} || 20,
 	});
 
 	$acoustics->ext_hook(COMPONENT, 'start');
