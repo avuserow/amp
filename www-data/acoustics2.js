@@ -120,6 +120,10 @@ function loadPlayHistory(amount, who) {
 	);
 }
 
+function hideShow(what) {
+	$("#"+what).toggle('fast');
+}
+
 function fillResultTable(json) {
 	$("#search-results-table tbody").html(" ");
 	if (json.length < 1) {
@@ -171,6 +175,13 @@ function unvoteSong(song_id) {
 	);
 }
 
+function changePlayer(player_id) {
+	$.getJSON(
+		jsonSource + "?mode=change_player;player_id="+player_id,
+		function(data) { handlePlayerStateRequest(data);}
+	);
+}
+
 function handlePlayerStateRequest(json) {
 	// volume
 	if (json.player && json.player.volume != undefined) {
@@ -185,6 +196,21 @@ function handlePlayerStateRequest(json) {
 		$("#header-bar-user-message").html("logged in as");
 		$("#user-name").html(json.who);
 		currentUser = json.who;
+	}
+
+	// players
+	if (json.players.length > 1) {
+		$("#header-player-list").html(" ");
+		for (i in json.players) {
+			if (json.players[i] == json.selected_player) {
+				$("#header-player-list").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></b></li>\n");
+			} else {
+				$("#header-player-list").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></li>\n");
+
+			}
+		}
+	} else {
+		$("#header-bar-menu-players").hide();
 	}
 
 	// now playing

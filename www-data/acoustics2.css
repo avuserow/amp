@@ -97,6 +97,37 @@ a img {
 			-moz-box-shadow: 0 0 2px 2px #000;
 			-webkit-box-shadow: 0 0 2px 2px #000;
 		}
+			.header-bar-menu-dropdown {
+				display: none;
+				position: absolute;
+				z-index: 50;
+				width: 100px;
+				top: 40px;
+				margin-left: -30px;
+				background-color: #222;
+				-webkit-border-bottom-right-radius: 8px;
+				-webkit-border-bottom-left-radius: 8px;
+				-moz-border-radius-bottomright: 8px;
+				-moz-border-radius-bottomleft: 8px;
+				border-bottom-right-radius: 8px;
+				border-bottom-left-radius: 8px;
+				-moz-box-shadow: 0 5px 5px #000;
+			}
+			.header-bar-menu-dropdown li {
+				display: block;
+				width: 100px;
+				height: 40px;
+				padding-bottom: 0px;
+				padding-top: 0px;
+			}
+			.header-bar-menu-dropdown li a {
+				color: #ddd;
+				height: 40px;
+				padding-bottom: 0px;
+			}
+			.header-bar-menu-dropdown li a:hover {
+				color: #fff;
+			}
 
 	#header-bar-user {
 		text-align: right;
