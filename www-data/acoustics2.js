@@ -74,6 +74,41 @@ function doSearch(field, value) {
 	return false;
 }
 
+function loadRandomSongs(amount, seed) {
+	$.getJSON(
+		jsonSource + "?mode=random;amount=" + amount + ";seed=" + seed,
+		function (data) {
+			$('#search-results-random a').attr('href',
+				'#RandomSongs/20/' + (new Date()).getTime());
+			fillResultTable(data);
+			$("#search-results-status").html(amount + " Random Songs");
+		}
+	);
+}
+
+function loadRecentSongs(amount) {
+	$.getJSON(
+		jsonSource + '?mode=recent;amount=' + amount,
+		function (data) {
+			fillResultTable(data);
+			$("#search-results-status").html(amount + " Recently Added Songs");
+		}
+	);
+}
+
+function loadPlayHistory(amount, who) {
+	$.getJSON(
+		jsonSource + '?mode=history;amount=' + amount + ";who=" + who,
+		function (data) {
+			fillResultTable(data);
+			var bywho = "";
+			if (who) bywho = " By " + who;
+			$("#search-results-status").html(amount + " Recently Played Songs"
+				+ bywho);
+		}
+	);
+}
+
 function fillResultTable(json) {
 	$("#search-results-table tbody").html(" ");
 	if (json.length < 1) {
@@ -267,7 +302,15 @@ function pageLoadChange(hash) {
 	var action = args.shift();
 	if (!args[0]) args[0] = '';
 	if (!args[1]) args[1] = '';
-	if (action == 'SearchRequest') {
+	if (action == '') {
+		loadRandomSongs(20, (new Date()).getTime());
+	} else if (action == 'RandomSongs') {
+		loadRandomSongs(args[0], args[1]);
+	} else if (action == 'RecentSongs') {
+		loadRecentSongs(args[0]);
+	} else if (action == 'PlayHistory') {
+		loadPlayHistory(args[0], args[1]);
+	} else if (action == 'SearchRequest') {
 		doSearch(args[0], args[1]);
 	}
 }
