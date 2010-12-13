@@ -319,11 +319,9 @@ a img {
 		#search-results-table tbody tr:hover td {
 			background-color: #888 !important;
 			color: #000;
-			text-shadow: 0 1px 1px #333;
 		}
 		#search-results-table tbody tr:hover td a {
 			color: #000;
-			text-shadow: 0 1px 1px #333;
 		}
 		#search-results-table tbody tr.odd td {
 			background-color: #444;

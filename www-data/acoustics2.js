@@ -121,7 +121,7 @@ function loadPlayHistory(amount, who) {
 }
 
 function hideShow(what) {
-	$("#"+what).toggle('fast');
+	$("#"+what).toggle();
 }
 
 function fillResultTable(json) {
