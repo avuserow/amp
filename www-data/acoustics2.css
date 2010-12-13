@@ -112,6 +112,8 @@ a img {
 				border-bottom-right-radius: 8px;
 				border-bottom-left-radius: 8px;
 				-moz-box-shadow: 0 5px 5px #000;
+				-webkit-box-shadow: 0 5px 5px #000;
+				box-shadow: 0 5px 5px #000;
 			}
 			.header-bar-menu-dropdown li {
 				display: block;
