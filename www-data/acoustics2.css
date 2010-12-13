@@ -493,6 +493,13 @@ a img {
 					white-space: nowrap;
 					overflow: hidden;
 				}
+				.queue-song-title {
+					width: 240px;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					text-overflow-mode: ellipsis;
+				}
 				.queue-song-vote-button {
 					width: 20px;
 					float: left;
@@ -507,6 +514,8 @@ a img {
 					float: left;
 					width: 200px;
 					overflow: hidden;
+					text-overflow: ellipsis;
+					text-overflow-mode: ellipsis;
 				}
 				.queue-song-bottomrow {
 					width: 260px;
