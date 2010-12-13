@@ -46,7 +46,7 @@ function updatePlayingTime() {
 	if (elapsedTime < totalTime) {
 		$('#now-playing-time').html(readableTime(++elapsedTime));
 		$('#now-playing-progress').progressbar({value: Math.floor(100 * (elapsedTime/totalTime))});
-	} else if (elapsedTime == totalTime) {
+	} else if (elapsedTime >= totalTime) {
 		playerStateRequest();
 	}
 }
