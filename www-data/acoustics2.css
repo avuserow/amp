@@ -235,7 +235,7 @@ a:hover {
 		#search-results-table tbody tr td {
 			font-size: 12px;
 			height: 14px;
-			white-space: nowrap;
+			vertical-align: top;
 			overflow: hidden;
 		}
 		#search-results-table tbody tr td a {
