@@ -80,9 +80,18 @@ a:hover {
 			color: #fff;
 		}
 		.header-bar-menu-selected {
-			background-color: #000 !important;
+			background-color: #363538 !important;
 			color: #fff !important;
 			font-weight: bold;
+			-webkit-border-top-left-radius: 8px;
+			-webkit-border-top-right-radius: 8px;
+			-moz-border-radius-topleft: 8px;
+			-moz-border-radius-topright: 8px;
+			border-top-left-radius: 8px;
+			border-top-right-radius: 8px;
+			box-shadow: 0 0 2px 2px #000;
+			-moz-box-shadow: 0 0 2px 2px #000;
+			-webkit-box-shadow: 0 0 2px 2px #000;
 		}
 
 	#header-bar-user {
