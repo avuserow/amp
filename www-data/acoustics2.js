@@ -31,6 +31,19 @@ $(document).ready(function() {
 	});
 });
 
+function titleOrPath(json) {
+	if (json.title) {
+		return json.title;
+	} else {
+		var shortname = /^.*\/(.*)$/.exec(json.path);
+		if (shortname) {
+			return shortname[1];
+		} else {
+			return json.path;
+		}
+	}
+}
+
 function readableTime(length) {
 	if (length < 0) {length = 0;}
 	var seconds = length % 60;
@@ -147,8 +160,8 @@ function fillResultTable(json) {
 			"<tr><td><div class=\"search-song-id\">" + song.song_id +
 			"</div><a href=\"javascript:voteSong(" + song.song_id +
 			")\">+</a></td><td>" + song.track +
-			"</td><td><a href='#SelectRequest/title/" + uriencode(song.title) +
-			"'>" + song.title + "</a></td><td><a href='#SelectRequest/album/" +
+			"</td><td><a href='#SelectRequest/title/" + uriencode(titleOrPath(song)) +
+			"'>" + titleOrPath(song) + "</a></td><td><a href='#SelectRequest/album/" +
 			uriencode(song.album) + "'>" + song.album +
 			"</a></td><td><a href='#SelectRequest/artist/" +
 			uriencode(song.artist) + "'>" + song.artist + "</td><td>"
@@ -277,7 +290,7 @@ function handlePlayerStateRequest(json) {
 	var nowPlayingPanel = templates.nowPlayingPanel.clone();
 	$("#now-playing-panel").empty();
 	if (nowPlaying) {
-		$("#now-playing-title", nowPlayingPanel).html(nowPlaying.title);
+		$("#now-playing-title", nowPlayingPanel).html(titleOrPath(nowPlaying));
 		$("#now-playing-album", nowPlayingPanel).html(nowPlaying.album);
 		$("#now-playing-artist", nowPlayingPanel).html(nowPlaying.artist);
 		$("#now-playing-total", nowPlayingPanel).html(readableTime(nowPlaying.length));
@@ -303,7 +316,7 @@ function handlePlayerStateRequest(json) {
 		var song = json.playlist[i];
 		var entry = templates.queueSong.clone();
 		$(".queue-song-id", entry).html(song.song_id);
-		$(".queue-song-title", entry).html(song.title);
+		$(".queue-song-title", entry).html(titleOrPath(song));
 		$(".queue-song-artist", entry).html(song.artist);
 		$(".queue-song-time", entry).html(readableTime(song.length));
 		if (_.indexOf(song.who, currentUser) != -1) {
