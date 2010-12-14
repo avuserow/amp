@@ -11,7 +11,6 @@ $(document).ready(function() {
 	$("#queue-list").sortable({
 		placeholder: "queue-song-placeholder",
 		axis: "y",
-		handle: ".queue-song-handle",
 		update: updateQueueOrder
 	});
 
@@ -23,6 +22,13 @@ $(document).ready(function() {
 	if (stateTimer) clearInterval(stateTimer);
 	stateTimer = setInterval(function() {playerStateRequest();}, 15000)
 	$("#search-results-table").tablesorter({widgets: ['zebra']});
+	$(".header-bar-menu-root").hover(function() {
+		$("#"+$(this).attr('id')+"-dropdown").show();
+	});
+	$('.header-bar-menu-dropdown').hover(function() {
+	}, function() {
+		$(this).hide();
+	});
 });
 
 function readableTime(length) {
@@ -160,8 +166,16 @@ function fillResultTable(json) {
 }
 
 function updateQueueOrder(event, ui) {
-	// Do something here.
+	// XXX: Unimplemented
 	$("#search-results-status").html("The queue was reordered.");
+	var block = "";
+	$("#queue-list .queue-song").each(function(index) {
+		block += "song_id=" + $(".queue-song-id",this).text() + ";";
+	});
+	$.getJSON(
+		jsonSource + '?mode=reorder;' + block,
+		function (data) {handlePlayerStateRequest(data);}
+	);
 }
 
 function voteSong(song_id) {
@@ -245,12 +259,12 @@ function handlePlayerStateRequest(json) {
 
 	// players
 	if (json.players.length > 1) {
-		$("#header-player-list li").remove();
+		$("#header-bar-menu-players-dropdown li").remove();
 		for (i in json.players) {
 			if (json.players[i] == json.selected_player) {
-				$("#header-player-list").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></b></li>\n");
+				$("#header-bar-menu-players-dropdown").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></b></li>\n");
 			} else {
-				$("#header-player-list").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></li>\n");
+				$("#header-bar-menu-players-dropdown").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></li>\n");
 
 			}
 		}
