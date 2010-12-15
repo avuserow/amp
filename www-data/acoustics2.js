@@ -182,7 +182,6 @@ function fillResultTable(json) {
 }
 
 function updateQueueOrder(event, ui) {
-	// XXX: Unimplemented
 	$("#search-results-status").html("The queue was reordered.");
 	var block = "";
 	$("#queue-list .queue-song").each(function(index) {
@@ -414,7 +413,7 @@ $("#messageBox").ready(function() {
 });
 
 function formSearch() {
-	$.address.value("SearchRequest/any/" + $("#search-box").val());
+	$.address.value("SearchRequest/any/" + formencode($("#search-box").val()));
 	return false;
 }
 
@@ -425,6 +424,15 @@ function uriencode(str) {
 	str = str.replace(/\//g, '%2f');
 
 	return encodeURIComponent(str);
+}
+
+function formencode(str) {
+	str = str.replace(/\&/g, '%26');
+	str = str.replace(/\+/g, '%2b');
+	str = str.replace(/\#/g, '%23');
+	str = str.replace(/\//g, '%2f');
+
+	return str;
 }
 
 function pageLoadChange(hash) {
