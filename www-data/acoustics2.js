@@ -186,7 +186,7 @@ function updateQueueOrder(event, ui) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
 	$.getJSON(
-		jsonSource + '?mode=reorder;' + block,
+		jsonSource + '?mode=reorder_queue;' + block,
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }

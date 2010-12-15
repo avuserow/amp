@@ -386,6 +386,38 @@ sub vote_to_top {
 	$self->status;
 }
 
+=head2 reorder_queue
+
+Reorders the songs that the current user has in the queue into the order
+provided.
+
+=cut
+
+sub reorder_queue {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+
+	my @order = $self->cgi->param('song_id');
+
+	my %songmap = map {$_->{song_id} => $_}
+		$self->acoustics->query('select_votes', {who => $self->who});
+
+	my @songs;
+	for my $song_id (@order) {
+		push @songs, delete $songmap{$song_id};
+	}
+	push @songs, values %songmap;
+
+	for my $i (0 .. $#songs) {
+		$songs[$i]{priority} = $i;
+		$self->acoustics->query('update_votes', $songs[$i],
+			{song_id => $songs[$i]{song_id}, player_id => $songs[$i]{player_id},
+				who => $songs[$i]{who}});
+	}
+
+	return $self->status;
+}
+
 =head1 METHODS THAT FIND SONGS
 
 Many methods find and return an array of songs.
