@@ -706,9 +706,11 @@ function uriencode(str) {
 }
 
 function formencode(str) {
-	str = str.replace('&', '%26');
-	str = str.replace('+', '%2B');
-	str = str.replace('#', '%23');
+	str = str.replace(/\&/g, '%26');
+	str = str.replace(/\+/g, '%2b');
+	str = str.replace(/\#/g, '%23');
+	str = str.replace(/\//g, '%2f');
+
 	return str;
 }
 
