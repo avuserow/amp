@@ -102,6 +102,10 @@ sub send_signal {
 		'select_players', {player_id => $acoustics->player_id},
 	);
 
+	if (!defined($player->{local_id})) {
+		ERROR "Tried to send signal $signal to a player that isn't running.";
+		return 0;
+	}
 	my $success   = kill $signal => $player->{local_id};
 
 	if ($success) {
