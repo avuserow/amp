@@ -150,15 +150,17 @@ sub run_player {
 	# Plan: run acoustics-cap-xine, feed it delicious songs.
 	my($player_out, $player_in);
 	my $pid = open2($player_out, $player_in,
-		'/home/ak13/projects/custom-acoustics-player/a.out');
+		'/home/ak13/projects/custom-acoustics-player/cap');
 
+	local $SIG{__DIE__} = local $SIG{TERM} = local $SIG{INT} = sub {
+		print STDERR "got here!!\n";
+		print $player_in "quit\n\n";
+		$acoustics->query('delete_players',
+			{player_id => $acoustics->player_id});
+		exit 0;
+	};
 	my $song;
 	while (<$player_out>) {
-		local $SIG{__DIE__} = local $SIG{TERM} = local $SIG{INT} = sub {
-			print $player_in "quit\n";
-			$acoustics->query('delete_players',
-				{player_id => $acoustics->player_id});
-		};
 		my $song_start_time = time;
 		# e.g. if the previous song has stopped
 		if ($song) {
