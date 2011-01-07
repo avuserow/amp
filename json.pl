@@ -23,7 +23,7 @@ if ($running_under_fastcgi) {
 
 do {
 	my $q         = CGI::Simple->new;
-	my $acoustics = Acoustics->new({config_file => 'conf/acoustics.ini'});
+	my $acoustics = Acoustics->new;
 	my $web       = Acoustics::Web->new({
 		acoustics        => $acoustics,
 		cgi              => $q,

@@ -62,10 +62,28 @@ log4perl.appender.Weblogfile.layout.ConversionPattern = %p %d %F{1} %L> %m %n
 Log::Log4perl::init(\$log4perl_conf);
 my $logger = Log::Log4perl::get_logger;
 
+
 sub BUILD {
 	my $self = shift;
 
-	$self->{config_file} ||= $ENV{ACOUSTICS_CONFIG_FILE};
+	if (not defined $self->{config_file}) {
+		# if a file is not specified, then allow config files from the
+		# environment, the home directory, the traditional conf directory (for
+		# development), and finally system-wide in /etc/acoustics
+		my @AUTO_CONFIG_PATHS = (
+			$ENV{ACOUSTICS_CONFIG_FILE},
+			($0 =~ m{(.+?)(?:bin)?/[^/]+$})[0] . '/conf/acoustics.ini',
+			(glob('~') . '/.acoustics.ini'),
+			'/etc/acoustics/acoustics.ini',
+		);
+
+		for my $config (@AUTO_CONFIG_PATHS) {
+			if (defined $config && -r $config) {
+				$self->{config_file} = $config;
+				last;
+			}
+		}
+	}
 
 	$self->{config} = Config::Tiny->read($self->config_file)
 		or die "couldn't read config: \"" . $self->config_file . '"';
