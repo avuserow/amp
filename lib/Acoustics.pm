@@ -70,9 +70,19 @@ sub BUILD {
 		# if a file is not specified, then allow config files from the
 		# environment, the home directory, the traditional conf directory (for
 		# development), and finally system-wide in /etc/acoustics
+
+		use Cwd 'cwd';
+		my($base_acoustics_dir) = ($0 =~ m{^(.+)/[^/]+$});
+		if ($base_acoustics_dir !~ m{^/}) { # handle non-abs paths
+			$base_acoustics_dir =~ s/^\.//; # handle './foo'
+			$base_acoustics_dir = cwd() . $base_acoustics_dir;
+		}
+		# make this work for scripts in the root of the Acoustics dir, or for
+		# ones in the bin subdirectory
+		$base_acoustics_dir =~ s{bin/?$}{};
 		my @AUTO_CONFIG_PATHS = (
 			$ENV{ACOUSTICS_CONFIG_FILE},
-			($0 =~ m{(.+?)(?:bin)?/[^/]+$})[0] . '/conf/acoustics.ini',
+			$base_acoustics_dir . '/conf/acoustics.ini',
 			(glob('~') . '/.acoustics.ini'),
 			'/etc/acoustics/acoustics.ini',
 		);
