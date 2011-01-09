@@ -32,7 +32,7 @@ do {
 
 	# hide private methods and revert to the default mode
 	my $mode = lc $q->param('mode') || '';
-	$mode    = 'status' if $mode =~ /^_/ or $mode eq 'new';
+	$mode    = 'status' if $mode =~ /^_/ or $mode =~ /[^\w_]/ or $mode eq 'new';
 	$mode    = 'status' unless $web->can($mode);
 	my($headers, $data) = $web->$mode;
 
