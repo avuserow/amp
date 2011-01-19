@@ -104,9 +104,13 @@ sub BUILD {
 		{RaiseError => 1, AutoCommit => 1},
 	);
 	$self->{querybook} = Acoustics::Database->new(
-		db => $self->{db},
-		phrasebook => 'queries.txt',
+		db => [
+			$self->config->{database}{data_source},
+			$self->config->{database}{user}, $self->config->{database}{pass},
+		],
+		phrasebook => 'sql', # directory holding the dictionaries
 	);
+	$self->{db} = $self->{querybook}{db}; # backward compatibility
 
 	$self->select_player($self->player_id);
 	my $queue_class = $self->config->{player}{queue} || 'RoundRobin';
@@ -334,7 +338,7 @@ sub reinit {
 sub rand {
 	my $self = shift;
 	my $seed = shift;
-	$seed = rand() if $seed =~ /\D/;
+	$seed = rand(1e9) if !$seed || $seed =~ /\D/;
 	my $db = $self->config->{database}{data_source};
 	if ($db =~ m{^dbi:mysql}i) {
 		return "RAND($seed)";
@@ -353,7 +357,7 @@ sub dedupe
 	my $self = shift;
 	my @input = grep {$_->{title} ne ""} @_;
 
-	my %songs = map { 
+	my %songs = map {
 		join(' ', uc(join '', ($_->{title} =~ /\S+/g)),
 		uc(join '', ($_->{artist} =~ /\S+/g)),
 		uc(join '', ($_->{album} =~ /\S+/g)))
@@ -417,7 +421,7 @@ sub ext_hook {
 			load $class;
 			my $code = $class->can($routine);
 			my $rv   = $code ? $code->($self, dclone($params)) : undef;
-			
+
 			# test for our magic value
 			return ref($rv) =~ /Acoustics::INTERNAL::ext_stop/;
 		} catch {

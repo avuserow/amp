@@ -45,7 +45,7 @@ if ($command =~ /^player\-/) {
 	GetOptions('daemonize!' => \$daemonize);
 	push @ARGV, $daemonize if $command eq 'start';
 
-	$acoustics->player($command, @ARGV);
+	exit $acoustics->player($command, @ARGV);
 } elsif ($command eq 'scan') {
 	Acoustics::Scanner::scan(@ARGV);
 } elsif ($command eq 'prune') {

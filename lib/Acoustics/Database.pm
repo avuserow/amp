@@ -12,10 +12,9 @@ use Try::Tiny;
 use Moose;
 
 has 'phrasebook' => (is => 'rw', isa => 'Str', required => 1);
-has 'db'   => (is => 'ro', required => 1);
-
-has 'book' => (is => 'ro');
-has 'abstract' => (is => 'ro');
+has 'db'         => (is => 'ro', required => 1);
+has 'book'       => (is => 'ro');
+has 'abstract'   => (is => 'ro');
 
 =head1 NAME
 
@@ -49,9 +48,20 @@ L<SQL::Abstract::Limit> or L<SQL::Abstract> object.
 sub BUILD {
 	my $self = shift;
 
+	my @db_opts = @{$self->{db} || []};
+	if (@db_opts != 3) {
+		croak '"db" parameter in Acoustics::Database should be the first three'
+			. ' arguments to DBI->connect';
+	}
+	$self->{db} = DBI->connect(@db_opts, {RaiseError => 1, AutoCommit => 1});
+
+	my @parsed = DBI->parse_dsn($db_opts[0]);
+	my $db_drive = $parsed[1];
+
 	$self->{book} = Data::Phrasebook->new(
 		class => 'Callback',
 		file  => $self->phrasebook,
+		dict  => ['generic', $db_drive],
 	);
 
 	# we'd really like SQL::Abstract::Limit but we'll make do without it if we
@@ -60,7 +70,7 @@ sub BUILD {
 	try {
 		require SQL::Abstract::Limit;
 		$self->{abstract} = SQL::Abstract::Limit->new(
-			limit_dialect => $self->db,
+			limit_dialect => $self->{db},
 		);
 	}
 }
@@ -162,8 +172,8 @@ sub query {
 		$sth = $self->db->prepare($sql);
 		$sth->execute(@bind);
 	} catch {
-		use Data::Dumper;
-		die Dumper($self->db->errstr, $sql, @bind);
+		require Data::Dumper;
+		die Data::Dumper::Dumper($self->db->errstr, $sql, @bind);
 	};
 
 	# determine the return value based on context
@@ -175,12 +185,20 @@ sub query {
 			return;
 		}
 	} else {
-		my @values = @{$sth->fetchall_arrayref({})};
+		my @values;
+		try {
+			@values = @{$sth->fetchall_arrayref({})};
+		} catch {
+			require Data::Dumper;
+			confess Data::Dumper::Dumper($self->db->errstr, $sql, @bind);
+		};
 
 		# list context
 		return @values if wantarray;
 
 		# scalar context
+		# TODO: "know" if we are selecting on the primary key or a unique
+		# clause so we can throw this error earlier and more predictably
 		if (@values > 1) {
 			cluck "Multiple values returned when in scalar context";
 		}
