@@ -119,6 +119,97 @@ sub BUILD {
 	$self->{queue} = $queue_class->new({acoustics => $self});
 }
 
+=head2 LOGGING
+
+Acoustics has a minimalistic logging facility. It enables you to log fatal and non-fatal messages.
+
+C<fatal()> and C<info()> both log a message, with an optional event parameter.
+The message is presented to the user and stored in the database. The event
+parameter is up to a given module to use to identify certain occurrences, and is
+optional. Also optional is a hashref of arguments to determine certain logging
+parameters. Currently, the only recognized value is "no_db". If set to true,
+this will not be logged to the database.
+
+C<fatal()> calls C<die> with the message at the end. C<info()> calls C<print>,
+but only if C<Acoustics::Web> has not been loaded.
+
+Also logged is the calling package, line number, and timestamp. This may change
+to include additional debugging information.
+
+TODO: Make it possible to opt in/out to certain event categories, to prevent
+overly verbose information.
+
+=head3 fatal('message', 'event', {args})
+=head3 fatal('message', 'event')
+=head3 fatal('message')
+
+=cut
+
+sub fatal {
+	my $self = shift;
+	my $mess = shift;
+	$self->_log('fatal', $mess, [caller], @_);
+}
+
+=head3 info('message', 'event', {args})
+=head3 info('message', 'event')
+=head3 info('message')
+
+=cut
+
+sub info {
+	my $self = shift;
+	my $mess = shift;
+	$self->_log('info', $mess, [caller], @_);
+}
+
+sub _log {
+	my $self = shift;
+	my $type = shift;
+	my $mess = shift;
+	my $call = shift;
+	my $args = {};
+	my $event = $type;
+
+	for my $val (@_) {
+		if (not ref $val) {
+			# looks like an event string
+			$event = $val;
+		} elsif (ref $val eq 'HASH') {
+			# args hash
+			$args = $val;
+		} else {
+			die "unexpected value given to _log: $val";
+		}
+	}
+
+	unless ($args->{no_db}) {
+		try {
+			$self->query('insert_logs', {
+				message => $mess,
+				time => time,
+				filename => $call->[0],
+				package => $call->[1],
+				line => $call->[2],
+				event => $event,
+				type => $type,
+			});
+		} catch {
+			$self->fatal("Could not insert log message into database. (Database)
+				error is '$_'. Original message was '$mess'.", {no_db => 1});
+		};
+	}
+
+	my $formatted = sprintf('%s: acoustics[%s:%s at %s]: %s: %s' . "\n",
+		$type, $call->[0], $call->[2], scalar(localtime), $event, $mess,
+	);
+	if ($type eq 'fatal') {
+		die $formatted;
+	} elsif (not exists $INC{'Acoustics/Web.pm'}) { # FIXME: make more robust
+		print $formatted;
+	}
+}
+
 sub select_player {
 	my $self   = shift;
 	my $player = shift;
