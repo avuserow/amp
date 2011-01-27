@@ -7,7 +7,6 @@ use Acoustics;
 use Acoustics::Scanner 'file_to_info';
 use File::Find::Rule ();
 use List::MoreUtils qw(uniq);
-use Log::Log4perl ':easy';
 use Cwd qw(abs_path);
 
 sub prune {
@@ -22,9 +21,9 @@ sub prune {
 			$song->{online} = -e $song->{path} ? 1 : 0;
 			if ($song->{online} != $state) {
 				if ($song->{online}) {
-					WARN "Setting $song->{path} online";
+					print "Setting online: $song->{path}\n";
 				} else {
-					ERROR "Setting $song->{path} offline";
+					print "Setting offline: $song->{path}\n";
 				}
 				$acoustics->query('update_songs', $song, {path => $song->{path}});
 			}

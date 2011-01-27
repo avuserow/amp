@@ -6,7 +6,6 @@ use warnings;
 use Acoustics;
 use File::Find::Rule ();
 use List::MoreUtils qw(uniq);
-use Log::Log4perl ':easy';
 use Cwd qw(abs_path);
 
 sub file_to_info {
@@ -30,14 +29,13 @@ sub file_to_info {
 
 sub scan {
 	my @args = @_;
-	my $acoustics = Acoustics->new({
-		config_file => ($0 =~ m{(.+)/})[0] . '/../conf/acoustics.ini',
-	});
+	my $acoustics = Acoustics->new;
 
 	my $prefix = $acoustics->config->{scanner}{require_prefix};
 	for my $filename (map {abs_path($_)} @args) {
 		if ($prefix && index($filename, $prefix) != 0) {
-			LOGDIE "Your path ($filename) must begin with $prefix";
+			$acoustics->fatal( "Your path ($filename) must begin with $prefix",
+				'scan.badprefix');
 		}
 	}
 
@@ -47,15 +45,15 @@ sub scan {
 	for my $file (@files) {
 		my %hash = file_to_info($file);
 		unless($hash{length}) {
-			WARN "file $hash{path} not music";
+			$acoustics->info("not music: $hash{path}", 'scan.notmusic');
 			next;
 		}
 		if($acoustics->query('select_songs', {path => $hash{path}}, [], 1)) {
-			INFO "file $hash{path} updated";
+			$acoustics->info("updated: $hash{path}", 'scan.updated');
 			my $path = delete $hash{path};
 			$acoustics->query('update_songs', \%hash, {path => $path});
 		} else {
-			INFO "file $hash{path} added";
+			$acoustics->info("added: $hash{path}", 'scan.added');
 			$acoustics->query('insert_songs', \%hash);
 		}
 	}

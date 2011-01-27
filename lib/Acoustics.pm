@@ -140,7 +140,9 @@ TODO: Make it possible to opt in/out to certain event categories, to prevent
 overly verbose information.
 
 =head3 fatal('message', 'event', {args})
+
 =head3 fatal('message', 'event')
+
 =head3 fatal('message')
 
 =cut
@@ -152,7 +154,9 @@ sub fatal {
 }
 
 =head3 info('message', 'event', {args})
+
 =head3 info('message', 'event')
+
 =head3 info('message')
 
 =cut
@@ -171,6 +175,7 @@ sub _log {
 	my $args = {};
 	my $event = $type;
 
+	# allow them to specify an event string or an argument hash in any order
 	for my $val (@_) {
 		if (not ref $val) {
 			# looks like an event string
