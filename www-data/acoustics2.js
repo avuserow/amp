@@ -292,14 +292,31 @@ function handlePlayerStateRequest(json) {
 	var nowPlayingPanel = templates.nowPlayingPanel.clone();
 	$("#now-playing-panel").empty();
 	if (nowPlaying) {
-		$("#now-playing-title", nowPlayingPanel).html(titleOrPath(nowPlaying));
-		$("#now-playing-album", nowPlayingPanel).html(nowPlaying.album);
-		$("#now-playing-artist", nowPlayingPanel).html(nowPlaying.artist);
+		$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title);
+		$("#now-playing-title a", nowPlayingPanel).attr('href',
+			'#SelectRequest/title/' + uriencode(nowPlaying.title));
+		$("#now-playing-title a", nowPlayingPanel).attr('title',
+			nowPlaying.title);
+		$("#now-playing-artist a", nowPlayingPanel).html(nowPlaying.artist);
+		$("#now-playing-artist a", nowPlayingPanel).attr('href',
+			'#SelectRequest/artist/' + uriencode(nowPlaying.artist));
+		$("#now-playing-artist a", nowPlayingPanel).attr('title',
+			nowPlaying.artist);
+		$("#now-playing-album a", nowPlayingPanel).html(nowPlaying.album);
+		$("#now-playing-album a", nowPlayingPanel).attr('href',
+			'#SelectRequest/album/' + uriencode(nowPlaying.album));
+		$("#now-playing-album a", nowPlayingPanel).attr('title',
+			nowPlaying.album);
 		$("#now-playing-total", nowPlayingPanel).html(readableTime(nowPlaying.length));
 		totalTime = nowPlaying.length;
 		startPlayingTimer();
 		elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
-		$("#now-playing-time", nowPlayingPanel).html(readableTime(elapsedTime));
+		// kludge to prevent time from going too high
+		if (elapsedTime <= totalTime) {
+			$("#now-playing-time", nowPlayingPanel).html(readableTime(elapsedTime));
+		} else {
+			$("#now-playing-time", nowPlayingPanel).html(readableTime(totalTime));
+		}
 		$("#nothing-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 		$("#now-playing-album-art-img").reflect({height: 16});
@@ -319,8 +336,14 @@ function handlePlayerStateRequest(json) {
 			var song = json.playlist[i];
 			var entry = templates.queueSong.clone();
 			$(".queue-song-id", entry).html(song.song_id);
-			$(".queue-song-title", entry).html(titleOrPath(song));
-			$(".queue-song-artist", entry).html(song.artist);
+			$(".queue-song-title a", entry).html(titleOrPath(song));
+			$(".queue-song-title a", entry).attr('href',
+				'#SelectRequest/title/' + uriencode(song.title));
+
+			$(".queue-song-artist a", entry).html(song.artist);
+			$(".queue-song-artist a", entry).attr('href',
+				'#SelectRequest/artist/' + uriencode(song.artist));
+
 			$(".queue-song-time", entry).html(readableTime(song.length));
 			if (_.indexOf(song.who, currentUser) != -1) {
 				$(".queue-song-vote-link", entry).remove();
