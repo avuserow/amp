@@ -417,6 +417,9 @@ a img {
 			height: 200px;
 			padding: 4px;
 		}
+			#search-results-song-details div a {
+				color: #fff;
+			}
 			#song-details-album-art {
 				height: 160px;
 				width: 128px;
@@ -466,6 +469,9 @@ a img {
 			background-color: #222;
 			color: #fff;
 		}
+			#now-playing-panel div a {
+				color: #fff;
+			}
 			#nothing-playing-info {
 				font-size: 16px;
 				font-weight: bold;
@@ -579,6 +585,9 @@ a img {
 				vertical-align: baseline;
 				list-style-type: none;
 			}
+				.queue-song a {
+					color: #fff;
+				}
 				.queue-song-voted {
 					background-color: #524057 !important;
 				}
