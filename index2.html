@@ -44,12 +44,10 @@
 			<div id="search-results" class="panel">
 				<div id="search-results-toolbar" class="toolbar">
 					<ul id="search-results-toolbar-list" class="toolbar-list">
-						<li id="search-results-advance">
-							<a href="javascript:toggleAdvancedSearch();">v</a>
-						</li>
 						<li id="search-results-search">
-							<form onSubmit="return formSearch();">
-								<input id="search-box" placeholder="Search" type="search" />
+							<form onSubmit="return formSearch();" class="input-split-form">
+								<span class="input-split-button" onMouseClick="javascript:toggleAdvancedSearch();">V</span>
+								<input id="search-box" class="input-split-box" placeholder="Search" type="search" />
 							</form>
 						</li>
 						<li id="search-results-new" class="toolbar-right"><a href="#RecentSongs/20">New</a></li>

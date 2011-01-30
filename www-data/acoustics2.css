@@ -291,14 +291,38 @@ a img {
 		padding-left: 0px;
 		margin-left: 0px;
 	}
-		#search-box {
-			-webkit-border-radius: 6px;
-			-moz-border-radius: 6px;
-			border-radius: 6px;
+		.input-split-form {
+			font-size: 0px;
+		}
+		.input-split-box {
+			-webkit-border-top-right-radius: 6px;
+			-webkit-border-bottom-right-radius: 6px;
+			-moz-border-radius-topright: 6px;
+			-moz-border-radius-bottomright: 6px;
+			border-top-right-radius: 6px;
+			border-bottom-right-radius: 6px;
 			border: 1px solid #000;
 			background-color: #888;
 			width: 200px;
-			padding-left: 10px;
+			padding-left: 0px;
+			margin-left: 0px;
+		}
+		.input-split-button {
+			-webkit-border-top-left-radius: 6px;
+			-webkit-border-bottom-left-radius: 6px;
+			-moz-border-radius-topleft: 6px;
+			-moz-border-radius-bottomleft: 6px;
+			border-top-left-radius: 6px;
+			border-bottom-left-radius: 6px;
+			margin-right: 0px;
+			font-size: 13px;
+			padding-top: 1px;
+			padding-bottom: 1px;
+			padding-left: 2px;
+			padding-right: 2px;
+			border: 1px solid #000;
+			border-right: 0;
+			background-color: #777;
 		}
 		#search-box:focus {
 			background-color: #fff;
