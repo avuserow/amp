@@ -515,6 +515,17 @@ $("#messageBox").ready(function() {
 	});
 });
 
+function advancedSearchFormSubmit() {
+	var conditions = [];
+	$(".advanced-search-row").each(function(index) {
+		alert($(".adv-search-type input", this).val()
+			+ " " + $(".adv-search-compare input", this).val()
+			+ " " + $(".adv-search-value", this).val());
+		//conditions.push();
+	});
+	return false;
+}
+
 function formSearch() {
 	$.address.value("SearchRequest/any/" + formencode($("#search-box").val()));
 	return false;
