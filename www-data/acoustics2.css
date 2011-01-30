@@ -303,6 +303,9 @@ a img {
 		#search-box:focus {
 			background-color: #fff;
 		}
+		#search-advanced-container {
+			height: 14px;
+		}
 		#search-results-table {
 			width: 100%;
 			border-collapse: collapse;
