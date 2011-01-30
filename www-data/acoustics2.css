@@ -238,7 +238,7 @@ a img {
 	left: 0px;
 	right: 0px;
 	height: 24px;
-	padding-right: 30px;
+	padding-right: 10px;
 	background: url(images/ui2/statusbar.png);
 	vertical-align: text-bottom;
 }
