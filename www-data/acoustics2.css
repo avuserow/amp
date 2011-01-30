@@ -548,6 +548,9 @@ a img {
 				vertical-align: baseline;
 				list-style-type: none;
 			}
+				.queue-song-voted {
+					background-color: #524057 !important;
+				}
 				.queue-song-data {
 					display: none;
 					height: 0;

@@ -369,6 +369,7 @@ function handlePlayerStateRequest(json) {
 				$(".queue-song-vote-link", entry).remove();
 				$(".queue-song-unvote-link", entry).attr("href",
 						"javascript:unvoteSong("+ song.song_id +")");
+				$("div",entry).addClass("queue-song-voted");
 			} else {
 				$(".queue-song-vote-link", entry).attr("href",
 						"javascript:voteSong("+ song.song_id +")");
