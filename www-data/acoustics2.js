@@ -183,7 +183,7 @@ function fillResultTable(json) {
 			"<tr><td><div class=\"search-song-id\">" + song.song_id +
 			"</div><a href=\"javascript:voteSong(" + song.song_id +
 			")\">+</a></td><td>" + song.track +
-			"</td><td><a href='#SelectRequest/title/" + uriencode(titleOrPath(song)) +
+			"</td><td><a href='#SongDetails/" + song.song_id +
 			"'>" + titleOrPath(song) + "</a></td><td><a href='#SelectRequest/album/" +
 			uriencode(song.album) + "'>" + song.album +
 			"</a></td><td><a href='#SelectRequest/artist/" +
@@ -314,7 +314,7 @@ function handlePlayerStateRequest(json) {
 	if (nowPlaying) {
 		$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title);
 		$("#now-playing-title a", nowPlayingPanel).attr('href',
-			'#SelectRequest/title/' + uriencode(nowPlaying.title));
+			'#SongDetails/' + nowPlaying.song_id);
 		$("#now-playing-title a", nowPlayingPanel).attr('title',
 			nowPlaying.title);
 		$("#now-playing-artist a", nowPlayingPanel).html(nowPlaying.artist);
@@ -358,7 +358,7 @@ function handlePlayerStateRequest(json) {
 			$(".queue-song-id", entry).html(song.song_id);
 			$(".queue-song-title a", entry).html(titleOrPath(song));
 			$(".queue-song-title a", entry).attr('href',
-				'#SelectRequest/title/' + uriencode(song.title));
+				'#SongDetails/' + song.song_id);
 
 			$(".queue-song-artist a", entry).html(song.artist);
 			$(".queue-song-artist a", entry).attr('href',
@@ -436,6 +436,26 @@ function controlVolumeUp() {
 	}
 }
 
+function songDetails(id) {
+	$.getJSON(
+		jsonSource + '?mode=get_details;song_id='+id,
+		function(json) {
+			json = json.song;
+			$("#song-details-title").html(json.title);
+			$("#song-details-artist").html(json.artist);
+			$("#song-details-album").html(json.album);
+			$("#song-details-file").html(json.path);
+			$("#search-results-song-details").show(300, function() {
+				$("#song-details-album-art-img").reflect({height: 32});
+			});
+		}
+	);
+}
+
+function hideSongDetails() {
+	$("#search-results-song-details").hide(300);
+}
+
 $("#messageBox").ready(function() {
 	$("#messageBox").dialog({
 		autoOpen: false,
@@ -484,6 +504,7 @@ function pageLoadChange(hash) {
 	var action = args.shift();
 	if (!args[0]) args[0] = '';
 	if (!args[1]) args[1] = '';
+	hideSongDetails();
 	if (action == '') {
 		loadRandomSongs(20, (new Date()).getTime());
 	} else if (action == 'RandomSongs') {
@@ -496,6 +517,8 @@ function pageLoadChange(hash) {
 		selectRequest(args[0], args[1]);
 	} else if (action == 'SearchRequest') {
 		doSearch(args[0], args[1]);
+	} else if (action == 'SongDetails') {
+		songDetails(args[0]);
 	}
 }
 

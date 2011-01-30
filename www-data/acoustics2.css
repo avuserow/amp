@@ -271,6 +271,19 @@ a img {
 	overflow-x: auto;
 }
 
+.floaty {
+	display: none;
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	border: 1px solid #000;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	box-shadow: 2px 2px 2px rgba(0,0,0,0.25);
+	background-color: #666;
+}
+
 #main-content {
 	position: absolute;
 	top: 40px;
@@ -367,6 +380,41 @@ a img {
 				width: 0;
 				height: 0;
 				overflow: hidden;
+			}
+		#search-results-song-details {
+			right: 20px;
+			height: 200px;
+			padding: 4px;
+		}
+			#song-details-album-art {
+				height: 160px;
+				width: 128px;
+				float: left;
+				margin-right: 10px;
+			}
+			#song-details-close {
+				position: absolute;
+				right: 10px;
+				bottom: 10px;
+			}
+			#search-results-song-details div {
+				white-space: nowrap;
+				overflow: hidden;
+				padding-left: 4px;
+			}
+			#song-details-title {
+				font-weight: bold;
+				font-size: 20px;
+				text-shadow: 0px 1px 1px #ccc;
+			}
+			#song-details-artist {
+				font-size: 16px;
+			}
+			#song-details-album {
+				font-size: 14px;
+			}
+			#song-details-file {
+				font-size: 13px;
 			}
 
 	#right-panel {
