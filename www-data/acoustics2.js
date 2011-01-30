@@ -7,6 +7,7 @@ var playingTimer;
 var elapsedTime = 0;
 var totalTime = 0;
 var queueLocked = false;
+var queueHidden = false;
 
 $(document).ready(function() {
 	$("#queue-list").sortable({
@@ -31,6 +32,25 @@ $(document).ready(function() {
 	$('.header-bar-menu-dropdown').hover(function() {
 	}, function() {
 		$(this).hide();
+	});
+	$("#search-results-toggle-right-panel").click(function() {
+		if (queueHidden) {
+			$("#right-panel").animate({
+				right: '0'
+			}, 400);
+			$("#search-results").animate({
+				right: '300'
+			}, 400);
+			queueHidden = false;
+		} else {
+			$("#right-panel").animate({
+				right: '-300'
+			}, 400);
+			$("#search-results").animate({
+				right: '0'
+			}, 400);
+			queueHidden = true;
+		}
 	});
 });
 
