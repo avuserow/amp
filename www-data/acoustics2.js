@@ -21,6 +21,8 @@ $(document).ready(function() {
 	// templating
 	templates.queueSong = $("li.queue-song").first().clone();
 	templates.nowPlayingPanel = $("#now-playing-panel").clone();
+	templates.searchResultSong = $("#search-results-entry").clone();
+	$("#search-results-table tbody").empty();
 
 	playerStateRequest();
 	if (stateTimer) clearInterval(stateTimer);
@@ -176,19 +178,29 @@ function fillResultTable(json) {
 		return false;
 	}
 	var total_length = 0;
+	$("#search-results-table tbody").empty();
 	for (i in json) {
 		var song = json[i];
-		// TODO: template me
-		$("#search-results-table tbody").append(
-			"<tr><td><div class=\"search-song-id\">" + song.song_id +
-			"</div><a href=\"javascript:voteSong(" + song.song_id +
-			")\">+</a></td><td>" + song.track +
-			"</td><td><a href='#SongDetails/" + song.song_id +
-			"'>" + titleOrPath(song) + "</a></td><td><a href='#SelectRequest/album/" +
-			uriencode(song.album) + "'>" + song.album +
-			"</a></td><td><a href='#SelectRequest/artist/" +
-			uriencode(song.artist) + "'>" + song.artist + "</td><td>"
-			+ readableTime(song.length) + "</td></tr>\n");
+		var entry = templates.searchResultSong.clone();
+		$(".search-results-entry-song-id", entry).html(song.song_id);
+		$(".search-results-entry-track", entry).html(song.track);
+		$(".search-results-entry-length", entry).html(readableTime(song.length));
+
+		$(".search-results-entry-vote", entry).attr('href',
+			'javascript:voteSong(' + song.song_id + ')');
+
+		$(".search-results-entry-title a", entry).html(song.title);
+		$(".search-results-entry-title a", entry).attr('href',
+			'#SongDetails/' + song.song_id);
+
+		$(".search-results-entry-album a", entry).html(song.album);
+		$(".search-results-entry-album a", entry).attr('href',
+			'#SelectRequest/album/' + uriencode(song.album));
+
+		$(".search-results-entry-artist a", entry).html(song.artist);
+		$(".search-results-entry-artist a", entry).attr('href',
+			'#SelectRequest/artist/' + uriencode(song.artist));
+		$("#search-results-table tbody").append(entry);
 		total_length += parseInt(song.length);
 	}
 	$("#search-results-table").trigger("update");
@@ -237,7 +249,7 @@ function changePlayer(player_id) {
 function voteAll() {
 	var block = "";
 	$("#search-results-table tbody tr").each(function(index) {
-		block += "song_id=" + $(".search-song-id",this).text() + ";";
+		block += "song_id=" + $(".search-results-entry-song-id",this).text() + ";";
 	});
 	var command = "?mode=vote;";
 	$.getJSON(
@@ -254,7 +266,7 @@ function voteOne() {
 	//        Can I index these guys?
 	$("#search-results-table tbody tr").each(function(index) {
 		if (index == randomSelection) {
-			block += "song_id=" + $(".search-song-id",this).text() + ";";
+			block += "song_id=" + $(".search-results-entry-song-id",this).text() + ";";
 		}
 	});
 	var command = "?mode=vote;";

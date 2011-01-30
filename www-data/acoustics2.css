@@ -375,7 +375,7 @@ a img {
 		#sr-vote { width: 20px; }
 		#sr-track { width: 20px; }
 		#sr-length { width: 50px; }
-			.search-song-id {
+			.search-results-entry-song-id {
 				display: none;
 				width: 0;
 				height: 0;
