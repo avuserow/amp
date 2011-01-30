@@ -307,6 +307,10 @@ a img {
 		.input-split-form {
 			font-size: 0px;
 		}
+		.input-split-form-wide {
+			font-size: 0px;
+			margin: 2px;
+		}
 		.input-split-box {
 			-webkit-border-top-right-radius: 6px;
 			-webkit-border-bottom-right-radius: 6px;
@@ -317,6 +321,7 @@ a img {
 			border: 1px solid #000;
 			background-color: #888;
 			width: 200px;
+			font-size: 13px;
 			padding-left: 0px;
 			margin-left: 0px;
 		}
@@ -336,6 +341,32 @@ a img {
 			border: 1px solid #000;
 			border-right: 0;
 			background-color: #777;
+		}
+		.input-split-dropdown {
+			margin-right: 0px;
+			font-size: 13px;
+			padding-top: 1px;
+			padding-bottom: 1px;
+			padding-left: 2px;
+			padding-right: 2px;
+			border: 1px solid #000;
+			border-right: 0;
+			background-color: #777;
+		}
+		.input-split-dropdown input {
+			display: none;
+		}
+		.input-split-dropdown label.expanded {
+			display: inline !important;
+		}
+		.input-split-dropdown label {
+			display: none;
+		}
+		.input-split-dropdown input:checked + label {
+			display: inline !important;
+		}
+		.input-split-dropdown input:checked + label.expanded {
+			background-color: #524057 !important;
 		}
 		#search-box:focus {
 			background-color: #fff;

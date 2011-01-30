@@ -59,7 +59,20 @@
 				</div>
 				<div id="search-results-container" class="container">
 					<div id="search-results-advanced-container">
-						hi
+						<div id="advanced-search-NUM" class="input-split-form-wide">
+							<span class="input-split-button   adv-search-combine">if</span>
+							<span class="input-split-dropdown adv-search-type">
+								<input type="radio" id="adv-search-artist-NUM" name="adv-search-type-NUM" checked/><label for="adv-search-artist-NUM" onClick="javascript:expandSplitDropdown(this);">artist</label>
+								<input type="radio" id="adv-search-album-NUM"  name="adv-search-type-NUM"/><label for="adv-search-album-NUM" onClick="javascript:expandSplitDropdown(this);">album</label>
+								<input type="radio" id="adv-search-title-NUM"  name="adv-search-type-NUM"/><label for="adv-search-title-NUM" onClick="javascript:expandSplitDropdown(this);">title</label>
+								<input type="radio" id="adv-search-path-NUM"   name="adv-search-type-NUM"/><label for="adv-search-path-NUM" onClick="javascript:expandSplitDropdown(this);">path</label>
+							</span>
+							<span class="input-split-dropdown adv-search-compare">
+								<input type="radio" id="adv-search-equals-NUM"   name="adv-search-compare-NUM" checked/><label for="adv-search-equals-NUM" onClick="javascript:expandSplitDropdown(this);">equals</label>
+								<input type="radio" id="adv-search-contains-NUM" name="adv-search-compare-NUM"/><label for="adv-search-contains-NUM" onClick="javascript:expandSplitDropdown(this);">contains</label>
+							</span>
+							<input id="adv-search-value-NUM" class="input-split-box     adv-search-value" value="herp"></input>
+						</div>
 					</div>
 					<table id="search-results-table">
 						<thead>

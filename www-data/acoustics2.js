@@ -429,6 +429,14 @@ function controlNext() {
 	);
 }
 
+function expandSplitDropdown(field) {
+	if ($("label",field.parentNode).hasClass("expanded")) {
+		$("label",field.parentNode).removeClass("expanded");
+	} else {
+		$("label",field.parentNode).addClass("expanded");
+	}
+}
+
 function controlVolumeDown() {
 	if (volume != undefined) {
 		volume -= 10;
