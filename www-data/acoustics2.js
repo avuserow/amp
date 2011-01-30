@@ -518,8 +518,8 @@ $("#messageBox").ready(function() {
 function advancedSearchFormSubmit() {
 	var conditions = [];
 	$(".advanced-search-row").each(function(index) {
-		alert($(".adv-search-type input", this).val()
-			+ " " + $(".adv-search-compare input", this).val()
+		alert($(".adv-search-type input:checked", this).val()
+			+ " " + $(".adv-search-compare input:checked", this).val()
 			+ " " + $(".adv-search-value", this).val());
 		//conditions.push();
 	});
