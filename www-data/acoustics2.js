@@ -446,10 +446,25 @@ function songDetails(id) {
 		jsonSource + '?mode=get_details;song_id='+id,
 		function(json) {
 			json = json.song;
-			$("#song-details-title").html(json.title);
-			$("#song-details-artist").html(json.artist);
-			$("#song-details-album").html(json.album);
-			$("#song-details-file").html(json.path);
+			$("#song-details-title a").html(json.title);
+			$("#song-details-title a").attr('title', json.title);
+			$("#song-details-title a").attr('href',
+				'#SelectRequest/title/' + uriencode(json.title));
+
+			$("#song-details-artist a").html(json.artist);
+			$("#song-details-artist a").attr('title', json.artist);
+			$("#song-details-artist a").attr('href',
+				'#SelectRequest/artist/' + uriencode(json.artist));
+
+			$("#song-details-album a").html(json.album);
+			$("#song-details-album a").attr('title', json.album);
+			$("#song-details-album a").attr('href',
+				'#SelectRequest/album/' + uriencode(json.album));
+
+			$("#song-details-file a").html(json.path);
+			$("#song-details-file a").attr('title', json.path);
+			$("#song-details-file a").attr('href',
+				'#SelectRequest/path/' + uriencode(json.path));
 			$("#search-results-song-details").show(300, function() {
 				$("#song-details-album-art-img").reflect({height: 32});
 			});
