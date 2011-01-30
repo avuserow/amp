@@ -437,6 +437,10 @@ function controlVolumeUp() {
 	}
 }
 
+function toggleAdvancedSearch() {
+	$("#search-results-advanced-container").slideToggle();
+}
+
 function songDetails(id) {
 	$.getJSON(
 		jsonSource + '?mode=get_details;song_id='+id,
