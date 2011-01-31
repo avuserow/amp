@@ -517,12 +517,21 @@ $("#messageBox").ready(function() {
 
 function advancedSearchFormSubmit() {
 	var conditions = [];
+	var inner = [];
 	$(".advanced-search-row").each(function(index) {
-		alert($(".adv-search-type input:checked", this).val()
-			+ " " + $(".adv-search-compare input:checked", this).val()
-			+ " " + $(".adv-search-value", this).val());
-		//conditions.push();
+		// TODO: check if this is an OR row instead
+		// if (this_is_OR_row) {
+		// conditions.push(inner.join('/AND/'));
+		// inner = [];
+		// etc
+		// }
+
+		inner.push($(".adv-search-type input:checked", this).val()
+			+ "/" + $(".adv-search-compare input:checked", this).val()
+			+ "/" + uriencode($(".adv-search-value", this).val()));
 	});
+	conditions.push(inner.join('/AND/')); // handle the last one
+	alert(conditions.join('/OR/'));
 	return false;
 }
 
