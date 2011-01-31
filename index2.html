@@ -61,18 +61,25 @@
 					<div id="search-results-advanced-container">
 						<form onSubmit="return advancedSearchFormSubmit();">
 							<div id="advanced-search-NUM" class="input-split-form-wide advanced-search-row">
-								<span class="input-split-button   adv-search-combine">if</span>
+								<span class="input-split-button input-split-dropdown  adv-search-combine">
+									<input type="radio" id="adv-search-if-NUM"  name="adv-search-combine-NUM" value="if" checked /><label for="adv-search-if-NUM" onClick="javascript:expandSplitDropdown(this);">if</label>
+									<input type="radio" id="adv-search-and-NUM" name="adv-search-combine-NUM" value="and" /><label for="adv-search-and-NUM" onClick="javascript:expandSplitDropdown(this);">and</label>
+									<input type="radio" id="adv-search-or-NUM"  name="adv-search-combine-NUM" value="or"  /><label for="adv-search-or-NUM" onClick="javascript:expandSplitDropdown(this);">or</label>
+								</span>
 								<span class="input-split-dropdown adv-search-type">
 									<input type="radio" id="adv-search-artist-NUM" name="adv-search-type-NUM" value="artist" checked/><label for="adv-search-artist-NUM" onClick="javascript:expandSplitDropdown(this);">artist</label>
-									<input type="radio" id="adv-search-album-NUM"  name="adv-search-type-NUM" value="album"/><label for="adv-search-album-NUM" onClick="javascript:expandSplitDropdown(this);">album</label>
+									<input type="radio" id="adv-search-album-NUM"  name="adv-search-type-NUM" value="album" /><label for="adv-search-album-NUM" onClick="javascript:expandSplitDropdown(this);">album</label>
 									<input type="radio" id="adv-search-title-NUM"  name="adv-search-type-NUM" value="title" /><label for="adv-search-title-NUM" onClick="javascript:expandSplitDropdown(this);">title</label>
-									<input type="radio" id="adv-search-path-NUM"   name="adv-search-type-NUM" value="path"/><label for="adv-search-path-NUM" onClick="javascript:expandSplitDropdown(this);">path</label>
+									<input type="radio" id="adv-search-path-NUM"   name="adv-search-type-NUM" value="path"  /><label for="adv-search-path-NUM" onClick="javascript:expandSplitDropdown(this);">path</label>
 								</span>
 								<span class="input-split-dropdown adv-search-compare">
 									<input type="radio" id="adv-search-equals-NUM"   name="adv-search-compare-NUM" value="equals" checked/><label for="adv-search-equals-NUM" onClick="javascript:expandSplitDropdown(this);">equals</label>
 									<input type="radio" id="adv-search-contains-NUM" name="adv-search-compare-NUM" value="contains" /><label for="adv-search-contains-NUM" onClick="javascript:expandSplitDropdown(this);">contains</label>
 								</span>
 								<input id="adv-search-value-NUM" class="input-split-box     adv-search-value" value="herp"></input>
+								<span style="font-size: 13px;">&nbsp;&nbsp;</span>
+								<span class="input-split-button" id="adv-search-add-NUM">add</span>
+								<span class="input-split-right input-split-disabled" id="adv-search-remove-NUM">remove</span>
 							</div>
 						</form>
 					</div>
