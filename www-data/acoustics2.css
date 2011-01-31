@@ -366,7 +366,12 @@ a img {
 			display: inline !important;
 		}
 		.input-split-dropdown input:checked + label.expanded {
-			background-color: #524057 !important;
+			border: 1px solid #999;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+			background-color: #999;
+			color: #000;
 		}
 		.input-split-right {
 			-webkit-border-top-right-radius: 6px;
