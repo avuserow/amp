@@ -7,6 +7,7 @@ var playingTimer;
 var elapsedTime = 0;
 var totalTime = 0;
 var queueLocked = false;
+var queueHidden = false;
 
 $(document).ready(function() {
 	$("#queue-list").sortable({
@@ -20,6 +21,8 @@ $(document).ready(function() {
 	// templating
 	templates.queueSong = $("li.queue-song").first().clone();
 	templates.nowPlayingPanel = $("#now-playing-panel").clone();
+	templates.searchResultSong = $("#search-results-entry").clone();
+	$("#search-results-table tbody").empty();
 
 	playerStateRequest();
 	if (stateTimer) clearInterval(stateTimer);
@@ -31,6 +34,25 @@ $(document).ready(function() {
 	$('.header-bar-menu-dropdown').hover(function() {
 	}, function() {
 		$(this).hide();
+	});
+	$("#search-results-toggle-right-panel").click(function() {
+		if (queueHidden) {
+			$("#right-panel").animate({
+				right: '0'
+			}, 400);
+			$("#search-results").animate({
+				right: '300'
+			}, 400);
+			queueHidden = false;
+		} else {
+			$("#right-panel").animate({
+				right: '-300'
+			}, 400);
+			$("#search-results").animate({
+				right: '0'
+			}, 400);
+			queueHidden = true;
+		}
 	});
 });
 
@@ -156,19 +178,29 @@ function fillResultTable(json) {
 		return false;
 	}
 	var total_length = 0;
+	$("#search-results-table tbody").empty();
 	for (i in json) {
 		var song = json[i];
-		// TODO: template me
-		$("#search-results-table tbody").append(
-			"<tr><td><div class=\"search-song-id\">" + song.song_id +
-			"</div><a href=\"javascript:voteSong(" + song.song_id +
-			")\">+</a></td><td>" + song.track +
-			"</td><td><a href='#SelectRequest/title/" + uriencode(titleOrPath(song)) +
-			"'>" + titleOrPath(song) + "</a></td><td><a href='#SelectRequest/album/" +
-			uriencode(song.album) + "'>" + song.album +
-			"</a></td><td><a href='#SelectRequest/artist/" +
-			uriencode(song.artist) + "'>" + song.artist + "</td><td>"
-			+ readableTime(song.length) + "</td></tr>\n");
+		var entry = templates.searchResultSong.clone();
+		$(".search-results-entry-song-id", entry).html(song.song_id);
+		$(".search-results-entry-track", entry).html(song.track);
+		$(".search-results-entry-length", entry).html(readableTime(song.length));
+
+		$(".search-results-entry-vote", entry).attr('href',
+			'javascript:voteSong(' + song.song_id + ')');
+
+		$(".search-results-entry-title a", entry).html(song.title);
+		$(".search-results-entry-title a", entry).attr('href',
+			'#SongDetails/' + song.song_id);
+
+		$(".search-results-entry-album a", entry).html(song.album);
+		$(".search-results-entry-album a", entry).attr('href',
+			'#SelectRequest/album/' + uriencode(song.album));
+
+		$(".search-results-entry-artist a", entry).html(song.artist);
+		$(".search-results-entry-artist a", entry).attr('href',
+			'#SelectRequest/artist/' + uriencode(song.artist));
+		$("#search-results-table tbody").append(entry);
 		total_length += parseInt(song.length);
 	}
 	$("#search-results-table").trigger("update");
@@ -217,7 +249,7 @@ function changePlayer(player_id) {
 function voteAll() {
 	var block = "";
 	$("#search-results-table tbody tr").each(function(index) {
-		block += "song_id=" + $(".search-song-id",this).text() + ";";
+		block += "song_id=" + $(".search-results-entry-song-id",this).text() + ";";
 	});
 	var command = "?mode=vote;";
 	$.getJSON(
@@ -234,7 +266,7 @@ function voteOne() {
 	//        Can I index these guys?
 	$("#search-results-table tbody tr").each(function(index) {
 		if (index == randomSelection) {
-			block += "song_id=" + $(".search-song-id",this).text() + ";";
+			block += "song_id=" + $(".search-results-entry-song-id",this).text() + ";";
 		}
 	});
 	var command = "?mode=vote;";
@@ -292,14 +324,31 @@ function handlePlayerStateRequest(json) {
 	var nowPlayingPanel = templates.nowPlayingPanel.clone();
 	$("#now-playing-panel").empty();
 	if (nowPlaying) {
-		$("#now-playing-title", nowPlayingPanel).html(titleOrPath(nowPlaying));
-		$("#now-playing-album", nowPlayingPanel).html(nowPlaying.album);
-		$("#now-playing-artist", nowPlayingPanel).html(nowPlaying.artist);
+		$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title);
+		$("#now-playing-title a", nowPlayingPanel).attr('href',
+			'#SongDetails/' + nowPlaying.song_id);
+		$("#now-playing-title a", nowPlayingPanel).attr('title',
+			nowPlaying.title);
+		$("#now-playing-artist a", nowPlayingPanel).html(nowPlaying.artist);
+		$("#now-playing-artist a", nowPlayingPanel).attr('href',
+			'#SelectRequest/artist/' + uriencode(nowPlaying.artist));
+		$("#now-playing-artist a", nowPlayingPanel).attr('title',
+			nowPlaying.artist);
+		$("#now-playing-album a", nowPlayingPanel).html(nowPlaying.album);
+		$("#now-playing-album a", nowPlayingPanel).attr('href',
+			'#SelectRequest/album/' + uriencode(nowPlaying.album));
+		$("#now-playing-album a", nowPlayingPanel).attr('title',
+			nowPlaying.album);
 		$("#now-playing-total", nowPlayingPanel).html(readableTime(nowPlaying.length));
 		totalTime = nowPlaying.length;
 		startPlayingTimer();
 		elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
-		$("#now-playing-time", nowPlayingPanel).html(readableTime(elapsedTime));
+		// kludge to prevent time from going too high
+		if (elapsedTime <= totalTime) {
+			$("#now-playing-time", nowPlayingPanel).html(readableTime(elapsedTime));
+		} else {
+			$("#now-playing-time", nowPlayingPanel).html(readableTime(totalTime));
+		}
 		$("#nothing-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 		$("#now-playing-album-art-img").reflect({height: 16});
@@ -319,13 +368,20 @@ function handlePlayerStateRequest(json) {
 			var song = json.playlist[i];
 			var entry = templates.queueSong.clone();
 			$(".queue-song-id", entry).html(song.song_id);
-			$(".queue-song-title", entry).html(titleOrPath(song));
-			$(".queue-song-artist", entry).html(song.artist);
+			$(".queue-song-title a", entry).html(titleOrPath(song));
+			$(".queue-song-title a", entry).attr('href',
+				'#SongDetails/' + song.song_id);
+
+			$(".queue-song-artist a", entry).html(song.artist);
+			$(".queue-song-artist a", entry).attr('href',
+				'#SelectRequest/artist/' + uriencode(song.artist));
+
 			$(".queue-song-time", entry).html(readableTime(song.length));
 			if (_.indexOf(song.who, currentUser) != -1) {
 				$(".queue-song-vote-link", entry).remove();
 				$(".queue-song-unvote-link", entry).attr("href",
 						"javascript:unvoteSong("+ song.song_id +")");
+				$("div",entry).addClass("queue-song-voted");
 			} else {
 				$(".queue-song-vote-link", entry).attr("href",
 						"javascript:voteSong("+ song.song_id +")");
@@ -373,6 +429,14 @@ function controlNext() {
 	);
 }
 
+function expandSplitDropdown(field) {
+	if ($("label",field.parentNode).hasClass("expanded")) {
+		$("label",field.parentNode).removeClass("expanded");
+	} else {
+		$("label",field.parentNode).addClass("expanded");
+	}
+}
+
 function controlVolumeDown() {
 	if (volume != undefined) {
 		volume -= 10;
@@ -393,6 +457,45 @@ function controlVolumeUp() {
 	}
 }
 
+function toggleAdvancedSearch() {
+	$("#search-results-advanced-container").slideToggle();
+}
+
+function songDetails(id) {
+	$.getJSON(
+		jsonSource + '?mode=get_details;song_id='+id,
+		function(json) {
+			json = json.song;
+			$("#song-details-title a").html(json.title);
+			$("#song-details-title a").attr('title', json.title);
+			$("#song-details-title a").attr('href',
+				'#SelectRequest/title/' + uriencode(json.title));
+
+			$("#song-details-artist a").html(json.artist);
+			$("#song-details-artist a").attr('title', json.artist);
+			$("#song-details-artist a").attr('href',
+				'#SelectRequest/artist/' + uriencode(json.artist));
+
+			$("#song-details-album a").html(json.album);
+			$("#song-details-album a").attr('title', json.album);
+			$("#song-details-album a").attr('href',
+				'#SelectRequest/album/' + uriencode(json.album));
+
+			$("#song-details-file a").html(json.path);
+			$("#song-details-file a").attr('title', json.path);
+			$("#song-details-file a").attr('href',
+				'#SelectRequest/path/' + uriencode(json.path));
+			$("#search-results-song-details").show(300, function() {
+				$("#song-details-album-art-img").reflect({height: 32});
+			});
+		}
+	);
+}
+
+function hideSongDetails() {
+	$("#search-results-song-details").hide(300);
+}
+
 $("#messageBox").ready(function() {
 	$("#messageBox").dialog({
 		autoOpen: false,
@@ -411,6 +514,26 @@ $("#messageBox").ready(function() {
 		$(this).dialog('open');
 	});
 });
+
+function advancedSearchFormSubmit() {
+	var conditions = [];
+	var inner = [];
+	$(".advanced-search-row").each(function(index) {
+		// TODO: check if this is an OR row instead
+		// if (this_is_OR_row) {
+		// conditions.push(inner.join('/AND/'));
+		// inner = [];
+		// etc
+		// }
+
+		inner.push($(".adv-search-type input:checked", this).val()
+			+ "/" + $(".adv-search-compare input:checked", this).val()
+			+ "/" + uriencode($(".adv-search-value", this).val()));
+	});
+	conditions.push(inner.join('/AND/')); // handle the last one
+	alert(conditions.join('/OR/'));
+	return false;
+}
 
 function formSearch() {
 	$.address.value("SearchRequest/any/" + formencode($("#search-box").val()));
@@ -441,6 +564,7 @@ function pageLoadChange(hash) {
 	var action = args.shift();
 	if (!args[0]) args[0] = '';
 	if (!args[1]) args[1] = '';
+	hideSongDetails();
 	if (action == '') {
 		loadRandomSongs(20, (new Date()).getTime());
 	} else if (action == 'RandomSongs') {
@@ -453,6 +577,8 @@ function pageLoadChange(hash) {
 		selectRequest(args[0], args[1]);
 	} else if (action == 'SearchRequest') {
 		doSearch(args[0], args[1]);
+	} else if (action == 'SongDetails') {
+		songDetails(args[0]);
 	}
 }
 

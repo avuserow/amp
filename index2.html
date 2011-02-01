@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 	<head>
-		<title>ACueStick</title>
+		<title>Acoustics</title>
 		<meta charset="utf-8" />
 		<link rel="stylesheet" href="www-data/acoustics2.css" />
 		<link rel="stylesheet" href="www-data/jquery-ui-1.8.6.custom.css" />
@@ -45,8 +45,9 @@
 				<div id="search-results-toolbar" class="toolbar">
 					<ul id="search-results-toolbar-list" class="toolbar-list">
 						<li id="search-results-search">
-							<form onSubmit="return formSearch();">
-								<input id="search-box" placeholder="Search" type="search" />
+							<form onSubmit="return formSearch();" class="input-split-form">
+								<span class="input-split-button" onClick="javascript:toggleAdvancedSearch();">V</span>
+								<input id="search-box" class="input-split-box" placeholder="Search" type="search" />
 							</form>
 						</li>
 						<li id="search-results-new" class="toolbar-right"><a href="#RecentSongs/20">New</a></li>
@@ -57,6 +58,31 @@
 					</ul>
 				</div>
 				<div id="search-results-container" class="container">
+					<div id="search-results-advanced-container">
+						<form onSubmit="return advancedSearchFormSubmit();">
+							<div id="advanced-search-NUM" class="input-split-form-wide advanced-search-row">
+								<span class="input-split-button input-split-dropdown  adv-search-combine">
+									<input type="radio" id="adv-search-if-NUM"  name="adv-search-combine-NUM" value="if" checked /><label for="adv-search-if-NUM" onClick="javascript:expandSplitDropdown(this);">if</label>
+									<input type="radio" id="adv-search-and-NUM" name="adv-search-combine-NUM" value="and" /><label for="adv-search-and-NUM" onClick="javascript:expandSplitDropdown(this);">and</label>
+									<input type="radio" id="adv-search-or-NUM"  name="adv-search-combine-NUM" value="or"  /><label for="adv-search-or-NUM" onClick="javascript:expandSplitDropdown(this);">or</label>
+								</span>
+								<span class="input-split-dropdown adv-search-type">
+									<input type="radio" id="adv-search-artist-NUM" name="adv-search-type-NUM" value="artist" checked/><label for="adv-search-artist-NUM" onClick="javascript:expandSplitDropdown(this);">artist</label>
+									<input type="radio" id="adv-search-album-NUM"  name="adv-search-type-NUM" value="album" /><label for="adv-search-album-NUM" onClick="javascript:expandSplitDropdown(this);">album</label>
+									<input type="radio" id="adv-search-title-NUM"  name="adv-search-type-NUM" value="title" /><label for="adv-search-title-NUM" onClick="javascript:expandSplitDropdown(this);">title</label>
+									<input type="radio" id="adv-search-path-NUM"   name="adv-search-type-NUM" value="path"  /><label for="adv-search-path-NUM" onClick="javascript:expandSplitDropdown(this);">path</label>
+								</span>
+								<span class="input-split-dropdown adv-search-compare">
+									<input type="radio" id="adv-search-equals-NUM"   name="adv-search-compare-NUM" value="equals" checked/><label for="adv-search-equals-NUM" onClick="javascript:expandSplitDropdown(this);">equals</label>
+									<input type="radio" id="adv-search-contains-NUM" name="adv-search-compare-NUM" value="contains" /><label for="adv-search-contains-NUM" onClick="javascript:expandSplitDropdown(this);">contains</label>
+								</span>
+								<input id="adv-search-value-NUM" class="input-split-box     adv-search-value" value="herp"></input>
+								<span style="font-size: 13px;">&nbsp;&nbsp;</span>
+								<span class="input-split-button" id="adv-search-add-NUM">add</span>
+								<span class="input-split-right input-split-disabled" id="adv-search-remove-NUM">remove</span>
+							</div>
+						</form>
+					</div>
 					<table id="search-results-table">
 						<thead>
 							<tr>
@@ -69,11 +95,33 @@
 							</tr>
 						</thead>
 						<tbody>
+							<tr id="search-results-entry">
+								<td>
+									<div class="search-results-entry-song-id">0</div>
+									<a class="search-results-entry-vote" href="#" title="Vote for this song">+</a>
+								</td>
+								<td class="search-results-entry-track">-</td>
+								<td class="search-results-entry-title"><a href="#">title</a></td>
+								<td class="search-results-entry-album"><a href="#">album</a></td>
+								<td class="search-results-entry-artist"><a href="#">artist</a></td>
+								<td class="search-results-entry-length">0:00</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
+				<div id="search-results-song-details" class="floaty">
+					<div id="song-details-album-art">
+						<img id="song-details-album-art-img" width="128" src="www-data/icons/cd_big.png" />
+					</div>
+					<div id="song-details-title"><a href="#">That One Song</a></div>
+					<div id="song-details-artist"><a href="#">The Artist You Like</a></div>
+					<div id="song-details-album"><a href="#">Their Big Album</a></div>
+					<div id="song-details-file"><a href="#">Path</a></div>
+					<div id="song-details-close"><a href="javascript:hideSongDetails()">close</a></div>
+				</div>
 				<div id="search-results-statusbar" class="statusbar">
 					<div id="search-results-status"></div>
+					<div id="search-results-toggle-right-panel" class="statusbar-right">&gt;&gt;</div>
 					<div id="search-results-time"  class="statusbar-right">0:00</div>
 					<div id="search-results-count" class="statusbar-right">0 songs</div>
 				</div>
@@ -87,9 +135,9 @@
 						<img id="now-playing-album-art-img" src="www-data/icons/cd_big.png" />
 					</div>
 					<div id="now-playing-info">
-						<div id="now-playing-title">Nothing Playing</div>
-						<div id="now-playing-artist">No One</div>
-						<div id="now-playing-album">No Album</div>
+						<div id="now-playing-title"><a href="#">Nothing Playing</a></div>
+						<div id="now-playing-artist"><a href="#">No One</a></div>
+						<div id="now-playing-album"><a href="#">No Album</a></div>
 						<div id="now-playing-times"><span id="now-playing-time">0:00</span> / <span id="now-playing-total">0:00</span></div>
 					</div>
 					<div id="now-playing-progress-container">
@@ -128,11 +176,15 @@
 											<a class="queue-song-vote-link" href="#">+</a>
 											<a class="queue-song-unvote-link" href="#">-</a>
 										</div>
-										<div class="queue-song-title">Song Title</div>
+										<div class="queue-song-title">
+											<a href="#">Song Title</a>
+										</div>
 									</div>
 									<div class="queue-song-bottomrow">
 										<div class="queue-song-vote-count">0</div>
-										<div class="queue-song-artist">Artist</div>
+										<div class="queue-song-artist">
+											<a href="#">Artist</a>
+										</div>
 										<div class="queue-song-time">0:00</div>
 									</div>
 								</div>
