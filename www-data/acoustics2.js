@@ -35,26 +35,29 @@ $(document).ready(function() {
 	}, function() {
 		$(this).hide();
 	});
-	$("#search-results-toggle-right-panel").click(function() {
-		if (queueHidden) {
-			$("#right-panel").animate({
-				right: '0'
-			}, 400);
-			$("#search-results").animate({
-				right: '300'
-			}, 400);
-			queueHidden = false;
-		} else {
-			$("#right-panel").animate({
-				right: '-300'
-			}, 400);
-			$("#search-results").animate({
-				right: '0'
-			}, 400);
-			queueHidden = true;
-		}
-	});
+	$("#search-results-toggle-right-panel").click(function() { toggleQueue(); });
+	$("#statistics-toggle-right-panel").click(function() { toggleQueue(); });
 });
+
+function toggleQueue() {
+	if (queueHidden) {
+		$("#right-panel").animate({
+			right: '0'
+		}, 400);
+		$(".panel-left").animate({
+			right: '300'
+		}, 400);
+		queueHidden = false;
+	} else {
+		$("#right-panel").animate({
+			right: '-300'
+		}, 400);
+		$(".panel-left").animate({
+			right: '0'
+		}, 400);
+		queueHidden = true;
+	}
+}
 
 function titleOrPath(json) {
 	if (json.title) {
@@ -166,6 +169,10 @@ function loadPlayHistory(amount, who) {
 
 function hideShow(what) {
 	$("#"+what).toggle();
+}
+
+function hideShowSlide(what) {
+	$("#"+what).slideToggle(300);
 }
 
 function fillResultTable(json) {
@@ -596,6 +603,26 @@ function pageLoadChange(hash) {
 	} else if (action == 'SongDetails') {
 		songDetails(args[0]);
 	}
+	if (action == 'Statistics') {
+		setLeftPanel("statistics");
+		setMenuItem("statistics");
+	} else if (action == 'Playlists') {
+		setLeftPanel("search-results");
+		setMenuItem("playlists");
+	} else {
+		setLeftPanel("search-results");
+		setMenuItem("now-playing");
+	}
+}
+
+function setLeftPanel(panel) {
+	$(".panel-left").not("#"+panel).slideUp(300);
+	$("#"+panel).slideDown(300);
+}
+
+function setMenuItem(item) {
+	$("#header-bar-menu-list li a").not("#header-bar-menu-"+item).removeClass("header-bar-menu-selected", 100);
+	$("#header-bar-menu-" + item).addClass("header-bar-menu-selected", 100);
 }
 
 $.address.change(function(e) {pageLoadChange(e.value);});

@@ -292,6 +292,19 @@ a img {
 	right: 0px;
 	left: 0px;
 }
+	#statistics {
+		position: absolute;
+		float: left;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		bottom: 0px;
+		background-color: #666;
+		color: #FFF;
+		padding: 10px;
+		margin-left: 0px;
+		display: none;
+	}
 
 	#search-results {
 		position: absolute;
