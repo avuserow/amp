@@ -8,6 +8,7 @@ var elapsedTime = 0;
 var totalTime = 0;
 var queueLocked = false;
 var queueHidden = false;
+var queueShouldBeHidden = false;
 
 $(document).ready(function() {
 	$("#queue-list").sortable({
@@ -35,27 +36,48 @@ $(document).ready(function() {
 	}, function() {
 		$(this).hide();
 	});
-	$("#search-results-toggle-right-panel").click(function() { toggleQueue(); });
-	$("#statistics-toggle-right-panel").click(function() { toggleQueue(); });
+	$("#search-results-toggle-right-panel").click(function() { toggleQueueExplicit(); });
 });
+
+function toggleQueueExplicit() {
+	toggleQueue();
+	queueShouldBeHidden = queueHidden;
+}
+
+function showQueue() {
+	$("#right-panel").animate({
+		right: '0'
+	}, 400);
+	$(".panel-left").animate({
+		right: '300'
+	}, 400);
+	queueHidden = false;
+}
+
+function hideQueue() {
+	$("#right-panel").animate({
+		right: '-300'
+	}, 400);
+	$(".panel-left").animate({
+		right: '0'
+	}, 400);
+	queueHidden = true;
+
+}
 
 function toggleQueue() {
 	if (queueHidden) {
-		$("#right-panel").animate({
-			right: '0'
-		}, 400);
-		$(".panel-left").animate({
-			right: '300'
-		}, 400);
-		queueHidden = false;
+		showQueue();
 	} else {
-		$("#right-panel").animate({
-			right: '-300'
-		}, 400);
-		$(".panel-left").animate({
-			right: '0'
-		}, 400);
-		queueHidden = true;
+		hideQueue();
+	}
+}
+
+function restoreQueue() {
+	if (queueShouldBeHidden) {
+		hideQueue();
+	} else {
+		showQueue();
 	}
 }
 
@@ -109,7 +131,7 @@ function doStats(who) {
 	$("#statistics-status").html("Getting statistics...");
 	$.getJSON(jsonSource + "?mode=stats;who=" + who,
 		function (json) {
-			$("#statistics-status").html("System Statistics");
+			$("#statistics-status").html("Thank you for using Acoustics, the Social Music Player!");
 			$("#statistics-song-count").html(json.total_songs);
 			$("#statistics-top-artist").html(json.top_artists[0].artist);
 		}
@@ -618,12 +640,15 @@ function pageLoadChange(hash) {
 		setLeftPanel("statistics");
 		setMenuItem("statistics");
 		doStats(args[0]);
+		hideQueue();
 	} else if (action == 'Playlists') {
 		setLeftPanel("search-results");
 		setMenuItem("playlists");
+		hideQueue();
 	} else {
 		setLeftPanel("search-results");
 		setMenuItem("now-playing");
+		restoreQueue();
 	}
 }
 
