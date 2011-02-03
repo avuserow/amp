@@ -488,8 +488,24 @@ function songDetails(id) {
 			$("#search-results-song-details").show(300, function() {
 				$("#song-details-album-art-img").reflect({height: 32});
 			});
+			if (json.who.length > 0) {
+				$("#song-details-voters").html(htmlForVoters(json.who));
+			} else {
+				$("#song-details-voters").html("");
+			}
 		}
 	);
+}
+
+function htmlForVoters(who) {
+	var output = "Voters: ";
+	for (voter in who) {
+		output += who[voter];
+		if (voter < who.length - 1) {
+			output += ", ";
+		}
+	}
+	return output;
 }
 
 function hideSongDetails() {
