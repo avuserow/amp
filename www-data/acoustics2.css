@@ -305,6 +305,14 @@ a img {
 		margin-left: 0px;
 		display: none;
 	}
+		#statistics-container {
+			text-align: center;
+			line-height: 40px;
+			font-size: 20px;
+		}
+		.statistics-value {
+			font-weight: bold;
+		}
 
 	#search-results {
 		position: absolute;

@@ -105,6 +105,17 @@ function playerStateRequest() {
 	);
 }
 
+function doStats(who) {
+	$("#statistics-status").html("Getting statistics...");
+	$.getJSON(jsonSource + "?mode=stats;who=" + who,
+		function (json) {
+			$("#statistics-status").html("System Statistics");
+			$("#statistics-song-count").html(json.total_songs);
+			$("#statistics-top-artist").html(json.top_artists[0].artist);
+		}
+	);
+}
+
 function doSearch(field, value) {
 	$("#search-results-status").html("Searching for '" + value + "'...");
 	$.getJSON(jsonSource + "?mode=search;field=" + field + ";value=" + value,
@@ -606,6 +617,7 @@ function pageLoadChange(hash) {
 	if (action == 'Statistics') {
 		setLeftPanel("statistics");
 		setMenuItem("statistics");
+		doStats(args[0]);
 	} else if (action == 'Playlists') {
 		setLeftPanel("search-results");
 		setMenuItem("playlists");
@@ -616,8 +628,8 @@ function pageLoadChange(hash) {
 }
 
 function setLeftPanel(panel) {
-	$(".panel-left").not("#"+panel).slideUp(300);
-	$("#"+panel).slideDown(300);
+	$(".panel-left").not("#"+panel).hide();
+	$("#"+panel).show();
 }
 
 function setMenuItem(item) {
