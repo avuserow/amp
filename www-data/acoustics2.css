@@ -502,6 +502,7 @@ a img {
 				position: absolute;
 				right: 10px;
 				bottom: 10px;
+				padding: 10px;
 			}
 			#search-results-song-details div {
 				white-space: nowrap;
@@ -615,9 +616,9 @@ a img {
 			}
 			#controls div a {
 				display: block;
-				height: 50px;
+				height: 40px;
 				float: left;
-				width: 100px;
+				width: 98px;
 				text-align: center;
 				padding-top: 8px;
 				outline: none !important;
@@ -625,10 +626,6 @@ a img {
 				color: #fff;
 				font-weight: bold;
 				font-size: 28px;
-				text-shadow: 0px 1px 1px #000;
-			}
-			#controls div a:hover {
-				background-color: #333;
 			}
 
 		#queue {
@@ -729,3 +726,87 @@ a img {
 				display: block;
 				list-style-type: none;
 			}
+
+	#playlist-panel {
+		background-color: #666;
+		position: absolute;
+		float: right;
+		top: 0px;
+		right: -300px;
+		width: 300px;
+		bottom: 0px;
+		height: 100%;
+	}
+
+	/* Control button is styled off the toolbar buttons. I hate code duplication, so this makes me sad */
+	a.control-button {
+		background-color: #000;
+		border: 1px solid #222;
+		-moz-box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+		-webkit-box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+		box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+		background: #111;
+		background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+					rgba(0, 0, 0, 0.9) 0%,
+					rgba(20, 20, 20, 0.9) 50%,
+					rgba(30, 30, 30, 0.9) 50%,
+					rgba(50, 50, 50, 0.9) 100%);
+		background: -webkit-gradient(linear, 0 0, 0 100%,
+					color-stop(0, rgba(50, 50, 50, 0.9)),
+					color-stop(0.5, rgba(30, 30, 30, 0.9)),
+					color-stop(0.5, rgba(20, 20, 20, 0.9)),
+					color-stop(1, rgba(0, 0, 0, 0.9)));
+		font-size: 14px;
+		color: #fff;
+		text-decoration: none;
+		text-shadow: 0px -1px 1px rgba(0, 0, 0, .8), 0 1px 1px rgba(255, 255, 255, 0.3);
+		outline: none;
+	}
+	a.control-button:hover {
+		background: #222;
+		background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+					rgba(20, 20, 20, 0.9) 0%,
+					rgba(40, 40, 40, 0.9) 50%,
+					rgba(50, 50, 50, 0.9) 50%,
+					rgba(70, 70, 70, 0.9) 100%);
+		background: -webkit-gradient(linear, 0 0, 0 100%,
+					color-stop(0, rgba(70, 70, 70, 0.9)),
+					color-stop(0.5, rgba(50, 50, 50, 0.9)),
+					color-stop(0.5, rgba(40, 40, 40, 0.9)),
+					color-stop(1, rgba(20, 20, 20, 0.9)));
+		text-shadow: 1px 1px 1px #333;
+	}
+	a.control-button:active {
+		background: #000;
+		background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+					rgba(0, 0, 0, 0.9) 0%,
+					rgba(10, 10, 10, 0.9) 50%,
+					rgba(20, 20, 20, 0.9) 50%,
+					rgba(30, 30, 30, 0.9) 100%);
+		background: -webkit-gradient(linear, 0 0, 0 100%,
+					color-stop(0, rgba(30, 30, 30, 0.9)),
+					color-stop(0.5, rgba(20, 20, 20, 0.9)),
+					color-stop(0.5, rgba(10, 10, 10, 0.9)),
+					color-stop(1, rgba(0, 0, 0, 0.9)));
+	}
+
+	#controls-stop {
+		-webkit-border-top-left-radius: 15px;
+		-moz-border-radius-topleft: 15px;
+		border-top-left-radius: 15px;
+	}
+	#controls-next {
+		-webkit-border-top-right-radius: 15px;
+		-moz-border-radius-topright: 15px;
+		border-top-right-radius: 15px;
+	}
+	#controls-volume-down {
+		-webkit-border-bottom-left-radius: 15px;
+		-moz-border-radius-bottomleft: 15px;
+		border-bottom-left-radius: 15px;
+	}
+	#controls-volume-up {
+		-webkit-border-bottom-right-radius: 15px;
+		-moz-border-radius-bottomright: 15px;
+		border-bottom-right-radius: 15px;
+	}

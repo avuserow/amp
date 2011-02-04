@@ -120,7 +120,7 @@
 					<div id="song-details-album"><a href="#">Their Big Album</a></div>
 					<div id="song-details-file"><a href="#">Path</a></div>
 					<div id="song-details-voters">Voters</div>
-					<div id="song-details-close"><a href="javascript:hideSongDetails()">close</a></div>
+					<div id="song-details-close"><a href="javascript:hideSongDetails()" class="button">close</a></div>
 				</div>
 				<div id="search-results-statusbar" class="statusbar">
 					<div id="search-results-status"></div>
@@ -171,14 +171,14 @@
 				</div>
 				<div id="controls" class="panel">
 					<div id="controls-top">
-						<a href="javascript:controlStop()" id="controls-stop"><img src="www-data/images/ui2/buttons/stop.png" /></a>
-						<a href="javascript:controlPlayPause()" id="controls-play-pause"><img src="www-data/images/ui2/buttons/play.png" /></a>
-						<a href="javascript:controlNext()" id="controls-next"><img src="www-data/images/ui2/buttons/next.png" /></a>
+						<a href="javascript:controlStop()" id="controls-stop" class="control-button"><img src="www-data/images/ui2/buttons/stop.png" /></a>
+						<a href="javascript:controlPlayPause()" id="controls-play-pause" class="control-button"><img src="www-data/images/ui2/buttons/play.png" /></a>
+						<a href="javascript:controlNext()" id="controls-next" class="control-button"><img src="www-data/images/ui2/buttons/next.png" /></a>
 					</div>
 					<div id="controls-bottom">
-						<a href="javascript:controlVolumeDown()" id="controls-volume-down"><img src="www-data/images/ui2/buttons/volume-down.png" /></a>
-						<a href="#" id="controls-volume">-</a>
-						<a href="javascript:controlVolumeUp()" id="controls-volume-up"><img src="www-data/images/ui2/buttons/volume-up.png" /></a>
+						<a href="javascript:controlVolumeDown()" id="controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.png" /></a>
+						<a href="#" id="controls-volume" class="control-button">-</a>
+						<a href="javascript:controlVolumeUp()" id="controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.png" /></a>
 					</div>
 				</div>
 				<div id="queue" class="panel">
@@ -220,6 +220,18 @@
 						<div id="queue-song-count">0 songs</div>
 						<div id="queue-length" class="statusbar-right">0:00</div>
 					</div>
+				</div>
+			</div>
+			<div id="playlist-panel" class="panel">
+				<div id="playlist-toolbar" class="toolbar">
+					<ul id="playlist-toolbar-list" class="toolbar-list">
+						<li id="playlist-panel-title"><span>Playlist</span></li>
+						<li id="playlist-save" class="toolbar-right"><a href="#Playlists/">Save</a></li>
+					</ul>
+				</div>
+				<div id="playlist-statusbar" class="statusbar">
+					<div id="playlist-status">Editing playlist.</div>
+					<div id="playlist-length" class="statusbar-right">0:00</div>
 				</div>
 			</div>
 		</div>

@@ -62,7 +62,6 @@ function hideQueue() {
 		right: '0'
 	}, 400);
 	queueHidden = true;
-
 }
 
 function toggleQueue() {
@@ -80,6 +79,20 @@ function restoreQueue() {
 		showQueue();
 	}
 }
+
+function showPlaylist() {
+	showQueue();
+	$("#playlist-panel").animate({
+		right: '0'
+	}, 300);
+}
+
+function hidePlaylist() {
+	$("#playlist-panel").animate({
+		right: '-500'
+	}, 400);
+}
+
 
 function titleOrPath(json) {
 	if (json.title) {
@@ -640,14 +653,16 @@ function pageLoadChange(hash) {
 		setLeftPanel("statistics");
 		setMenuItem("statistics");
 		doStats(args[0]);
+		hidePlaylist();
 		hideQueue();
 	} else if (action == 'Playlists') {
 		setLeftPanel("search-results");
 		setMenuItem("playlists");
-		hideQueue();
+		showPlaylist();
 	} else {
 		setLeftPanel("search-results");
 		setMenuItem("now-playing");
+		hidePlaylist();
 		restoreQueue();
 	}
 }
