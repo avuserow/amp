@@ -101,12 +101,11 @@ a img {
 			-webkit-box-shadow: 0 0 2px 2px #000;
 		}
 			.header-bar-menu-dropdown {
-				display: none;
+				display: block;
 				position: absolute;
 				z-index: 50;
 				width: 100px;
 				top: 40px;
-				margin-left: -30px;
 				background-color: #222;
 				-webkit-border-bottom-right-radius: 8px;
 				-webkit-border-bottom-left-radius: 8px;
@@ -126,6 +125,7 @@ a img {
 				padding-top: 0px;
 			}
 			.header-bar-menu-dropdown li a {
+				background: none !important;
 				color: #ddd;
 				height: 40px;
 				padding-bottom: 0px;
