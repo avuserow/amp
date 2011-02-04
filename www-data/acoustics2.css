@@ -89,7 +89,6 @@ a img {
 		.header-bar-menu-selected {
 			background-color: #363538 !important;
 			color: #fff !important;
-			/* font-weight: bold; */
 			-webkit-border-top-left-radius: 8px;
 			-webkit-border-top-right-radius: 8px;
 			-moz-border-radius-topleft: 8px;
@@ -101,7 +100,7 @@ a img {
 			-webkit-box-shadow: 0 0 2px 2px #000;
 		}
 			.header-bar-menu-dropdown {
-				display: block;
+				display: none;
 				position: absolute;
 				z-index: 50;
 				width: 100px;
