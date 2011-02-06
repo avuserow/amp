@@ -504,7 +504,11 @@ sub select {
 
 sub search {
 	my $self = shift;
-	_search_or_select($self, 'search');
+	if ($self->cgi->param('query')) {
+		$self->_newsearch;
+	} else {
+		_search_or_select($self, 'search');
+	}
 }
 
 sub _search_or_select {
@@ -534,6 +538,119 @@ sub _search_or_select {
 	@results = $self->acoustics->dedupe(@results);
 
 	return [], \@results;
+}
+
+=head2 _newsearch
+
+Takes in a JSON structure and searches for things. Examples:
+
+=over 4
+
+=item * songs where artist is foo and album is bar
+
+    ["artist", "==", "foo", "AND", "album", "==", "bar"]
+
+=item * songs where artist is foo or artist is bar and album is not baz
+
+    ["artist", "==", "foo", "OR", ["artist", "==", "bar", "album", "!=",
+    "baz"]]
+
+=back
+
+Basically, specify a "group". This group contains either one value (a
+subgroup), or three values (field, operator, and value). Then the group either
+ends or has a joining operator, and the initial values repeat.
+
+Operators, which may be prefaced with a ! to negate it: == for equals and ~~
+for contains.
+
+Joining operators are C<AND> and C<OR>.
+
+=cut
+
+sub _newsearch {
+	my $self = shift;
+	my $query = $self->acoustics->from_json($self->cgi->param('query'));
+
+	my($where, @bind) = _newsearch_parse_query($query);
+
+	my $sth = $self->acoustics->db->prepare('SELECT * FROM songs WHERE online = 1 AND ' . $where);
+	$sth->execute(@bind);
+	my @results = @{$sth->fetchall_arrayref({})};
+
+	return [], \@results;
+}
+
+sub _newsearch_parse_query {
+	my $query = shift;
+	use Data::Dumper;
+	die Dumper($query);
+	ref $query eq 'ARRAY'
+		or die '_newsearch_parse_query: outer level must be arrayref';
+
+	return if @$query == 0; # empty useless group
+
+	# well, this is awkward
+	my $bool;
+	$bool = uc shift @$query;
+	if ($bool eq 'AND') {
+		$bool = ' AND ';
+	} elsif ($bool eq 'OR') {
+		$bool = ' OR ';
+	} else {
+		die "_newsearch_parse_query: unknown boolean $bool";
+	}
+
+
+	my @sql;
+	my @bind_vars;
+
+	while (@$query > 0) {
+		if (ref $query->[0]) {
+			# found a subgroup; recurse
+			my $subgroup = shift @$query;
+			my($sql, @bind) = _newsearch_parse_query($subgroup);
+			push @sql, "($sql)";
+			push @bind_vars, @bind;
+		} else {
+			# we can get into some odd situations where we don't get the right
+			# number of items, so let's sanity check here
+			if (@$query < 2) {
+				die '_newsearch_parse_query: not enough key/value pairs found';
+			}
+
+			my $field = shift @$query;
+			not ref $field or die '_newsearch_parse_query: field expected where ' .
+				(ref $field) . ' found';
+			$field =~ /^\w+$/
+				or die '_newsearch_parse_query: field contains invalid characters';
+
+			my $value = shift @$query;
+			if (not defined $value) {
+				push @sql, "$field IS NOT NULL";
+			} elsif (ref $value eq 'HASH') {
+				# XXX: needs to be more well thought out here
+				if ($value->{"!="}) {
+					push @sql, "$field != ?";
+					push @bind_vars, $value->{"!="};
+				} elsif ($value->{"~~"}) {
+					push @sql, "$field LIKE ?";
+					my $val = $value->{"~~"};
+					push @bind_vars, "%$val%";
+				}
+			} else {
+				not ref $value or die '_newsearch_parse_query: value expected where ' .
+					(ref $value) . ' found';
+
+				push @sql, "$field = ?";
+				push @bind_vars, $value;
+			}
+		}
+	}
+
+	my $sql = join $bool, @sql;
+
+	return $sql, @bind_vars;
 }
 
 =head2 playlist_contents

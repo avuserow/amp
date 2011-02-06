@@ -225,6 +225,30 @@ sub select_player {
 	}
 }
 
+=head2 JSON TOOLS
+
+Currently we use JSON::DWIW for encoding/decoding, but this is likely to change. To help this, we have generic to_json and from_json routines.
+
+=head3 to_json($data_structure)
+
+=cut
+
+sub to_json {
+	my $self = shift;
+	my $data = shift;
+
+	return JSON::DWIW->new(
+		{escape_multi_byte => 1, bad_char_policy => 'convert', pretty => 1}
+	)->to_json($data);
+}
+
+sub from_json {
+	my $self = shift;
+	my $json = shift;
+
+	return JSON::DWIW->new->from_json($json);
+}
+
 sub initdb_mysql {
 	my $self = shift;
 	my $db   = $self->db;

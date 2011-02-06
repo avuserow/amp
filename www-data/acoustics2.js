@@ -607,8 +607,8 @@ $("#messageBox").ready(function() {
 });
 
 function advancedSearchFormSubmit() {
-	var conditions = [];
-	var inner = [];
+	var conditions = ["OR"];
+	var inner = ["AND"];
 	$(".advanced-search-row").each(function(index) {
 		// TODO: check if this is an OR row instead
 		// if (this_is_OR_row) {
@@ -617,12 +617,25 @@ function advancedSearchFormSubmit() {
 		// etc
 		// }
 
-		inner.push($(".adv-search-type input:checked", this).val()
-			+ "/" + $(".adv-search-compare input:checked", this).val()
-			+ "/" + uriencode($(".adv-search-value", this).val()));
+		inner.push($(".adv-search-type input:checked", this).val(),
+			//+ "/" + $(".adv-search-compare input:checked", this).val()
+			$(".adv-search-value", this).val());
 	});
-	conditions.push(inner.join('/AND/')); // handle the last one
-	alert(conditions.join('/OR/'));
+	conditions.push(inner); // handle the last one
+	JSON.stringify(conditions);
+
+	$.getJSON(jsonSource + "?mode=search;query=" + JSON.stringify(conditions),
+		function (data) {
+			$("#search-results-status").html("Processing " + data.length + " results.");
+			if (data.length > 1000) {
+				if (!confirm("Your search returned a lot of results (" + data.length +"). Do you still want to continue?")) {
+					return false;
+				}
+			}
+			fillResultTable(data);
+			$("#search-results-status").html("Search results for '" + value + "'.");
+		}
+	);
 	return false;
 }
 
