@@ -60,15 +60,15 @@
 				</div>
 				<div id="search-results-container" class="container">
 					<div id="search-results-advanced-container">
-						<form onSubmit="return advancedSearchFormSubmit();">
+						<form id="search-results-advanced-form" onSubmit="return advancedSearchFormSubmit();">
 							<div id="advanced-search-NUM" class="input-split-form-wide advanced-search-row">
 								<span class="input-split-button input-split-dropdown  adv-search-combine">
-									<input type="radio" id="adv-search-if-NUM"  name="adv-search-combine-NUM" value="if" checked /><label for="adv-search-if-NUM" onClick="javascript:expandSplitDropdown(this);">if</label>
-									<input type="radio" id="adv-search-and-NUM" name="adv-search-combine-NUM" value="and" /><label for="adv-search-and-NUM" onClick="javascript:expandSplitDropdown(this);">and</label>
-									<input type="radio" id="adv-search-or-NUM"  name="adv-search-combine-NUM" value="or"  /><label for="adv-search-or-NUM" onClick="javascript:expandSplitDropdown(this);">or</label>
+									<input type="radio" id="adv-search-if-NUM"  name="adv-search-combine-NUM" value="if" checked="checked" /><label id="adv-label-if-NUM" for="adv-search-if-NUM" onClick="javascript:expandSplitDropdown(this);">if</label>
+									<input type="radio" id="adv-search-and-NUM" name="adv-search-combine-NUM" value="and" checked="checked" /><label id="adv-label-and-NUM" for="adv-search-and-NUM" onClick="javascript:expandSplitDropdown(this);">and</label>
+									<input type="radio" id="adv-search-or-NUM"  name="adv-search-combine-NUM" value="or"  /><label id="adv-label-or-NUM" for="adv-search-or-NUM" onClick="javascript:expandSplitDropdown(this);">or</label>
 								</span>
 								<span class="input-split-dropdown adv-search-type">
-									<input type="radio" id="adv-search-artist-NUM" name="adv-search-type-NUM" value="artist" checked/><label for="adv-search-artist-NUM" onClick="javascript:expandSplitDropdown(this);">artist</label>
+									<input type="radio" id="adv-search-artist-NUM" name="adv-search-type-NUM" value="artist" checked="checked"/><label for="adv-search-artist-NUM" onClick="javascript:expandSplitDropdown(this);">artist</label>
 									<input type="radio" id="adv-search-album-NUM"  name="adv-search-type-NUM" value="album" /><label for="adv-search-album-NUM" onClick="javascript:expandSplitDropdown(this);">album</label>
 									<input type="radio" id="adv-search-title-NUM"  name="adv-search-type-NUM" value="title" /><label for="adv-search-title-NUM" onClick="javascript:expandSplitDropdown(this);">title</label>
 									<input type="radio" id="adv-search-path-NUM"   name="adv-search-type-NUM" value="path"  /><label for="adv-search-path-NUM" onClick="javascript:expandSplitDropdown(this);">path</label>
@@ -81,6 +81,10 @@
 								<span style="font-size: 13px;">&nbsp;&nbsp;</span>
 								<span class="input-split-button" id="adv-search-add-NUM">add</span>
 								<span class="input-split-right input-split-disabled" id="adv-search-remove-NUM">remove</span>
+							</div>
+							<div id="advanced-search-submit">
+								<input type="submit" class="control-button button-link" value="Search" />
+								<input type="reset"  class="control-button button-link" value="Clear" />
 							</div>
 						</form>
 						<br />
@@ -120,7 +124,7 @@
 					<div id="song-details-album"><a href="#">Their Big Album</a></div>
 					<div id="song-details-file"><a href="#">Path</a></div>
 					<div id="song-details-voters">Voters</div>
-					<div id="song-details-close"><a href="javascript:hideSongDetails()" class="button">close</a></div>
+					<div id="song-details-close"><a href="javascript:hideSongDetails()" class="control-button button-link">close</a></div>
 				</div>
 				<div id="search-results-statusbar" class="statusbar">
 					<div id="search-results-status"></div>
@@ -232,6 +236,9 @@
 				<div id="playlist-statusbar" class="statusbar">
 					<div id="playlist-status">Editing playlist.</div>
 					<div id="playlist-length" class="statusbar-right">0:00</div>
+				</div>
+				<div id="playlist-contianer" class="container">
+					<a href="javascript:advancedSearchFormSubmit()" class="control-button button-link">Search</a>
 				</div>
 			</div>
 		</div>
