@@ -738,7 +738,7 @@ a img {
 	}
 
 	/* Control button is styled off the toolbar buttons. I hate code duplication, so this makes me sad */
-	a.control-button {
+	.control-button {
 		background-color: #000;
 		border: 1px solid #222;
 		-moz-box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
@@ -761,7 +761,7 @@ a img {
 		text-shadow: 0px -1px 1px rgba(0, 0, 0, .8), 0 1px 1px rgba(255, 255, 255, 0.3);
 		outline: none;
 	}
-	a.control-button:hover {
+	.control-button:hover {
 		background: #222;
 		background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
 					rgba(20, 20, 20, 0.9) 0%,
@@ -775,7 +775,7 @@ a img {
 					color-stop(1, rgba(20, 20, 20, 0.9)));
 		text-shadow: 1px 1px 1px #333;
 	}
-	a.control-button:active {
+	.control-button:active {
 		background: #000;
 		background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
 					rgba(0, 0, 0, 0.9) 0%,
@@ -808,4 +808,13 @@ a img {
 		-webkit-border-bottom-right-radius: 15px;
 		-moz-border-radius-bottomright: 15px;
 		border-bottom-right-radius: 15px;
+	}
+
+	.button-link {
+		padding: 3px 3px 3px 3px;
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+		margin: 5px !important;
+		line-height: 25px;
 	}

@@ -23,6 +23,8 @@ $(document).ready(function() {
 	templates.queueSong = $("li.queue-song").first().clone();
 	templates.nowPlayingPanel = $("#now-playing-panel").clone();
 	templates.searchResultSong = $("#search-results-entry").clone();
+	templates.advancedSearchEntry = $("#advanced-search-NUM").clone();
+	$("#advanced-search-NUM").remove();
 	$("#search-results-table tbody").empty();
 
 	playerStateRequest();
@@ -37,7 +39,27 @@ $(document).ready(function() {
 		$(this).hide();
 	});
 	$("#search-results-toggle-right-panel").click(function() { toggleQueueExplicit(); });
+	insertAdvancedSearch(1);
+	insertAdvancedSearch(2);
 });
+
+function insertAdvancedSearch(id) {
+	var entry = templates.advancedSearchEntry.clone();
+	if (id == 1) {
+		$("#adv-search-and-NUM",entry).remove();
+		$("#adv-search-or-NUM",entry).remove();
+		$("#adv-label-and-NUM",entry).remove();
+		$("#adv-label-or-NUM",entry).remove();
+	} else {
+		$("#adv-search-if-NUM",entry).remove();
+		$("#adv-label-if-NUM",entry).remove();
+	}
+	$("label",entry).addClass("expanded");
+	entry.attr("id",entry.attr("id").replace("-NUM","-"+id));
+	entry.html(entry.html().replace(/-NUM/g,"-"+id));
+	// Do stuff here
+	$("#advanced-search-submit").before(entry);
+}
 
 function toggleQueueExplicit() {
 	toggleQueue();
