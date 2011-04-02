@@ -14,6 +14,7 @@ use Date::Parse 'str2time';
 use Config::Tiny;
 use Storable 'dclone';
 use Try::Tiny;
+use JSON::DWIW ();
 
 has 'db' => (is => 'ro', isa => 'DBI', handles => [qw(begin_work commit)]);
 has 'config' => (is => 'ro', isa => 'Config::Tiny');
