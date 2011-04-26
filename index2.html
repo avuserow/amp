@@ -223,6 +223,7 @@
 					</div>
 					<div id="queue-statusbar" class="statusbar">
 						<div id="queue-song-count">0 songs</div>
+						<div id="queue-fullscreen" class="statusbar-right"><a href="javascript:fullscreen()">f</a></div>
 						<div id="queue-length" class="statusbar-right">0:00</div>
 					</div>
 				</div>
@@ -244,5 +245,24 @@
 			</div>
 		</div>
 		<div id="messageBox">no text... why?</div>
+		<div id="fullscreen-view">
+			<div id="fullscreen-center">
+				<div id="fullscreen-album-art">
+					<img id="fullscreen-album-art-img" width="300" src="www-data/icons/big_a.png" />
+				</div>
+				<div id="fullscreen-info">
+					<div id="fullscreen-spacer"></div>
+					<div id="fullscreen-spacer-h"></div>
+					<span class="fullscreen-span" id="fullscreen-title">Javascript is disabled.</span><br />
+					<span class="fullscreen-extra">by</span>
+					<span class="fullscreen-span" id="fullscreen-artist">Acoustics needs Javascript to work.</span><br />
+					<span class="fullscreen-extra">from</span>
+					<span class="fullscreen-span" id="fullscreen-album">Please enable it.</span><br />
+				</div>
+			</div>
+			<div id="fullscreen-close">
+				<a href="javascript:unfullscreen()" class="control-button button-link">Close</a>
+			</div>
+		</div>
 	</body>
 </html>

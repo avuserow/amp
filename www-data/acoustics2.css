@@ -492,8 +492,8 @@ a img {
 				color: #fff;
 			}
 			#song-details-album-art {
-				height: 160px;
-				width: 128px;
+				height: 180px;
+				width: 138px;
 				float: left;
 				margin-right: 10px;
 			}
@@ -817,4 +817,65 @@ a img {
 		border-radius: 4px;
 		margin: 5px !important;
 		line-height: 25px;
+	}
+
+#fullscreen-view {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background-color: #000;
+	/* display: none; */
+}
+	#fullscreen-center {
+		width: 600px;
+		height: 400px;
+		/* Half the size */
+		margin-left: -300px;
+		margin-top:  -200px;
+		top: 50%;
+		left: 50%;
+		position: absolute;
+	}
+		#fullscreen-spacer {
+			float: left;
+			width: 300px;
+			height: 120px;
+		}
+		#fullscreen-spacer-h {
+			float: left;
+			height: 100px;
+			width:  20px;
+		}
+		#fullscreen-album-art {
+			height: 400px;
+			width: 300px;
+			float: left;
+		}
+		#fullscreen-album-art-img {
+			-webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.66,transparent),to(rgba(255,255,255,0.5)));
+		}
+		#fullscreen-title {
+			color: #FFF;
+			font-size: 18px;
+		}
+		#fullscreen-artist {
+			color: #FFF;
+			font-size: 16px;
+		}
+		#fullscreen-album {
+			color: #FFF;
+			font-size: 16px;
+		}
+		.fullscreen-extra {
+			font-size: 14px;
+			color: #333;
+		}
+	#fullscreen-close {
+		position: absolute;
+		right: 0px;
+		bottom: 0px;
+		padding-right: 4px;
+		padding-bottom: 4px;
 	}
