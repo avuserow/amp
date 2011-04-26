@@ -916,3 +916,7 @@ a img {
 			-moz-border-radius-topright: 15px;
 			border-top-right-radius: 15px;
 		}
+
+#messageBox {
+	font-size: 12px;
+}
