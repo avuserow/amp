@@ -879,3 +879,40 @@ a img {
 		padding-right: 4px;
 		padding-bottom: 4px;
 	}
+	#fullscreen-controls {
+		position: absolute;
+		left: 50%;
+		width: 400px;
+		margin-left: -200px;
+		color: #FFF;
+		height: 60px;
+		bottom: -50px;
+		text-align: center;
+	}
+		#fullscreen-control-spacing {
+			width: 400px;
+			height: 10px;
+		}
+		#fullscreen-controls a {
+			display: block;
+			height: 40px;
+			float: left;
+			width: 63px;
+			text-align: center;
+			padding-top: 8px;
+			outline: none !important;
+			text-decoration: none;
+			color: #fff;
+			font-weight: bold;
+			font-size: 28px;
+		}
+		#fs-controls-stop {
+			-webkit-border-top-left-radius: 15px;
+			-moz-border-radius-topleft: 15px;
+			border-top-left-radius: 15px;
+		}
+		#fs-controls-volume-up {
+			-webkit-border-top-right-radius: 15px;
+			-moz-border-radius-topright: 15px;
+			border-top-right-radius: 15px;
+		}

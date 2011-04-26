@@ -10,9 +10,22 @@ var queueLocked = false;
 var queueHidden = false;
 var queueShouldBeHidden = false;
 var nowPlaying = {}
+var fsControlsHidden = true;
 
 $(document).ready(function() {
 	unfullscreen();
+	$("#fullscreen-controls").hover(function() {
+		if (fsControlsHidden) {
+			fsControlsHidden = false;
+			$(this).animate({bottom: 0, opacity: 1.0}, 'fast');
+		}
+	}, function() {
+		if (!fsControlsHidden) {
+			fsControlsHidden = true;
+			$(this).animate({bottom: -50, opacity: 0.1}, 'fast');
+		}
+	});
+
 
 	$("#queue-list").sortable({
 		placeholder: "queue-song-placeholder",
@@ -372,9 +385,9 @@ function handlePlayerStateRequest(json) {
 	// volume
 	if (json.player && json.player.volume != undefined) {
 		volume = parseInt(json.player.volume);
-		$("#controls-volume").html((volume / 10) + 1);
+		$(".disp-volume").html((volume / 10) + 1);
 	} else {
-		$("#controls-volume").html("-");
+		$(".disp-volume").html("-");
 	}
 
 	// user
