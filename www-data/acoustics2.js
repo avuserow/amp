@@ -403,7 +403,9 @@ function handlePlayerStateRequest(json) {
 	nowPlaying = json.now_playing;
 	if (nowPlaying) {
 		var nowPlayingPanel = templates.nowPlayingInfo.clone();
-		$("#nothing-playing-info").remove();
+		$("#now-playing-album-art").show();
+		$("#now-playing-info").show();
+		$("#nothing-playing-info").hide();
 		$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title);
 		$("#now-playing-title a", nowPlayingPanel).attr('href',
 			'#SongDetails/' + nowPlaying.song_id);
@@ -437,11 +439,14 @@ function handlePlayerStateRequest(json) {
 		$("#fullscreen-title").html(nowPlaying.title);
 		$("#fullscreen-artist").html(nowPlaying.artist);
 		$("#fullscreen-album").html(nowPlaying.album);
+		/* Title Bar */
+		document.title = nowPlaying.title + " - " + nowPlaying.album + " [Acoustics]";
 	} else {
 		var nowPlayingPanel = templates.nowPlayingPanel.clone();
-		$("#now-playing-album-art", nowPlayingPanel).remove();
-		$("#now-playing-info", nowPlayingPanel).remove();
+		$("#now-playing-album-art", nowPlayingPanel).hide();
+		$("#now-playing-info", nowPlayingPanel).hide();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
+		$("#nothing-playing-info").show();
 		totalTime = -1;
 	}
 
