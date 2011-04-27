@@ -462,6 +462,7 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 		$("#nothing-playing-info").show();
 		clearFullscreen();
+		document.title = "Acoustics";
 		totalTime = -1;
 	}
 
