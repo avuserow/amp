@@ -454,7 +454,7 @@ function handlePlayerStateRequest(json) {
 		$("#fullscreen-artist").html(nowPlaying.artist);
 		$("#fullscreen-album").html(nowPlaying.album);
 		/* Title Bar */
-		document.title = nowPlaying.title + " - " + nowPlaying.album + " [Acoustics]";
+		document.title = nowPlaying.title + " - " + nowPlaying.artist + " [Acoustics]";
 	} else {
 		var nowPlayingPanel = templates.nowPlayingPanel.clone();
 		$("#now-playing-album-art", nowPlayingPanel).hide();
