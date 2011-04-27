@@ -14,6 +14,7 @@ var fsControlsHidden = true;
 
 $(document).ready(function() {
 	unfullscreen();
+	clearFullscreen();
 	$("#fullscreen-controls").hover(function() {
 		if (fsControlsHidden) {
 			fsControlsHidden = false;
@@ -460,6 +461,7 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-info", nowPlayingPanel).hide();
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 		$("#nothing-playing-info").show();
+		clearFullscreen();
 		totalTime = -1;
 	}
 
@@ -791,6 +793,7 @@ function getLastfmPreferred(data, size) {
 }
 
 function getLastfmArt() {
+	if (!nowPlaying) { return; }
 	$.getJSON(
 		getLastfmUrl(nowPlaying.artist,nowPlaying.album) + "&callback=?",
 		function (data) {
@@ -828,6 +831,12 @@ function fullscreen() {
 	$("#fullscreen-view").fadeIn(300, function() {
 		getLastfmArt();
 		});
+}
+
+function clearFullscreen() {
+	$("#fullscreen-title").html("Nothing Playing");
+	$("#fullscreen-artist").html("-");
+	$("#fullscreen-album").html("-");
 }
 
 $.address.change(function(e) {pageLoadChange(e.value);});
