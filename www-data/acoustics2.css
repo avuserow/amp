@@ -9,6 +9,7 @@ body {
 	bottom: 0px;
 	font-family: sans-serif;
 	font-size: 14px;
+	overflow: hidden;
 }
 
 ul { display: inline; }
@@ -102,7 +103,7 @@ a img {
 			.header-bar-menu-dropdown {
 				display: none;
 				position: absolute;
-				z-index: 50;
+				z-index: 1;
 				width: 100px;
 				top: 40px;
 				background-color: #222;
@@ -731,7 +732,7 @@ a img {
 		position: absolute;
 		float: right;
 		top: 0px;
-		right: -300px;
+		right: 0px;
 		width: 300px;
 		bottom: 0px;
 		height: 100%;
@@ -826,6 +827,7 @@ a img {
 	left: 0px;
 	right: 0px;
 	background-color: #000;
+	z-index: 2;
 	/* display: none; */
 }
 	#fullscreen-center {
