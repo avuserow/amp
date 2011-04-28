@@ -591,7 +591,7 @@ function songDetails(id) {
 			$("#song-details-file a").attr('title', json.path);
 			$("#song-details-file a").attr('href',
 				'#SelectRequest/path/' + uriencode(json.path));
-			$("#search-results-song-details").show(300, function() {
+			$("#search-results-song-details").slideDown(300, function() {
 				//$("#song-details-album-art-img").reflect({height: 32});
 				getLastfmArtFloat(json.artist,json.album);
 			});
@@ -617,7 +617,7 @@ function htmlForVoters(who) {
 
 function hideSongDetails() {
 	$("#song-details-album-art").empty();
-	$("#search-results-song-details").hide(300);
+	$("#search-results-song-details").slideUp(300);
 }
 
 $("#messageBox").ready(function() {
