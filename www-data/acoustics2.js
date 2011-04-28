@@ -401,6 +401,7 @@ function handlePlayerStateRequest(json) {
 	// players
 	if (json.players.length > 1) {
 		$("#header-bar-menu-players-dropdown li").remove();
+		$("#header-bar-menu-players-dropdown").append("<li><a href='#'>Players</a></li>");
 		for (i in json.players) {
 			if (json.players[i] == json.selected_player) {
 				$("#header-bar-menu-players-dropdown").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></b></li>\n");

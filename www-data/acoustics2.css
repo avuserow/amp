@@ -105,7 +105,7 @@ a img {
 				position: absolute;
 				z-index: 1;
 				width: 100px;
-				top: 40px;
+				top: 0px;
 				background-color: #222;
 				-webkit-border-bottom-right-radius: 8px;
 				-webkit-border-bottom-left-radius: 8px;
