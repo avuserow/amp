@@ -697,6 +697,7 @@ function qsencode(str) {
 }
 
 function uriencode(str) {
+	str = new String(str); // Sometimes we get ints ;_;
 	str = str.replace(/\&/g, '%26');
 	str = str.replace(/\+/g, '%2b');
 	str = str.replace(/\#/g, '%23');
@@ -706,6 +707,7 @@ function uriencode(str) {
 }
 
 function formencode(str) {
+	str = new String(str);
 	str = str.replace(/\&/g, '%26');
 	str = str.replace(/\+/g, '%2b');
 	str = str.replace(/\#/g, '%23');
