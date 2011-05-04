@@ -149,15 +149,15 @@ function titleOrPath(json) {
 }
 
 function readableTime(length) {
-	if (length < 0) {length = 0;}
-	var seconds = length % 60;
-	var minutes = Math.floor(length / 60) % 60;
-	var hours = Math.floor(length / 3600);
+	length = Math.max(length,0);
+	var seconds = Math.floor(length % 60), minutes = Math.floor(length / 60) % 60, hours = Math.floor(length / 3600);
+	seconds = (seconds < 10 ? "0" : "") + seconds;
+	minutes = (minutes < 10 ? "0" : "") + minutes;
+	length = minutes + ":" + seconds;
 	if (hours) {
-		return sprintf("%d:%02d:%02d",hours,minutes,seconds);
-	} else {
-		return sprintf("%d:%02d",minutes,seconds);
+		length = hours + ":" + length;
 	}
+	return length;
 }
 
 function startPlayingTimer() {
@@ -484,7 +484,7 @@ function handlePlayerStateRequest(json) {
 				'#SelectRequest/artist/' + uriencode(song.artist));
 
 			$(".queue-song-time", entry).html(readableTime(song.length));
-			if (_.indexOf(song.who, currentUser) != -1) {
+			if (song.who.indexOf(currentUser) != -1) {
 				$(".queue-song-vote-link", entry).remove();
 				$(".queue-song-unvote-link", entry).attr("href",
 						"javascript:unvoteSong("+ song.song_id +")");
