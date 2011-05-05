@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+
+import sys, md5
+import pycurl, simplejson, webbrowser
+
+class CurlReader:
+    def __init__(self):
+        self.contents = ''
+    def body_callback(self, buf):
+        self.contents = self.contents + buf
+def curl(url):
+    t = CurlReader()
+    c = pycurl.Curl()
+    c.setopt(c.URL, url)
+    c.setopt(c.WRITEFUNCTION, t.body_callback)
+    c.perform()
+    c.close()
+    return t.contents
+
+api_key = sys.argv[1]
+api_sec = sys.argv[2]
+
+print "API Key",api_key
+print "Secret ",api_sec
+
+print "Requesting an auth token."
+response = simplejson.loads(curl("http://ws.audioscrobbler.com/2.0/?method=auth.gettoken&format=json&api_key=" + api_key))
+token = response["token"]
+print "Token: ",token
+
+webbrowser.open("http://www.last.fm/api/auth/?api_key=" + api_key + "&token=" + token)
+raw_input("(Press enter when you're done)")
+
+print "Requesting a session key, this is your `sk` value."
+
+sig = md5.new("api_key" + api_key + "methodauth.getSession" + "token" + token + api_sec).hexdigest()
+print "Signat:",sig
+response = simplejson.loads(curl("http://ws.audioscrobbler.com/2.0/?method=auth.getSession&format=json&api_key=" + api_key + "&token=" + token + "&api_sig=" + sig))
+print "User:  ",response["session"]["name"]
+print "Key:   ",response["session"]["key"]
