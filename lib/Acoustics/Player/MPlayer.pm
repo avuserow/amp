@@ -40,7 +40,7 @@ sub daemonize {
 		open STDOUT, '>', '/dev/null'
 			or die "Can't write to /dev/null: $!";
 		setsid                  or die "Can't start a new session: $!";
-		#open STDERR, '>&', 'STDOUT' or die "Can't dup stdout: $!";
+		open STDERR, '>&', 'STDOUT' or die "Can't dup stdout: $!";
 		return $acoustics;
 	} else {
 		ERROR "fork failed: $!";
