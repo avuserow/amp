@@ -32,8 +32,8 @@ $db->do("CREATE TABLE players (player_id VARCHAR(256), volume INT,
     song_id INT, song_start INT, local_id VARCHAR(256),
     remote_id VARCHAR(256), queue_hint TEXT, PRIMARY KEY(player_id))");
 
-$db->do("CREATE TABLE playlists (who VARCHAR(256) NOT NULL, playlist_id INT
-    AUTO_INCREMENT PRIMARY KEY, title VARCHAR(256) NOT NULL)");
+$db->do("CREATE TABLE playlists (who VARCHAR(256) NOT NULL, playlist_id INTEGER
+    PRIMARY KEY AUTOINCREMENT, title VARCHAR(256) NOT NULL)");
 
 $db->do("CREATE TABLE playlist_contents (playlist_id INT, song_id INT
    , priority INT, UNIQUE(playlist_id,song_id))");

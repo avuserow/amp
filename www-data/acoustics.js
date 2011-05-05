@@ -72,22 +72,40 @@ templates = {
 	}
 };
 
+if(!Object.keys) Object.keys = function(o){
+	if (o !== Object(o))
+		throw new TypeError('Object.keys called on non-object');
+	var ret=[],p;
+	for(p in o) if(Object.prototype.hasOwnProperty.call(o,p)) ret.push(p);
+	return ret;
+}
+
+var currentTime = Date.now || function() { return new Date().getTime() };
+
+function mixin (sink,source) {
+	var p = Object.keys(source);
+	p.forEach(function(k) {
+		sink[k] = source[k];
+	});
+	return sink;
+}
+
 function readableTime(length) {
-	if (length < 0) {length = 0;}
-	var seconds = length % 60;
-	var minutes = Math.floor(length / 60) % 60;
-	var hours = Math.floor(length / 3600);
+	length = Math.max(length,0);
+	var seconds = Math.floor(length % 60), minutes = Math.floor(length / 60) % 60, hours = Math.floor(length / 3600);
+	seconds = (seconds < 10 ? "0" : "") + seconds;
+	minutes = (minutes < 10 ? "0" : "") + minutes;
+	length = minutes + ":" + seconds;
 	if (hours) {
-		return sprintf("%d:%02d:%02d",hours,minutes,seconds);
-	} else {
-		return sprintf("%d:%02d",minutes,seconds);
+		length = hours + ":" + length;
 	}
+	return length;
 }
 
 function sendPlayerCommand(mode) {
 	$.getJSON(
-			jsonSource + '?mode=' + mode,
-			function (data) {handlePlayerStateRequest(data);}
+		jsonSource + '?mode=' + mode,
+		handlePlayerStateRequest
 	);
 }
 
@@ -95,7 +113,7 @@ function zapPlayer(player) {
 	if (player){
 		$.getJSON(
 			jsonSource + '?mode=zap;value=' + '"' + player +'"',
-			function (data) {handlePlayerStateRequest(data);}
+			handlePlayerStateRequest
 		);
 	}
 }
@@ -103,14 +121,14 @@ function zapPlayer(player) {
 function login() {
 	$.get(
 		'www-data/auth',
-		function () {playerStateRequest();}
+		playerStateRequest
 	);
 }
 
 function setVolume(value) {
 	$.getJSON(
-			jsonSource + '?mode=volume;value=' + value,
-			function (data) {handlePlayerStateRequest(data);}
+		jsonSource + '?mode=volume;value=' + value,
+		handlePlayerStateRequest
 	);
 }
 
@@ -124,12 +142,12 @@ function searchRequest(field, value)
 		loadPlayHistory(25, value);
 	} else {
 		$.getJSON(
-				jsonSource + '?mode=search;field='+field+';value='+value,
-				function (data) {
-					$('#result_title').html('Search for "' + value + '" in ' + field);
-					fillResultTable(data);
-					showVoting();
-				}
+			jsonSource + '?mode=search;field='+field+';value='+value,
+			function (data) {
+				$('#result_title').html('Search for "' + value + '" in ' + field);
+				fillResultTable(data);
+				showVoting();
+			}
 		);
 	}
 }
@@ -137,30 +155,29 @@ function searchRequest(field, value)
 function selectRequest(field, value)
 {
 	$.getJSON(
-			jsonSource + '?mode=select;field='+field+';value='+value,
-			function (data) {
-				$('#result_title').html('Select on ' + field);
-				fillResultTable(data);
-				showVoting();
-			}
+		jsonSource + '?mode=select;field='+field+';value='+value,
+		function (data) {
+			$('#result_title').html('Select on ' + field);
+			fillResultTable(data);
+			showVoting();
+		}
 	);
 }
 
 function startPlayingTimer() {
 	if (playingTimer) clearInterval(playingTimer);
-	playingTimer = setInterval(function() { updatePlayingTime() }, 1000);
+	playingTimer = setInterval(updatePlayingTime, 1000);
 }
 
-function statsRequest(who)
-{
+function statsRequest(who) {
 	this.songIDs = [];
 	$.getJSON(
-			jsonSource+'?mode=stats;who='+who,
-			function(data) {
-				$('#result_title').html('A bit of statistics for ' + (who === '' ? "everyone" : who) + "...");
-				fillStatsTable(data);
-				hideVoting();
-			}
+		jsonSource+'?mode=stats;who='+who,
+		function(data) {
+			$('#result_title').html('A bit of statistics for ' + (who === '' ? "everyone" : who) + "...");
+			fillStatsTable(data);
+			hideVoting();
+		}
 	);
 }
 
@@ -172,13 +189,13 @@ function updatePlayingTime()
 function startPlayerStateTimer () {
 	playerStateRequest();
 	if (stateTimer) clearInterval(stateTimer);
-	stateTimer = setInterval(function() { playerStateRequest() }, 15000);
+	stateTimer = setInterval(playerStateRequest, 15000);
 }
 
 function playerStateRequest () {
 	$.getJSON(
 		jsonSource,
-		function (data) {handlePlayerStateRequest(data);}
+		handlePlayerStateRequest
 	);
 }
 
@@ -216,14 +233,14 @@ function updatePlaylist(json)
 {
 	var totalTime = 0;
 	var dropdown = [];
-	var json_items = _.map(json, function(item) {
-		_.each(item.who, function(voter) {
+	var json_items = json.map(function(item) {
+		item.who.forEach(function(voter) {
 			if (dropdown.indexOf(voter) == -1)
 			{
 				dropdown.push(voter);
 			}
 		});
-		totalTime = totalTime + parseInt(item.length);
+		totalTime += parseInt(item.length);
 		return {
 			voted:(item.who && item.who.indexOf(currentUser) != -1),
 			song_id : item.song_id,
@@ -235,7 +252,7 @@ function updatePlaylist(json)
 			voters: item.who.length
 		}
 	});
-	var time = 'Total Time: '+readableTime(totalTime);
+	var time = 'Total Time: ' + readableTime(totalTime);
 	$('#playlist').html(tableBuilder(templates.updatePlaylist.whole_template, templates.updatePlaylist.list_template, json_items) + time);
 	fillPurgeDropDown(dropdown);
 }
@@ -245,7 +262,7 @@ function fillPurgeDropDown(options)
 	var purgelist = document.getElementById('user');
 	purgelist.options.length = 0;
 	purgelist.options.add(new Option("Pick one",''));
-	_.each(options, function(option){ purgelist.options.add(new Option(option,option)) });
+	options.forEach(function(option){ purgelist.options.add(new Option(option,option)) });
 }
 
 function updatePlaylistSelector(who) {
@@ -253,12 +270,11 @@ function updatePlaylistSelector(who) {
 		jsonSource + '?mode=playlists;who='+who,
 		function(json) {
 			var selector = document.getElementById('playlistchooser');
-			selector.options.length = 0;
-			selector.options.add(new Option('Queue', 0));
+			selector.options.length = 1;
 			selector.options.add(new Option('New playlist...', -1));
 			selector.options.add(new Option('---', 0));
 			playlists = json;
-			_.each(json, function(item){
+			json.forEach(function(item){
 				selector.options.add(new Option(item.title, item.playlist_id));
 			});
 		}
@@ -319,7 +335,7 @@ function playlistRequest (who) {
 			$('#result_title').html((who === "" ? "All" : who + "'s") + " playlists");
 			var list_template = '<ul>{{#items}}{{{.}}}{{/items}}</ul>';
 			var item_template = '<li><a href="#PlaylistTable/{{playlist_id}}/{{codedtitle}}">{{title}}</a> by {{who}}</li>';
-			_.each(json, function(item) { item.codedtitle = uriencode(item.title) });
+			json = json.map(function(item) { item.codedtitle = uriencode(item.title); return item });
 			$('#songresults').html(tableBuilder(list_template, item_template, json));
 		}
 	);
@@ -355,14 +371,11 @@ function enqueuePlaylistShuffled (amount) {
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_pane,
 			function(json) {
 				json = shuffle(json);
-				var block = "";
-				for (var i = 0; i < json.length && i < amount; i++) {
-					block += "song_id=" + json[i].song_id + ";";
-				}
-				if (block != ""){
+				var block = json.map(function(j){ return "song_id=" + j.song_id }).join(";");
+				if (block){
 					$.getJSON(
-							jsonSource + '?mode=vote;' + block,
-							function(data) {handlePlayerStateRequest(data);selectPlaylist(0);}
+						jsonSource + '?mode=vote;' + block,
+						function(data) {handlePlayerStateRequest(data);selectPlaylist(0);}
 					);
 				}
 			}
@@ -378,11 +391,11 @@ function enqueuePlaylist () {
 		$.getJSON(
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_pane,
 			function(json) {
-				var block = Mustache.to_html("{{#items}}song_id={{song_id}};{{/items}}",{items:json});
-				if (block != ""){
+				var block = json.map(function(j){ return "song_id=" + j.song_id}).join(";");
+				if (block){
 					$.getJSON(
-							jsonSource + '?mode=vote;' + block,
-							function(data) {handlePlayerStateRequest(data);}
+						jsonSource + '?mode=vote;' + block,
+						function(data) {handlePlayerStateRequest(data);}
 					);
 				}
 				// go back to the queue
@@ -396,7 +409,7 @@ function enqueuePlaylist () {
 
 function showPlaylist(json) {
 	var totalTime = 0;
-	var json_items = _.map(json, function(item) {
+	var json_items = json.map(function(item) {
 		totalTime += parseInt(item.length);
 		return {
 			title: titleOrPath(item),
@@ -407,32 +420,32 @@ function showPlaylist(json) {
 			time: readableTime(item.length)
 		}
 	});
-	var time = 'Total Time: '+readableTime(totalTime);
+	var time = 'Total Time: ' + readableTime(totalTime);
 	$('#playlist').html(tableBuilder(templates.showPlaylist.playlist_template, templates.showPlaylist.item_template, json_items) + time);
 }
 
 function updateNowPlaying(json, player, selected_player, players_list) {
-	rem_time = json && parseInt(player.song_start) + parseInt(json.length) - Math.round(((new Date().getTime())/1000));
-	if (rem_time < 0) rem_time = 0;
+	rem_time = json && parseInt(player.song_start) + parseInt(json.length) - Math.round(currentTime()/1000);
+	rem_time = Math.max(rem_time,0);
 	var json_item = { exist: !!json };
 	if (json) {
-		_.extend(json_item,
-			{
-				song_id: json.song_id,
-				voted: (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0),
-				title: titleOrPath(json),
-				artist: json.artist,
-				coded_artist: uriencode(json.artist),
-				album: json.album,
-				coded_album: uriencode(json.album),
-				length: readableTime(json.length),
-				remaining: readableTime(rem_time)
-			});
+		json_item = {
+			song_id: json.song_id,
+			voted: (json.who && json.who.indexOf(currentUser) != -1 && playlist_pane == 0),
+			title: titleOrPath(json),
+			artist: json.artist,
+			coded_artist: uriencode(json.artist),
+			album: json.album,
+			coded_album: uriencode(json.album),
+			length: readableTime(json.length),
+			remaining: readableTime(rem_time),
+			exist: true
+		};
 	}
 
 	var player_model = {
 		pane: (playlist_pane == 0),
-		players: _.map(players_list, function(item){ return { player: item, selected: (selected_player == item) } })
+		players: players_list.map(function(item){ return { player: item, selected: (selected_player == item) } })
 	};
 
 	$('#currentsong').html(Mustache.to_html(templates.updateNowPlaying.now_template, json_item) + Mustache.to_html(templates.updateNowPlaying.pane_template,player_model));
@@ -442,9 +455,7 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 function changePlayer(player_id) {
 	$.getJSON(
 		jsonSource + '?mode=change_player;player_id=' + player_id,
-		function(data) {
-			handlePlayerStateRequest(data);
-		}
+		handlePlayerStateRequest
 	);
 }
 
@@ -507,7 +518,7 @@ function loadRandomSongs(amount,seed) {
 	$.getJSON(
 		jsonSource + '?mode=random;amount=' + amount+';seed='+seed,
 		function (data) {
-			$('#randomlink').attr('href', '#RandomSongs/20/' + (new Date()).getTime());
+			$('#randomlink').attr('href', '#RandomSongs/20/' + currentTime());
 			$('#result_title').html(amount + ' Random Songs');
 			fillResultTable(data);
 			showVoting();
@@ -575,17 +586,17 @@ function getSongDetails(song_id) {
 
 function fillStatsTable(json) {
 	var table_template = '<table id="result_table">'
-			+'<tr><th>Total Songs</th><td>{{total_songs}}</td></tr>'
-			+'<tr><th colspan=2>Most Played Artists:</th></tr>{{#items}}{{{.}}}{{/items}}</table>';
+	+'<tr><th>Total Songs</th><td>{{total_songs}}</td></tr>'
+	+'<tr><th colspan=2>Most Played Artists:</th></tr>{{#items}}{{{.}}}{{/items}}</table>';
 	var row_template = '<tr><td><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a></td><td>{{count}}</td><tr>';
-	var json_items = _.map(json.top_artists, function(item) { return { coded_artist: uriencode(item.artist), artist: item.artist, count: item.count } });
+	var json_items = json.top_artists.map(function(item) { return { coded_artist: uriencode(item.artist), artist: item.artist, count: item.count } });
 	$('#songresults').html(tableBuilder(table_template, row_template, json_items, {total_songs: json.total_songs}));
 	$('#userstats').html("");
 }
 
 function fillResultTable(json) {
 	this.songIDs = [];
-	var json_items = _.map(json,
+	var json_items = json.map(
 		function(item) {
 			this.songIDs.push(item.song_id);
 			return {
@@ -599,27 +610,27 @@ function fillResultTable(json) {
 				time: readableTime(item.length)
 			}
 		});
-	$('#songresults').html(tableBuilder(templates.fillResultTable.table_template, templates.fillResultTable.row_template, json_items));
-	$("#result_table").tablesorter({
-		headers: {
-			5: {
-				sorter: 'sortbytime'
+		$('#songresults').html(tableBuilder(templates.fillResultTable.table_template, templates.fillResultTable.row_template, json_items));
+		$("#result_table").tablesorter({
+			headers: {
+				5: {
+					sorter: 'sortbytime'
+				}
 			}
-		}
-	});
+		});
 }
 
 $.tablesorter.addParser({
 	id: 'sortbytime',
-	is: function(){return false},
-	format: function(s) { return _.reduce(s.split(":"), function(memo, num){ return memo*60 + parseFloat(num) }, 0) },
+	is: function(){},
+	format: function(s) { return s.split(":").reduce(function(memo, num){ return memo*60 + parseInt(num) }, 0) },
 	type: 'numeric'
 });
 
 /* table_template should contain {{#items}}{{{.}}}{{/items}} */
 function tableBuilder(table_template, row_template, items, table_extras) {
-	var rendered_items = { items: _.map(items, function(item){ return Mustache.to_html(row_template, item) }) };
-	if (table_extras) _.extend(rendered_items,table_extras);
+	var rendered_items = { items: items.map(function(item){ return Mustache.to_html(row_template, item) }) };
+	if (table_extras) mixin(rendered_items,table_extras);
 	return Mustache.to_html(table_template,rendered_items);
 }
 
@@ -628,12 +639,12 @@ function voteSong(song_id) {
 		$.getJSON(
 			jsonSource + '?mode=add_to_playlist;playlist_id='
 			+ playlist_pane + ';song_id=' + song_id,
-			function (data) {showPlaylist(data);}
+			showPlaylist(data)
 		);
 	} else {
 		$.getJSON(
 			jsonSource + '?mode=vote;song_id=' + song_id,
-			function (data) {handlePlayerStateRequest(data);}
+			handlePlayerStateRequest
 		);
 	}
 }
@@ -643,36 +654,34 @@ function unvoteSong(song_id) {
 		$.getJSON(
 			jsonSource + '?mode=remove_from_playlist;playlist_id='
 			+ playlist_pane + ';song_id=' + song_id,
-			function (data) {showPlaylist(data);}
+			showPlaylist
 		);
 	} else {
 		$.getJSON(
 			jsonSource + '?mode=unvote;song_id=' + song_id,
-			function (data) {handlePlayerStateRequest(data);}
+			handlePlayerStateRequest
 		);
 	}
 }
 
 function shuffleVotes() {
 	$.getJSON(
-			jsonSource + '?mode=shuffle_votes',
-			function (data) {handlePlayerStateRequest(data);}
+		jsonSource + '?mode=shuffle_votes',
+		handlePlayerStateRequest
 	);
 }
 
 function voteToTop(song_id) {
 	$.getJSON(
-			jsonSource + '?mode=vote_to_top;song_id=' + song_id,
-			function (data) {handlePlayerStateRequest(data);}
+		jsonSource + '?mode=vote_to_top;song_id=' + song_id,
+		handlePlayerStateRequest
 	);
 }
 
 function purgeSongs(user) {
 	$.getJSON(
 		jsonSource + '?mode=purge;who=' + user,
-		function (data) {
-			handlePlayerStateRequest(data);
-		}
+		handlePlayerStateRequest
 	);
 }
 
@@ -697,21 +706,23 @@ function qsencode(str) {
 }
 
 function uriencode(str) {
+	str = new String(str); // Sometimes we get ints ;_;
 	str = str.replace(/\&/g, '%26');
 	str = str.replace(/\+/g, '%2b');
 	str = str.replace(/\#/g, '%23');
 	str = str.replace(/\//g, '%2f');
 
-	return encodeURIComponent(str);
+		return encodeURIComponent(str);
 }
 
 function formencode(str) {
+	str = new String(str);
 	str = str.replace(/\&/g, '%26');
 	str = str.replace(/\+/g, '%2b');
 	str = str.replace(/\#/g, '%23');
 	str = str.replace(/\//g, '%2f');
 
-	return str;
+		return str;
 }
 
 function titleOrPath(json) {
@@ -720,13 +731,7 @@ function titleOrPath(json) {
 		return json.title;
 	}
 	else {
-		var shortname = /^.*\/(.*)$/.exec(json.path);
-		if (shortname) {
-			return shortname[1];
-		}
-		else {
-			return json.path;
-		}
+		return json.path.replace(/^.*\/(.*)$/,"$1");
 	}
 }
 
@@ -738,26 +743,23 @@ function voteRandom() {
 	var randomSong = this.songIDs[Math.floor(Math.random()*possible)];
 	$.getJSON(
 		jsonSource + '?mode=vote;song_id=' + randomSong,
-		function(data) {handlePlayerStateRequest(data);}
+		handlePlayerStateRequest
 	);
 }
 // ALL THE POWAR!
 function voteAll() {
-	var block = "";
-	for (var i in this.songIDs) {
-		block += "song_id=" + this.songIDs[i] + ";";
-	}
+	var block = this.songIDs.map(function(id){ return "song_id=" + id }).join(";");
 	if (block != ""){
 		var command = "?mode=vote;";
 		if (playlist_pane) {
 			command = "?mode=add_to_playlist;playlist_id=" + playlist_pane + ";";
 		}
 		$.getJSON(
-				jsonSource + command + block,
-				function(data) {
-					if (playlist_pane) showPlaylist(data);
-					else handlePlayerStateRequest(data);
-				}
+			jsonSource + command + block,
+			function(data) {
+				if (playlist_pane) showPlaylist(data);
+				else handlePlayerStateRequest(data);
+			}
 		);
 	}
 }
@@ -794,7 +796,7 @@ function pageLoadChange(hash) {
 	if (!args[0]) args[0] = '';
 	if (!args[1]) args[1] = '';
 	if (action == '') {
-		loadRandomSongs(20, (new Date()).getTime());
+		loadRandomSongs(20, currentTime());
 	} else if (action == 'RandomSongs') {
 		loadRandomSongs(args[0], args[1]);
 	} else if (action == 'RecentSongs') {
@@ -850,7 +852,4 @@ function alertBox(message) {
 	box.dialog('option', 'title', 'Alert');
 	box.html(message);
 	box.dialog('open');
-}
-
-function notify() {
 }

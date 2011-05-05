@@ -9,6 +9,7 @@ body {
 	bottom: 0px;
 	font-family: sans-serif;
 	font-size: 14px;
+	overflow: hidden;
 }
 
 ul { display: inline; }
@@ -102,9 +103,9 @@ a img {
 			.header-bar-menu-dropdown {
 				display: none;
 				position: absolute;
-				z-index: 50;
+				z-index: 1;
 				width: 100px;
-				top: 40px;
+				top: 0px;
 				background-color: #222;
 				-webkit-border-bottom-right-radius: 8px;
 				-webkit-border-bottom-left-radius: 8px;
@@ -283,7 +284,7 @@ a img {
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 	box-shadow: 2px 2px 2px rgba(0,0,0,0.25);
-	background-color: #666;
+	background-color: #333;
 }
 
 #main-content {
@@ -485,15 +486,15 @@ a img {
 			}
 		#search-results-song-details {
 			right: 20px;
-			height: 200px;
-			padding: 4px;
+			height: 150px;
+			padding: 20px;
 		}
 			#search-results-song-details div a {
 				color: #fff;
 			}
 			#song-details-album-art {
-				height: 160px;
-				width: 128px;
+				height: 180px;
+				width: 138px;
 				float: left;
 				margin-right: 10px;
 			}
@@ -731,7 +732,7 @@ a img {
 		position: absolute;
 		float: right;
 		top: 0px;
-		right: -300px;
+		right: 0px;
 		width: 300px;
 		bottom: 0px;
 		height: 100%;
@@ -818,3 +819,106 @@ a img {
 		margin: 5px !important;
 		line-height: 25px;
 	}
+
+#fullscreen-view {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background-color: #000;
+	z-index: 2;
+	/* display: none; */
+}
+	#fullscreen-center {
+		width: 600px;
+		height: 400px;
+		/* Half the size */
+		margin-left: -300px;
+		margin-top:  -200px;
+		top: 50%;
+		left: 50%;
+		position: absolute;
+	}
+		#fullscreen-spacer {
+			float: left;
+			width: 300px;
+			height: 120px;
+		}
+		#fullscreen-spacer-h {
+			float: left;
+			height: 100px;
+			width:  20px;
+		}
+		#fullscreen-album-art {
+			height: 400px;
+			width: 300px;
+			float: left;
+		}
+		#fullscreen-album-art-img {
+			-webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.66,transparent),to(rgba(255,255,255,0.5)));
+		}
+		#fullscreen-title {
+			color: #FFF;
+			font-size: 18px;
+		}
+		#fullscreen-artist {
+			color: #FFF;
+			font-size: 16px;
+		}
+		#fullscreen-album {
+			color: #FFF;
+			font-size: 16px;
+		}
+		.fullscreen-extra {
+			font-size: 14px;
+			color: #333;
+		}
+	#fullscreen-close {
+		position: absolute;
+		right: 0px;
+		bottom: 0px;
+		padding-right: 4px;
+		padding-bottom: 4px;
+	}
+	#fullscreen-controls {
+		position: absolute;
+		left: 50%;
+		width: 400px;
+		margin-left: -200px;
+		color: #FFF;
+		height: 60px;
+		bottom: -50px;
+		text-align: center;
+	}
+		#fullscreen-control-spacing {
+			width: 400px;
+			height: 10px;
+		}
+		#fullscreen-controls a {
+			display: block;
+			height: 40px;
+			float: left;
+			width: 63px;
+			text-align: center;
+			padding-top: 8px;
+			outline: none !important;
+			text-decoration: none;
+			color: #fff;
+			font-weight: bold;
+			font-size: 28px;
+		}
+		#fs-controls-stop {
+			-webkit-border-top-left-radius: 15px;
+			-moz-border-radius-topleft: 15px;
+			border-top-left-radius: 15px;
+		}
+		#fs-controls-volume-up {
+			-webkit-border-top-right-radius: 15px;
+			-moz-border-radius-topright: 15px;
+			border-top-right-radius: 15px;
+		}
+
+#messageBox {
+	font-size: 12px;
+}

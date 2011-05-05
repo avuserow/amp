@@ -3,6 +3,7 @@
 	<head>
 		<title>Acoustics</title>
 		<meta charset="utf-8" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<link rel="stylesheet" href="www-data/acoustics2.css" />
 		<link rel="stylesheet" href="www-data/jquery-ui-1.8.6.custom.css" />
 		<link rel="shortcut icon" href="www-data/images/ui2/favicon.ico" />
@@ -11,8 +12,6 @@
 		<script src="www-data/jquery-ui-1.8.6.custom.min.js"></script>
 		<script src="www-data/jquery.tablesorter.min.js"></script>
 		<script src="www-data/jquery.address-1.3.min.js"></script>
-		<script src="www-data/sprintf-min.js"></script>
-		<script src="www-data/underscore-min.js"></script>
 		<script src="www-data/acoustics2.js"></script>
 		<script src="www-data/jquery.reflection.js"></script>
 	</head>
@@ -182,7 +181,7 @@
 					</div>
 					<div id="controls-bottom">
 						<a href="javascript:controlVolumeDown()" id="controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.png" /></a>
-						<a href="#" id="controls-volume" class="control-button">-</a>
+						<a href="#" id="controls-volume" class="control-button disp-volume">-</a>
 						<a href="javascript:controlVolumeUp()" id="controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.png" /></a>
 					</div>
 				</div>
@@ -223,6 +222,7 @@
 					</div>
 					<div id="queue-statusbar" class="statusbar">
 						<div id="queue-song-count">0 songs</div>
+						<div id="queue-fullscreen" class="statusbar-right"><a href="javascript:fullscreen()">f</a></div>
 						<div id="queue-length" class="statusbar-right">0:00</div>
 					</div>
 				</div>
@@ -241,6 +241,34 @@
 				<div id="playlist-contianer" class="container">
 					<a href="javascript:advancedSearchFormSubmit()" class="control-button button-link">Search</a>
 				</div>
+			</div>
+		</div>
+		<div id="fullscreen-view">
+			<div id="fullscreen-center">
+				<div id="fullscreen-album-art">
+					<img id="fullscreen-album-art-img" width="300" src="www-data/icons/big_a.png" />
+				</div>
+				<div id="fullscreen-info">
+					<div id="fullscreen-spacer"></div>
+					<div id="fullscreen-spacer-h"></div>
+					<span class="fullscreen-span" id="fullscreen-title">Javascript is disabled.</span><br />
+					<span class="fullscreen-extra">by</span>
+					<span class="fullscreen-span" id="fullscreen-artist">Acoustics needs Javascript to work.</span><br />
+					<span class="fullscreen-extra">from</span>
+					<span class="fullscreen-span" id="fullscreen-album">Please enable it.</span><br />
+				</div>
+			</div>
+			<div id="fullscreen-controls">
+				<div id="fullscreen-control-spacing">&nbsp;</div>
+				<a href="javascript:controlStop()" id="fs-controls-stop" class="control-button"><img src="www-data/images/ui2/buttons/stop.png" /></a>
+				<a href="javascript:controlPlayPause()" id="fs-controls-play-pause" class="control-button"><img src="www-data/images/ui2/buttons/play.png" /></a>
+				<a href="javascript:controlNext()" id="fs-controls-next" class="control-button"><img src="www-data/images/ui2/buttons/next.png" /></a>
+				<a href="javascript:controlVolumeDown()" id="fs-controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.png" /></a>
+				<a href="#" id="fs-controls-volume" class="control-button disp-volume">-</a>
+				<a href="javascript:controlVolumeUp()" id="fs-controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.png" /></a>
+			</div>
+			<div id="fullscreen-close">
+				<a href="javascript:unfullscreen()" class="control-button button-link">Close</a>
 			</div>
 		</div>
 		<div id="messageBox">no text... why?</div>
