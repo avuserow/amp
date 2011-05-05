@@ -114,7 +114,7 @@ sub send_signal {
 		ERROR "Sending $signal to $player->{local_id} failed: $!";
 	}
 
-	return $success;
+	return $success ? 0 : 1;
 }
 
 sub start_player {
