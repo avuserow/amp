@@ -541,7 +541,8 @@ sub ext_hook {
 			# test for our magic value
 			return ref($rv) =~ /Acoustics::INTERNAL::ext_stop/;
 		} catch {
-			$logger->error($_);
+			use Carp 'longmess';
+			$logger->error(longmess($_));
 		};
 	}
 
