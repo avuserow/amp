@@ -24,13 +24,19 @@ sub handshake {
 }
 
 sub get_scrobblers {
-	my $file = ($0 =~ m{(.+/)?})[0] . '../conf/scrobblers.json';
 
-	open my $fh, '<', $file or die "couldn't open '$file': $!";
-	my $data = join '', <$fh>;
-	close $fh;
+	last if try {
+		my $file = ($0 =~ m{(.+/)?})[0] . '../conf/scrobblers.json';
 
-	return JSON::DWIW::deserialize($data);
+		open my $fh, '<', $file or die "couldn't open '$file': $!";
+		my $data = join '', <$fh>;
+		close $fh;
+
+		return JSON::DWIW::deserialize($data);
+	} except {
+		return {};
+
+	}
 }
 
 sub player_song_start {
