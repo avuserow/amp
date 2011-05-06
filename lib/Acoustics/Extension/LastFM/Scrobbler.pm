@@ -6,6 +6,7 @@ use warnings;
 use Net::LastFM;
 use Data::Dumper;
 use JSON::DWIW ();
+use Try::Tiny;
 
 sub handshake {
 	my $acoustics = shift;
@@ -25,7 +26,7 @@ sub handshake {
 
 sub get_scrobblers {
 
-	last if try {
+	try {
 		my $file = ($0 =~ m{(.+/)?})[0] . '../conf/scrobblers.json';
 
 		open my $fh, '<', $file or die "couldn't open '$file': $!";
@@ -33,7 +34,7 @@ sub get_scrobblers {
 		close $fh;
 
 		return JSON::DWIW::deserialize($data);
-	} except {
+	} catch {
 		return {};
 
 	}
