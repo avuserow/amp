@@ -54,6 +54,40 @@ templates = {
 		+ '<select name="sdplaylist" id="sdplaylist"><option value="0">---</option>{{#playlists}}<option value="{{playlist_id}}">{{title}}</option>{{/playlists}}</select> '
 		+ '<input type="submit" value="add" /></form> {{^playlists}}<b>You have no playlists</b>{{/playlists}}</td></tr>'
 	},
+	showQueueLog: {
+		table_template:
+		'<table id="result_table"><thead><tr>'
+		+ '<th>song_id</th>'
+		+ '<th>Title - Artist</th>'
+		+ '<th>Cost</th><th>State</th></tr></thead><tbody>'
+		+ '{{#items}}{{{.}}}{{/items}}</tbody></table>',
+		row_template:
+		'<tr><td style="text-align: center">{{song_id}}</td>'
+		+ '<td><a href="#SongDetails/{{song_id}}">{{title}}</a> - '
+		+ '<a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a></td>'
+		+ '<td>{{cost}}</td>'
+		+ '<td>{{state}}</td></tr>'
+	},
+	fillSurveyTable: {
+		table_template:
+		'<form name="cs410survey" id="cs410survey" method="POST" onSubmit="return submitCS410Survey(this)">'
+		+ '<input type="hidden" id="cs410surveywho" name="cs410surveywho" value="bug!" />'
+		+ '<input type="hidden" id="cs410surveytime" name="cs410surveytime" value="bug!" />'
+		+ '<table id="result_table" class="tablesorter"><thead><tr><th>vote</th>'
+		+ '<th>Track</th>'
+		+ '<th>Title</th>'
+		+ '<th>Album</th>'
+		+ '<th>Artist</th><th>Length</th></tr></thead><tbody>'
+		+ '{{#items}}{{{.}}}{{/items}}</tbody></table>'
+		+ '<input type="submit" /><input type="reset"/></form>',
+		row_template:
+		'<tr><td style="text-align: center"><input type="checkbox" value="{{suggestion_type}}" name="{{suggestion_type}}{{song_id}}" />'
+		+ '</td>'
+		+ '<td>{{track}}</td><td class="datacol"><a href="#SongDetails/{{song_id}}">{{title}}</a></td>'
+		+ '<td class="datacol"><a href="#SelectRequest/album/{{coded_album}}">{{album}}</a></td>'
+		+ '<td class="datacol"><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a></td>'
+		+ '<td>{{time}}</td></tr>'
+	},
 	fillResultTable: {
 		table_template:
 		'<table id="result_table" class="tablesorter"><thead><tr><th>vote</th>'
@@ -122,6 +156,22 @@ function login() {
 	$.get(
 		'www-data/auth',
 		playerStateRequest
+	);
+}
+
+function login2() {
+	if (!currentUser) {
+		$.get(
+			'www-data/auth2',
+			function () {playerStateRequest();}
+		);
+	}
+}
+
+function login3() {
+	$.get(
+		'www-data/auth3',
+		function () {playerStateRequest();}
 	);
 }
 
@@ -371,7 +421,11 @@ function enqueuePlaylistShuffled (amount) {
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist_pane,
 			function(json) {
 				json = shuffle(json);
-				var block = json.map(function(j){ return "song_id=" + j.song_id }).join(";");
+				var songs = [];
+				for (var i = 0; i < json.length && i < amount; i++) {
+					songs.push(json[i]);
+				}
+				var block = songs.map(function(j){ return "song_id=" + j.song_id }).join(";");
 				if (block){
 					$.getJSON(
 						jsonSource + '?mode=vote;' + block,
@@ -735,6 +789,109 @@ function titleOrPath(json) {
 	}
 }
 
+function getSurvey(who) {
+	$.getJSON(
+			jsonSource + '?mode=survey;who=' + who,
+			function (data) {fillSurveyTable(data, who);}
+	);
+}
+
+function fillSurveyTable(json, who) {
+	$('#result_title').html('Recommendation survey');
+	this.songIDs = [];
+	var json_items = _.map(json,
+		function(item) {
+			return {
+				title: titleOrPath(item),
+				song_id: item.song_id,
+				track: item.track,
+				album: item.album,
+				coded_album: uriencode(item.album),
+				artist: item.artist,
+				coded_artist: uriencode(item.artist),
+				time: readableTime(item.length),
+				suggestion_type: item.type,
+			}
+		});
+	$('#songresults').html(tableBuilder(templates.fillSurveyTable.table_template, templates.fillSurveyTable.row_template, json_items));
+	$('#cs410surveywho').val(who);
+	$('#cs410surveytime').val(Math.round((new Date().getTime())/1000));
+	$("#result_table").tablesorter({
+		headers: {
+			5: {
+				sorter: 'sortbytime'
+			}
+		}
+	});
+	hideVoting();
+}
+
+function submitCS410Survey(theForm) {
+	var random = 0;
+	var recommended = 0;
+	$.each($('input:checked', theForm),
+			function (index, elem) {
+				if ($(elem).val() == "random") {
+					random++;
+				}
+				if ($(elem).val() == "recommended") {
+					recommended++;
+				}
+			}
+	);
+	//alert("got " + random + " random songs, " + recommended + " recommended, query was " + $('#cs410surveywho').val() + ", time was " + $('#cs410surveytime').val());
+	var who = $('#cs410surveywho').val();
+	var time = $('#cs410surveytime').val();
+	$.getJSON(
+			jsonSource + "?mode=submit_survey;goodsuggested=" + recommended + ";goodrandom=" + random + ";who=" + who + ";time=" + time,
+			function (data) {alert("Thank you!");}
+	);
+	return false;
+}
+
+function getQueueLog() {
+	$.getJSON(
+			jsonSource + '?mode=queue_log',
+			function (data) {showQueueLog(data);}
+	);
+}
+
+function doLastFMWebAuth() {
+	$.getJSON(
+		jsonSource + '?mode=lastfm_webauth',
+		function (data) {
+			var lastfm_url = 'http://www.last.fm/api/auth?api_key=' + data.key
+			+ '&cb=' + window.location.protocol + '//' + data.jsonURL +
+			'?mode=lastfm_webauth';
+
+			window.open(lastfm_url, 'acousticsLastFMAuth');
+		}
+	);
+}
+
+function showQueueLog(json) {
+	json.playlist.unshift(json.now_playing);
+	var items = [];
+	for (var i = 0; i < json.playlist.length; i++) {
+		var debts = json.queue_log[i].debts;
+		var state = [];
+		for (var k in debts) {
+			state.push(k + "(" + debts[k] + ")");
+		}
+		var item = {
+			"song_id": json.playlist[i].song_id,
+			"title": json.playlist[i].title,
+			"artist": json.playlist[i].artist,
+			"coded_artist": json.playlist[i].artist,
+			"cost": json.playlist[i].length,
+			"state": state.join(", "),
+		};
+		items.push(item);
+	}
+
+	$('#songresults').html(tableBuilder(templates.showQueueLog.table_template, templates.showQueueLog.row_template, items));
+}
+
 function voteRandom() {
 	var possible = this.songIDs.length;
 	if (possible <= 0) {
@@ -833,9 +990,11 @@ $("#messageBox").ready(function() {
 	});
 
 	$("#messageBox").ajaxError(function (e, xhr, opts, err) {
-		$(this).dialog('option', 'title', 'Communication Error');
-		$(this).html(xhr.responseText);
-		$(this).dialog('open');
+		if (opts.url != "www-data/auth2") {
+			$(this).dialog('option', 'title', 'Communication Error');
+			$(this).html(xhr.responseText);
+			$(this).dialog('open');
+		}
 	});
 });
 
