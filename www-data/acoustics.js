@@ -106,6 +106,7 @@ templates = {
 	}
 };
 
+// who doesn't have Object.keys by now? 
 if(!Object.keys) Object.keys = function(o){
 	if (o !== Object(o))
 		throw new TypeError('Object.keys called on non-object');
@@ -114,26 +115,51 @@ if(!Object.keys) Object.keys = function(o){
 	return ret;
 }
 
-var currentTime = Date.now || function() { return new Date().getTime() };
+
+// seriously, no [].map? *shudder*
+if (!Array.prototype.map) {
+	Array.prototype.map = function(fun /*, thisp */) {
+		"use strict";
+
+		if (this === void 0 || this === null)
+			throw new TypeError();
+
+		var t = Object(this);
+		var len = t.length >>> 0;
+		if (typeof fun !== "function")
+			throw new TypeError();
+
+		var res = new Array(len);
+		var thisp = arguments[1];
+		for (var i = 0; i < len; i++) {
+			if (i in t)
+				res[i] = fun.call(thisp, t[i], i, t);
+			}
+
+			return res;
+	};
+}
+
+var currentTime = Date.now || function() { return (new Date()).getTime() };
 
 function mixin (sink,source) {
-	var p = Object.keys(source);
-	p.forEach(function(k) {
-		sink[k] = source[k];
-	});
+	var k = Object.keys(source);
+	for (var i = 0, l = k.length; i < l; i++) {
+		sink[k[i]] = source[k[i]];
+	}
 	return sink;
 }
 
 function readableTime(length) {
-	length = Math.max(length,0);
+	length = Math.max(length, 0);
 	var seconds = Math.floor(length % 60), minutes = Math.floor(length / 60) % 60, hours = Math.floor(length / 3600);
-	seconds = (seconds < 10 ? "0" : "") + seconds;
-	minutes = (minutes < 10 ? "0" : "") + minutes;
-	length = minutes + ":" + seconds;
+	var time = [];
 	if (hours) {
-		length = hours + ":" + length;
+		time.push(String(hours));
 	}
-	return length;
+	time.push((minutes < 10 ? "0" : "") + minutes);
+	time.push((seconds < 10 ? "0" : "") + seconds);
+	return time.join(":");
 }
 
 function sendPlayerCommand(mode) {
@@ -163,7 +189,7 @@ function login2() {
 	if (!currentUser) {
 		$.get(
 			'www-data/auth2',
-			function () {playerStateRequest();}
+			playerStateRequest
 		);
 	}
 }
@@ -171,7 +197,7 @@ function login2() {
 function login3() {
 	$.get(
 		'www-data/auth3',
-		function () {playerStateRequest();}
+		playerStateRequest
 	);
 }
 
@@ -799,7 +825,7 @@ function getSurvey(who) {
 function fillSurveyTable(json, who) {
 	$('#result_title').html('Recommendation survey');
 	this.songIDs = [];
-	var json_items = _.map(json,
+	var json_items = json.map(
 		function(item) {
 			return {
 				title: titleOrPath(item),
@@ -815,7 +841,7 @@ function fillSurveyTable(json, who) {
 		});
 	$('#songresults').html(tableBuilder(templates.fillSurveyTable.table_template, templates.fillSurveyTable.row_template, json_items));
 	$('#cs410surveywho').val(who);
-	$('#cs410surveytime').val(Math.round((new Date().getTime())/1000));
+	$('#cs410surveytime').val(Math.round(currentTime()/1000));
 	$("#result_table").tablesorter({
 		headers: {
 			5: {
