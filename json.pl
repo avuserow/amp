@@ -34,19 +34,28 @@ do {
 	my $mode = lc($q->param('mode') || '');
 	$mode    = 'status' if $mode =~ /^_/ or $mode =~ /[^\w_]/ or $mode eq 'new';
 	$mode    = 'status' unless $web->can($mode);
+
 	my($headers, $data) = $web->$mode;
 
-	$q->no_cache(1);
-	binmode STDOUT, ':utf8';
-	print $q->header(
-		@$headers,
-		-type     => 'application/json',
-	);
-	print scalar JSON::DWIW->new({
-		pretty            => 1,
-		escape_multi_byte => 1,
-		bad_char_policy   => 'convert',
-	})->to_json($data);
+	my %headers = @$headers;
+
+	# If they don't specify a type, assume it is a data structure that we
+	# should encode to JSON and change the header accordingly.
+	unless ($headers{'-type'}) {
+		$headers{'-type'} = 'application/json';
+		$data = scalar JSON::DWIW->new({
+			pretty            => 1,
+			escape_multi_byte => 1,
+			bad_char_policy   => 'convert',
+		})->to_json($data);
+		$q->no_cache(1);
+		binmode STDOUT, ':utf8';
+	}
+
+	print $q->header(%headers);
+	if ($data) {
+		print $data;
+	}
 
 	# finish FastCGI if needed and auto-reload ourselves if we were modified
 	$req->Finish if $running_under_fastcgi;

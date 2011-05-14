@@ -16,6 +16,7 @@ $db->do("DROP TABLE IF EXISTS history");
 $db->do("DROP TABLE IF EXISTS players");
 $db->do("DROP TABLE IF EXISTS playlists");
 $db->do("DROP TABLE IF EXISTS playlist_contents");
+$db->do("DROP TABLE IF EXISTS art_cache");
 
 $db->do("CREATE TABLE songs (song_id INT UNSIGNED AUTO_INCREMENT, path
     VARCHAR(1024) NOT NULL, artist VARCHAR(256), albumartist VARCHAR(256), album VARCHAR(256), title
@@ -37,3 +38,6 @@ $db->do("CREATE TABLE playlists (who VARCHAR(256) NOT NULL, playlist_id INT
 
 $db->do("CREATE TABLE playlist_contents (playlist_id INT UNSIGNED, song_id INT
     UNSIGNED, priority INT, UNIQUE(playlist_id,song_id))");
+
+$db->do("CREATE TABLE art_cache (artist VARCHAR(256), album VARCHAR(256), title VARCHAR(256),
+    image BLOB, url VARCHAR(512))");

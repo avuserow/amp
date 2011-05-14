@@ -3,6 +3,7 @@ var volume;
 var stateTimer;
 var templates = {};
 var jsonSource = 'json.pl';
+var artSource = 'json.pl?mode=art';
 var playingTimer;
 var elapsedTime = 0;
 var totalTime = 0;
@@ -60,7 +61,46 @@ $(document).ready(function() {
 	$("#search-results-toggle-right-panel").click(function() { toggleQueueExplicit(); });
 	insertAdvancedSearch(1);
 	insertAdvancedSearch(2);
+
+	/* XXX REMOVE THIS IN FINAL RELEASE XXX */
+	/* If they haven't seen it, present users with the
+	 * "Welcome to Acoustics Beta" dialog, which appears
+	 * in a warning box. */
+
+	function setCookie(name, value, expires) {
+		var exdate = new Date();
+		exdate.setDate(exdate.getDate() + expires);
+		var value = escape(value) + ((expires == null) ? "" : "; expires=" + exdate.toUTCString());
+		document.cookie = name + "=" + value;
+	}
+	function getCookie(name) {
+		var i, x, y, cookies = document.cookie.split(";");
+		for (i = 0; i < cookies.length; i++) {
+			x = cookies[i].substr(0, cookies[i].indexOf("="));
+			y = cookies[i].substr(cookies[i].indexOf("=")+1);
+			x = x.replace(/^\s+|\s+$/g,"");
+			if (x == name) {
+				return unescape(y);
+			}
+		}
+		return null;
+	}
+
+	if (getCookie("_seen_beta") != "yes") {
+		showMessage("Wecome to Acoustics Beta!",
+			"You are using the Beta release of Acoustics 2.0, "+
+			"a massive new release featuring a brand new interface. "+
+			"This release is not finished, and as such may have bugs "+
+			"or general usability issues or missing features.<br /><br />"+
+			"Thank you for taking the time to test the Beta.");
+		setCookie("_seen_beta","yes",10000);
+	}
+
+
+	/* XXX REMOVE THE ABOVE IN FINAL RELEASE XXX */
+
 });
+
 
 function insertAdvancedSearch(id) {
 	var entry = templates.advancedSearchEntry.clone();
@@ -283,7 +323,7 @@ function fillResultTable(json) {
 		$(".search-results-entry-vote", entry).attr('href',
 			'javascript:voteSong(' + song.song_id + ')');
 
-		$(".search-results-entry-title a", entry).html(song.title);
+		$(".search-results-entry-title a", entry).html("<img class='mini-album-art' src='" + getAlbumArtUrl(song.artist,song.album,song.title,16) + "' width=16 />" + song.title);
 		$(".search-results-entry-title a", entry).attr('href',
 			'#SongDetails/' + song.song_id);
 
@@ -295,6 +335,8 @@ function fillResultTable(json) {
 		$(".search-results-entry-artist a", entry).attr('href',
 			'#SelectRequest/artist/' + uriencode(song.artist));
 		$("#search-results-table tbody").append(entry);
+		//getLastfmArtImage(song.artist,song.album,song.title,$("#song-art-" + song.song_id));
+
 		total_length += parseInt(song.length);
 	}
 	$("#search-results-table").trigger("update");
@@ -448,12 +490,25 @@ function handlePlayerStateRequest(json) {
 		}
 		$("#nothing-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-info").replaceWith(nowPlayingPanel);
-		getLastfmArt();
+		$("#now-playing-album-art").empty();
+		$("#now-playing-album-art").append("<a href='javascript:fixArt(\"" + jsencode(nowPlaying.artist) + "\",\"" +
+				jsencode(nowPlaying.album) + "\",\"" + jsencode(nowPlaying.title) + "\")'>" + 
+				"<img id='now-playing-album-art-img' src='" + getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,64) + "' width='64'/></a>");
+		$("#now-playing-album-art-img").reflect({height: 16});
 		$("#now-playing-progress").progressbar({value: Math.floor(100 * (elapsedTime/totalTime))});
 		/* Full screen view */
 		$("#fullscreen-title").html(nowPlaying.title);
 		$("#fullscreen-artist").html(nowPlaying.artist);
 		$("#fullscreen-album").html(nowPlaying.album);
+		$("#fullscreen-album-art").empty();
+		$("#fullscreen-album-art").append("<a href='javascript:fixArt(\"" + jsencode(nowPlaying.artist) + "\",\"" +
+				jsencode(nowPlaying.album) + "\",\"" + jsencode(nowPlaying.title) + "\")'>" + 
+				"<img id='fullscreen-album-art-img' src='" + getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,300) + "' width='300'/></a>");
+		if (!$.browser.webkit) {
+			$("#fullscreen-album-art-img").reflect({height: 100});
+		}
+		/* And here's the fun part */
+		jQuery.favicon(getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,20));
 		/* Title Bar */
 		document.title = nowPlaying.title + " - " + nowPlaying.artist + " [Acoustics]";
 	} else {
@@ -463,6 +518,7 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 		$("#nothing-playing-info").show();
 		clearFullscreen();
+		jQuery.favicon("www-data/images/ui2/favicon.ico");
 		document.title = "Acoustics";
 		totalTime = -1;
 	}
@@ -592,9 +648,12 @@ function songDetails(id) {
 			$("#song-details-file a").attr('title', json.path);
 			$("#song-details-file a").attr('href',
 				'#SelectRequest/path/' + uriencode(json.path));
+			$("#song-details-album-art").empty();
+			$("#song-details-album-art").append("<a href='javascript:fixArt(\"" + jsencode(json.artist) + "\",\"" +
+					jsencode(json.album) + "\",\"" + jsencode(json.title) + "\")'>" + 
+					"<img id='song-details-album-art-img' src='" + getAlbumArtUrl(json.artist,json.album,json.title,128) + "' width='128'/></a>");
 			$("#search-results-song-details").slideDown(300, function() {
-				//$("#song-details-album-art-img").reflect({height: 32});
-				getLastfmArtFloat(json.artist,json.album);
+				$("#song-details-album-art img").reflect({height: 40});
 			});
 			if (json.who.length > 0) {
 				$("#song-details-voters").html(htmlForVoters(json.who));
@@ -621,24 +680,27 @@ function hideSongDetails() {
 	$("#search-results-song-details").slideUp(300);
 }
 
-$("#messageBox").ready(function() {
-	$("#messageBox").dialog({
-		autoOpen: false,
-		modal: true,
-		buttons: {"ok": function() {
-			$(this).dialog("close");
-			// set the text back to default
-			// (so we know if someone forgot to set it in another call)
-			$(this).html("no text... why?");
-		}}
-	});
-
-	$("#messageBox").ajaxError(function (e, xhr, opts, err) {
-		$(this).dialog('option', 'title', 'Communication Error');
-		$(this).html(xhr.responseText);
-		$(this).dialog('open');
+$("#message-box").ready(function() {
+	$("#message-box").ajaxError(function (e, xhr, opts, err) {
+		showMessage("Communication Error", xhr.responseText);
 	});
 });
+
+function showMessage(title, message) {
+	$("#message-box-title").empty();
+	$("#message-box-message").empty();
+	$("#message-box-title").html(title);
+	$("#message-box-message").html(message);
+	$("#message-box").show(100, function() {
+		var h = $("#message-box-inner").height() + 10;
+		$("#message-box").height(h);
+		$("#message-box").css("margin-top", (-h / 2) + "px");
+	});
+}
+
+function closeMessageBox() {
+	$("#message-box").hide(300);
+}
 
 function advancedSearchFormSubmit() {
 	var conditions = ["OR"];
@@ -679,13 +741,7 @@ function formSearch() {
 }
 
 function uriencode(str) {
-	str = new String(str);
-	str = str.replace(/\&/g, '%26');
-	str = str.replace(/\+/g, '%2b');
-	str = str.replace(/\#/g, '%23');
-	str = str.replace(/\//g, '%2f');
-
-	return encodeURIComponent(str);
+	return encodeURIComponent(formencode(str));
 }
 
 function formencode(str) {
@@ -695,6 +751,20 @@ function formencode(str) {
 	str = str.replace(/\#/g, '%23');
 	str = str.replace(/\//g, '%2f');
 
+	return str;
+}
+
+function jsencode(str) {
+	str = new String(str);
+	str = str.replace(/\'/g, '&apos;');
+	str = str.replace(/\"/g, '\\\"');
+	return str;
+}
+
+function moreencode(str) {
+	str = uriencode(str);
+	str = str.replace(/\'/g, '&apos;');
+	str = str.replace(/\"/g, '&quot;');
 	return str;
 }
 
@@ -748,83 +818,13 @@ function setMenuItem(item) {
 	$("#header-bar-menu-" + item).addClass("header-bar-menu-selected", 100);
 }
 
-function getLastfmUrl(artist, album) {
-	var api_key = "46d779178cb5e43eefe754d0c1c1fecf";
-	var url = "http://ws.audioscrobbler.com/2.0/?method=album.getInfo&api_key=" + api_key + "&format=json";
-	return url + "&artist=" + uriencode(artist) + "&album=" + uriencode(album);
+function fixArt(artist, album, title) {
+	newArt = prompt("Correct album art for " + title + " by " + artist + ":", "http://example.com/some_image.jpg");
+	$.get(getAlbumArtUrl(artist,album,title,0) + "&set=yes&image=" + newArt);
 }
 
-function getLastfmPreferred(data, size) {
-	var path = undefined;
-	if (data.album) {
-		if (size > 200) {
-			for (var i = 0; i < data.album.image.length; i++) {
-				if (data.album.image[i].size == "extralarge") {
-					path = data.album.image[i]["#text"];
-				}
-			}
-		}
-		if (size > 50) {
-			if (!path) {
-				for (var i = 0; i < data.album.image.length; i++) {
-					if (data.album.image[i].size == "large") {
-						path = data.album.image[i]["#text"];
-					}
-				}
-			}
-		}
-		if (size > 30) {
-			if (!path) {
-				for (var i = 0; i < data.album.image.length; i++) {
-					if (data.album.image[i].size == "medium") {
-						path = data.album.image[i]["#text"];
-					}
-				}
-			}
-		}
-		if (!path) {
-			path = data.album.image[0]["#text"];
-		}
-	}
-	if (!path) {
-		if (size < 128) {
-			path = "www-data/icons/cd_big.png";
-		} else {
-			path = "www-data/icons/big_a.png";
-		}
-	}
-	return path;
-}
-
-function getLastfmArt() {
-	if (!nowPlaying) { return; }
-	$.getJSON(
-		getLastfmUrl(nowPlaying.artist,nowPlaying.album) + "&callback=?",
-		function (data) {
-			path = getLastfmPreferred(data, 64);
-			$("#now-playing-album-art").empty();
-			$("#now-playing-album-art").append("<img id='now-playing-album-art-img' src='" + path + "' width='64'/>");
-			$("#now-playing-album-art-img").reflect({height: 16});
-			path = getLastfmPreferred(data, 300);
-			$("#fullscreen-album-art").empty();
-			$("#fullscreen-album-art").append("<img id='fullscreen-album-art-img' src='" + path + "' width='300'/>");
-			if (!$.browser.webkit) {
-				$("#fullscreen-album-art-img").reflect({height: 100});
-			}
-		}
-	);
-}
-
-function getLastfmArtFloat(artist, album) {
-	$.getJSON(
-		getLastfmUrl(artist,album) + "&callback=?",
-		function (data) {
-			path = getLastfmPreferred(data, 128);
-			$("#song-details-album-art").empty();
-			$("#song-details-album-art").append("<img id='song-details-album-art-img' src='" + path + "' width='128'/>");
-			$("#song-details-album-art-img").reflect({height: 32});
-		}
-	);
+function getAlbumArtUrl(artist, album, title, size) {
+	return artSource + "&artist=" + moreencode(artist) + "&album=" + moreencode(album) + "&title=" + moreencode(title) + "&size=" + size
 }
 
 function unfullscreen() {
@@ -833,7 +833,6 @@ function unfullscreen() {
 
 function fullscreen() {
 	$("#fullscreen-view").fadeIn(300, function() {
-		getLastfmArt();
 		});
 }
 

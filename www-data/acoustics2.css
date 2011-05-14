@@ -919,13 +919,45 @@ a img {
 			border-top-right-radius: 15px;
 		}
 
-#messageBox {
-	font-size: 12px;
-}
-
 .mini-album-art {
 	height: 16px;
 	width:  16px;
 	vertical-align: middle;
 	padding-right: 2px;
 }
+
+#message-box {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 600px;
+	height: 120px;
+	margin-top: -60px;
+	margin-left: -300px;
+	z-index: 3;
+	padding: 20px;
+	padding-top: 5px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-moz-box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+	border: 1px solid #B62222;
+	background-color: #EC3232;
+	background-color: rgba(236,50,50,0.9);
+	color: #FFF;
+	text-align: center;
+
+	display: none;
+}
+	#message-box div h1 {
+		font-size: 16px;
+		font-weight: bold;
+	}
+	#message-box-close {
+		position: absolute;
+		right: 10px;
+		bottom: 10px;
+	}
+

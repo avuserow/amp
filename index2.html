@@ -12,8 +12,9 @@
 		<script src="www-data/jquery-ui-1.8.6.custom.min.js"></script>
 		<script src="www-data/jquery.tablesorter.min.js"></script>
 		<script src="www-data/jquery.address-1.3.min.js"></script>
-		<script src="www-data/acoustics2.js"></script>
 		<script src="www-data/jquery.reflection.js"></script>
+		<script src="www-data/jquery.favicon.js"></script>
+		<script src="www-data/acoustics2.js"></script>
 	</head>
 	<body>
 		<div id="header-bar">
@@ -271,6 +272,14 @@
 				<a href="javascript:unfullscreen()" class="control-button button-link">Close</a>
 			</div>
 		</div>
-		<div id="messageBox">no text... why?</div>
+		<div id="message-box">
+			<div id="message-box-inner">
+				<h1 id="message-box-title">Title</h1>
+				<span id="message-box-message">Content</span>
+			</div>
+			<div id="message-box-close">
+				<a class="control-button button-link" href="javascript:closeMessageBox();">Okay</a>
+			</div>
+		</div>
 	</body>
 </html>
