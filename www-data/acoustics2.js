@@ -840,6 +840,11 @@ function clearFullscreen() {
 	$("#fullscreen-title").html("Nothing Playing");
 	$("#fullscreen-artist").html("-");
 	$("#fullscreen-album").html("-");
+	$("#fullscreen-album-art").empty();
+	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons/big_a.png\" />");
+	if (!$.browser.webkit) {
+		$("#fullscreen-album-art-img").reflect({height: 100});
+	}
 }
 
 $.address.change(function(e) {pageLoadChange(e.value);});
