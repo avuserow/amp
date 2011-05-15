@@ -484,7 +484,8 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-total", nowPlayingPanel).html(readableTime(nowPlaying.length));
 		totalTime = nowPlaying.length;
 		startPlayingTimer();
-		elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
+		//elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
+		elapsedTime = nowPlaying.now - json.player.song_start;
 		// kludge to prevent time from going too high
 		if (elapsedTime <= totalTime) {
 			$("#now-playing-time", nowPlayingPanel).html(readableTime(elapsedTime));
