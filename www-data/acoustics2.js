@@ -61,6 +61,7 @@ $(document).ready(function() {
 	$("#search-results-toggle-right-panel").click(function() { toggleQueueExplicit(); });
 	insertAdvancedSearch(1);
 	insertAdvancedSearch(2);
+	document.addEventListener('touchmove', function(e){ e.preventDefault(); });
 
 	/* XXX REMOVE THIS IN FINAL RELEASE XXX */
 	/* If they haven't seen it, present users with the
@@ -348,7 +349,7 @@ function fillResultTable(json) {
 		$("#search-results-count").html(json.length +" songs");
 	}
 	/* iOS scroll fix */
-	new iScroll(document.getElementById('search-results-table'));
+	new iScroll('search-results-table');
 }
 
 function updateQueueOrder(event, ui) {
