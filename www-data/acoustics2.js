@@ -686,7 +686,10 @@ function hideSongDetails() {
 
 $("#message-box").ready(function() {
 	$("#message-box").ajaxError(function (e, xhr, opts, err) {
-		showMessage("Communication Error", xhr.responseText);
+		/* If there's no message to show, let's not bother */
+		if (xhr.responseText.length > 10) {
+			showMessage("Communication Error", xhr.responseText);
+		}
 	});
 });
 
