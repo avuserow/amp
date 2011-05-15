@@ -124,6 +124,7 @@ sub status {
 
 	if ($data->{now_playing}) {
 		$data->{now_playing}{who} = [map {$_->{who}} $acoustics->query('select_votes', {song_id => $player->{song_id}})];
+		$data->{now_playing}{now} = time;
 	}
 
 	$data->{who} = $self->who;
