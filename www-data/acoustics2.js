@@ -347,6 +347,8 @@ function fillResultTable(json) {
 	} else {
 		$("#search-results-count").html(json.length +" songs");
 	}
+	/* iOS scroll fix */
+	new iScroll(document.getElementById('search-results-table'));
 }
 
 function updateQueueOrder(event, ui) {
