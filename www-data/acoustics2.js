@@ -336,7 +336,6 @@ function fillResultTable(json) {
 		$(".search-results-entry-artist a", entry).attr('href',
 			'#SelectRequest/artist/' + uriencode(song.artist));
 		$("#search-results-table tbody").append(entry);
-		//getLastfmArtImage(song.artist,song.album,song.title,$("#song-art-" + song.song_id));
 
 		total_length += parseInt(song.length);
 	}
@@ -484,7 +483,6 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-total", nowPlayingPanel).html(readableTime(nowPlaying.length));
 		totalTime = nowPlaying.length;
 		startPlayingTimer();
-		//elapsedTime = Math.round(((new Date().getTime())/1000)) - json.player.song_start;
 		elapsedTime = nowPlaying.now - json.player.song_start;
 		// kludge to prevent time from going too high
 		if (elapsedTime <= totalTime) {
