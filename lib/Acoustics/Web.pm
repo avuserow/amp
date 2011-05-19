@@ -949,7 +949,7 @@ sub art
 	}
 
 	# This is a request to set to a specific URL.
-	if ($set && $set == "yes") {
+	if ($set && $set eq "yes") {
 		my $url = $self->cgi->param("image");
 		my $image = get $url;
 		INFO("adding art cache for " . $title . ": " . $url);
