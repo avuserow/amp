@@ -484,6 +484,19 @@ a img {
 				height: 0;
 				overflow: hidden;
 			}
+			.search-results-entry-vote {
+				font-size: 10px !important;
+				padding: 1px;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 4px;
+				margin: 1px !important;
+				color: #fff !important;
+			}
+			.search-results-entry-vote:hover {
+				color: #fff !important;
+				text-decoration: none;
+			}
 		#search-results-song-details {
 			right: 20px;
 			height: 150px;
@@ -523,6 +536,28 @@ a img {
 			#song-details-file {
 				font-size: 13px;
 			}
+
+	.panel-tab {
+		position: absolute;
+		right: 0px;
+		width: 16px;
+		height: 64px;
+		top: 50%;
+		margin-top: -32px;
+		color: #FFF;
+		overflow: hidden;
+		z-index: 1;
+		-webkit-border-top-left-radius: 8px;
+		-webkit-border-bottom-left-radius: 8px;
+		-moz-border-radius-topleft: 8px;
+		-moz-border-radius-bottomleft: 8px;
+		border-top-left-radius: 8px;
+		border-bottom-left-radius: 8px;
+		opacity: 0.3;
+	}
+	.panel-tab:hover {
+		opacity: 1.0;
+	}
 
 	#right-panel {
 		position: absolute;
@@ -847,7 +882,7 @@ a img {
 		}
 		#fullscreen-spacer-h {
 			float: left;
-			height: 100px;
+			height: 200px;
 			width:  20px;
 		}
 		#fullscreen-album-art {

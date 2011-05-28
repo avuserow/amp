@@ -395,7 +395,11 @@ sub vote {
 				VALUES (?, date(\'now\'), ?, ?, ?)'
 			);
 		}
-		$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
+		# Try to process the vote. Failures are usually due to duplicates.
+		# and really should just be ignored.
+		try {
+			$sth->execute($song_id, $self->player_id, $who, $maxpri + 1);
+		}
 	}
 }
 
