@@ -4,7 +4,7 @@ rem_time = 0;
 stateTimer = 0;
 playingTimer = 0;
 playlists = [];
-jsonSource = 'json.pl';
+jsonSource = 'json.psgi';
 
 /* Backport some useful functionality */
 
@@ -78,7 +78,7 @@ templates = {
 			'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="www-data/icons/delete.png" alt="unvote" /></a>{{/voted}}'
 			+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote" /></a>{{/voted}}'
 			+ '&nbsp;<a href="#SongDetails/{{song_id}}">{{title}}</a> by <a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>'
-			+ '{{#album}} (from <a href="#SelectRequest/album/{{coded_album}}">{{album}}</a>){{/album}}'
+			+ '{{#hasAlbum}} (from <a href="#SelectRequest/album/{{coded_album}}">{{album}}</a>){{/hasAlbum}}'
 			+ '&nbsp;({{length}})&nbsp;(<span id="playingTime">{{remaining}}</span> remaining){{/exist}}{{^exist}}nothing playing{{/exist}}'),
 
 		pane_template: Handlebars.compile(
@@ -179,7 +179,7 @@ function sendPlayerCommand(mode) {
 function zapPlayer(player) {
 	if (player){
 		$.getJSON(
-			jsonSource + '?mode=zap;value=' + '"' + player +'"',
+			jsonSource + '?mode=zap;value=' + player,
 			handlePlayerStateRequest
 		);
 	}
@@ -277,7 +277,7 @@ function startPlayerStateTimer () {
 
 function playerStateRequest () {
 	$.getJSON(
-		jsonSource,
+		jsonSource + '?mode=status',
 		handlePlayerStateRequest
 	);
 }
@@ -520,6 +520,7 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 			title: titleOrPath(json),
 			artist: json.artist,
 			coded_artist: uriencode(json.artist),
+			hasAlbum: !!json.album,
 			album: json.album,
 			coded_album: uriencode(json.album),
 			length: readableTime(json.length),
@@ -704,7 +705,11 @@ function fillResultTable(json) {
 $.tablesorter.addParser({
 	id: 'sortbytime',
 	is: function(){},
-	format: function(s) { return s.split(":").reduce(function(memo, num){ return memo*60 + parseInt(num) }, 0) },
+	format: function(s) {
+		return s.split(":").reduce(function(memo, num) {
+			return memo*60 + parseInt(num);
+		}, 0);
+	},
 	type: 'numeric'
 });
 

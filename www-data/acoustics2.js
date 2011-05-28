@@ -217,7 +217,7 @@ function updatePlayingTime() {
 
 function playerStateRequest() {
 	$.getJSON(
-		jsonSource,
+		jsonSource + '?mode=status',
 		function (json) {handlePlayerStateRequest(json);}
 	);
 }
