@@ -67,7 +67,7 @@ my $logger = Log::Log4perl::get_logger;
 sub BUILD {
 	my $self = shift;
 
-	if (not defined $self->{config_file}) {
+	unless ($self->{config_file}) {
 		# if a file is not specified, then allow config files from the
 		# environment, the home directory, the traditional conf directory (for
 		# development), and finally system-wide in /etc/acoustics
@@ -84,6 +84,7 @@ sub BUILD {
 		my @AUTO_CONFIG_PATHS = (
 			$ENV{ACOUSTICS_CONFIG_FILE},
 			$base_acoustics_dir . '/conf/acoustics.ini',
+			cwd() . '/conf/acoustics.ini',
 			(glob('~') . '/.acoustics.ini'),
 			'/etc/acoustics/acoustics.ini',
 		);
