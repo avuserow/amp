@@ -74,6 +74,7 @@ sub BUILD {
 
 		use Cwd 'cwd';
 		my($base_acoustics_dir) = ($0 =~ m{^(.+)/[^/]+$});
+		$base_acoustics_dir ||= '';
 		if ($base_acoustics_dir !~ m{^/}) { # handle non-abs paths
 			$base_acoustics_dir =~ s/^\.//; # handle './foo'
 			$base_acoustics_dir = cwd() . $base_acoustics_dir;

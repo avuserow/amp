@@ -4,7 +4,7 @@ rem_time = 0;
 stateTimer = 0;
 playingTimer = 0;
 playlists = [];
-jsonSource = 'json.pl';
+jsonSource = '[% api_url %]';
 
 /* Backport some useful functionality */
 
@@ -59,24 +59,24 @@ function mixin (sink,source) {
 templates = {
 	updatePlaylist: Handlebars.compile(
 	'<ul>{{#items}}<li>{{#voted}}<a title="Remove your vote for this" href="javascript:unvoteSong({{song_id}})">'
-	+'<img src="www-data/icons/delete.png" alt="unvote"/></a>&nbsp;'
+	+'<img src="[% wwwdata_url %]icons/delete.png" alt="unvote"/></a>&nbsp;'
 	+ '<a title="Vote To Top" href="javascript:voteToTop({{song_id}})">'
-	+ '<img src="www-data/icons/lightning_go.png" alt="vote to top"/></a>{{/voted}}'
-	+ '{{^voted}}<a title="Vote for this" href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a>{{/voted}}'
+	+ '<img src="[% wwwdata_url %]icons/lightning_go.png" alt="vote to top"/></a>{{/voted}}'
+	+ '{{^voted}}<a title="Vote for this" href="javascript:voteSong({{song_id}})"><img src="[% wwwdata_url %]icons/add.png" alt="vote"/></a>{{/voted}}'
 	+ '&nbsp;<a title="See who voted for this" href="#SongDetails/{{coded_song_id}}">{{title}}</a> by '
 	+ '<a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>'
 	+ '&nbsp;({{time}}) ({{voters}})</li>{{/items}}</ul>')
 	,
 	showPlaylist: Handlebars.compile(
 		'<ul>{{#items}}<li><a title="Remove from your playlist" href="javascript:unvoteSong({{song_id}})">'
-		+ '<img src="www-data/icons/delete.png" alt="unvote" /></a> '
+		+ '<img src="[% wwwdata_url %]icons/delete.png" alt="unvote" /></a> '
 		+ '<a title="View Song Details" href="#SongDetails/{{coded_song_id}}">{{title}}</a> by '
 		+ '<a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>&nbsp;({{time}}){{/items}}</ul>')
 	,
 	updateNowPlaying: {
 		now_template: Handlebars.compile(
-			'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="www-data/icons/delete.png" alt="unvote" /></a>{{/voted}}'
-			+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote" /></a>{{/voted}}'
+			'{{#exist}}{{#voted}}<a href="javascript:unvoteSong({{song_id}})"><img src="[% wwwdata_url %]icons/delete.png" alt="unvote" /></a>{{/voted}}'
+			+ '{{^voted}}<a href="javascript:voteSong({{song_id}})"><img src="[% wwwdata_url %]icons/add.png" alt="vote" /></a>{{/voted}}'
 			+ '&nbsp;<a href="#SongDetails/{{song_id}}">{{title}}</a> by <a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>'
 			+ '{{#hasAlbum}} (from <a href="#SelectRequest/album/{{coded_album}}">{{album}}</a>){{/hasAlbum}}'
 			+ '&nbsp;({{length}})&nbsp;(<span id="playingTime">{{remaining}}</span> remaining){{/exist}}{{^exist}}nothing playing{{/exist}}'),
@@ -89,7 +89,7 @@ templates = {
 	getSongDetails: Handlebars.compile(
 		'<table id="result_table"><thead><tr><th>Vote</th><th>Track</th><th>Title</th><th>Album</th>'
 		+ '<th>Artist</th><th>Length</th></tr></thead><tbody>{{#items}}'
-		+ '<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})"><img src="www-data/icons/add.png" alt="vote"/></a></td>'
+		+ '<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})"><img src="[% wwwdata_url %]icons/add.png" alt="vote"/></a></td>'
 		+ '<td>{{track}}</td><td><a href="#SelectRequest/title/{{coded_title}}">{{title}}</a>{{{last_song}}}{{{wiki_song}}}</td>'
 		+ '<td><a href="#SelectRequest/album/{{coded_album}}">{{album}}</a>{{{last_album}}}{{{wiki_album}}}</td>'
 		+ '<td><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a>{{{last_artist}}}{{{wiki_artist}}}</td>'
@@ -140,7 +140,7 @@ templates = {
 		+ '<th>Artist</th><th>Length</th></tr></thead><tbody>'
 		+ '{{#items}}'
 		+ '<tr><td style="text-align: center"><a href="javascript:voteSong({{song_id}})">'
-		+ '<img src="www-data/icons/add.png" alt=vote"/></a></td>'
+		+ '<img src="[% wwwdata_url %]icons/add.png" alt=vote"/></a></td>'
 		+ '<td>{{track}}</td><td class="datacol"><a href="#SongDetails/{{song_id}}">{{title}}</a></td>'
 		+ '<td class="datacol"><a href="#SelectRequest/album/{{coded_album}}">{{album}}</a></td>'
 		+ '<td class="datacol"><a href="#SelectRequest/artist/{{coded_artist}}">{{artist}}</a></td>'
@@ -395,8 +395,8 @@ function selectPlaylist(playlist) {
 			jsonSource + '?mode=playlist_contents;playlist_id=' + playlist,
 			function(data) {
 				playlist_pane = playlist;
-				$('#playlist_action').html('<a href="javascript:enqueuePlaylist()"><img src="www-data/icons/add.png" alt="" /> enqueue playlist</a> <br /> <a href="javascript:enqueuePlaylistShuffled(10)"><img src="www-data/icons/sport_8ball.png" alt="" /> enqueue 10 random songs</a>');
-				$('#playlist_remove').html('<a href="javascript:deletePlaylist()"><img src="www-data/icons/bomb.png" alt="" /> delete playlist</a>');
+				$('#playlist_action').html('<a href="javascript:enqueuePlaylist()"><img src="[% wwwdata_url %]icons/add.png" alt="" /> enqueue playlist</a> <br /> <a href="javascript:enqueuePlaylistShuffled(10)"><img src="[% wwwdata_url %]icons/sport_8ball.png" alt="" /> enqueue 10 random songs</a>');
+				$('#playlist_remove').html('<a href="javascript:deletePlaylist()"><img src="[% wwwdata_url %]icons/bomb.png" alt="" /> delete playlist</a>');
 				showPlaylist(data);
 			}
 		);
@@ -405,8 +405,8 @@ function selectPlaylist(playlist) {
 		playerStateRequest();
 		// reset the dropdown to "Queue"
 		document.getElementById('playlistchooser').selectedIndex = 0;
-		$('#playlist_action').html('<a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a>');
-		$('#playlist_remove').html('<a href="javascript:purgeSongs(currentUser)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a>');
+		$('#playlist_action').html('<a href="javascript:shuffleVotes()"><img src="[% wwwdata_url %]icons/sport_8ball.png" alt="" /> shuffle my votes</a>');
+		$('#playlist_remove').html('<a href="javascript:purgeSongs(currentUser)"><img src="[% wwwdata_url %]icons/disconnect.png" alt="" /> clear my votes</a>');
 	}
 }
 
@@ -535,7 +535,7 @@ function updateNowPlaying(json, player, selected_player, players_list) {
 	};
 
 	$('#currentsong').html(templates.updateNowPlaying.now_template(json_item) + templates.updateNowPlaying.pane_template(player_model));
-	$('#zap').html('<a href="javascript:zapPlayer(\'' + selected_player + '\')"><img src="www-data/icons/wrench_orange.png" alt="zap"/> Zap The Player</a>');
+	$('#zap').html('<a href="javascript:zapPlayer(\'' + selected_player + '\')"><img src="[% wwwdata_url %]icons/wrench_orange.png" alt="zap"/> Zap The Player</a>');
 }
 
 function changePlayer(player_id) {
@@ -547,32 +547,32 @@ function changePlayer(player_id) {
 
 function lastLinkSong(artist, title)
 {
-	return '<a href="http://last.fm/music/'+artist+'/_/'+title+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
+	return '<a href="http://last.fm/music/'+artist+'/_/'+title+'" target="_new"><img class="icon" src="[% wwwdata_url %]icons/as.png"></a>';
 }
 
 function lastLinkAlbum(artist, album)
 {
-	return '<a href="http://last.fm/music/'+artist+'/'+album+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
+	return '<a href="http://last.fm/music/'+artist+'/'+album+'" target="_new"><img class="icon" src="[% wwwdata_url %]icons/as.png"></a>';
 }
 
 function lastLinkArtist(artist)
 {
-	return '<a href="http://last.fm/music/'+artist+'" target="_new"><img class="icon" src="www-data/icons/as.png"></a>';
+	return '<a href="http://last.fm/music/'+artist+'" target="_new"><img class="icon" src="[% wwwdata_url %]icons/as.png"></a>';
 }
 
 function wikiLinkArtist(artist)
 {
-	return '<a href="http://en.wikipedia.org/wiki/'+artist+'_(band)" target="_new"><img class="icon" src="www-data/icons/wiki.png"></a>';
+	return '<a href="http://en.wikipedia.org/wiki/'+artist+'_(band)" target="_new"><img class="icon" src="[% wwwdata_url %]icons/wiki.png"></a>';
 }
 
 function wikiLinkAlbum(album)
 {
-	return '<a href="http://en.wikipedia.org/wiki/'+album+'_(album)" target="_new"><img class="icon" src="www-data/icons/wiki.png"></a>';
+	return '<a href="http://en.wikipedia.org/wiki/'+album+'_(album)" target="_new"><img class="icon" src="[% wwwdata_url %]icons/wiki.png"></a>';
 }
 
 function wikiLinkSong(title)
 {
-	return '<a href="http://en.wikipedia.org/wiki/'+title+'_(song)" target="_new"><img class="icon" src="www-data/icons/wiki.png"></a>';
+	return '<a href="http://en.wikipedia.org/wiki/'+title+'_(song)" target="_new"><img class="icon" src="[% wwwdata_url %]icons/wiki.png"></a>';
 }
 
 function loadPlayHistory(amount, who) {

@@ -10,6 +10,7 @@ use Module::Load 'load';
 use List::Util 'shuffle';
 use LWP::Simple;
 
+has 'psgi_env'  => (is => 'ro', isa => 'HashRef');
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
 has 'cgi'       => (is => 'ro', isa => 'Object');
 
@@ -83,6 +84,7 @@ sub BUILD {
 	load $auth_module;
 
 	$self->{auth} = $auth_module->new({
+		psgi_env  => $self->psgi_env,
 		acoustics => $self->acoustics,
 		cgi       => $self->cgi,
 	});
@@ -854,6 +856,40 @@ sub rename_playlist {
 	return [], [$self->acoustics->query('update_playlists', $set, $where)];
 
 }
+
+=head2 resource
+
+Emit HTML, Javascript, or CSS content.
+
+=cut
+
+sub resource {
+	my $self = shift;
+	my $filename = $self->cgi->param('file') || 'index.html';
+	my($type) = $filename =~ /\.(html|css|js|png|jpg)$/;
+
+	return access_denied("Access Denied") if $filename =~ m{^/} || $filename =~ m{\.\.};
+	return access_denied("Access Denied") if $filename =~ m{[^/\.\w-]};
+	return bad_request("Invalid Filetype") unless $type;
+
+	open my $fh, '<', "www-data/$filename" or die "Could not open '$filename': $!";
+	my $data = join '', <$fh>;
+	close $fh;
+
+	my $content_type;
+	if ($type =~ /html|css|js/) {
+		$content_type = "text/$type";
+		my $api_url = 'json.psgi';
+		my $content_url = 'json.psgi?mode=resource;file=';
+		$data =~ s/\[%\s* api_url \s*%\]/$api_url/gx;
+		$data =~ s/\[%\s* wwwdata_url \s*%\]/$content_url/gx;
+	} else {
+		$content_type = "image/$type";
+	}
+
+	return [-type => $content_type], $data;
+}
+
 =head1 ERROR FUNCTIONS
 
 These are to be called as functions, not methods, for internal use only.
