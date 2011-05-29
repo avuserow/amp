@@ -33,31 +33,6 @@ a {
 	color: #191970;
 }
 
-.goog-tablesorter-header {cursor: pointer}
-.goog-slider-horizontal {
-	background-color: ThreeDFace;
-	position: relative;
-	overflow: hidden;
-}
-
-.goog-slider-thumb {
-	position: absolute;
-	background-color: ThreeDShadow;
-	overflow: hidden;
-}
-
-.goog-slider-horizontal .goog-slider-thumb {
-	top: 0;
-	width: 10%;
-	height: 100%;
-}
-
-th.goog-tablesorter-sorted {
-	background-color: #ffcccc;
-}
-th.goog-tablesorter-sorted-reverse {
-	background-color: #ccccff;
-}
 #center
 {
   margin-top: 2em;
@@ -93,6 +68,7 @@ th.goog-tablesorter-sorted-reverse {
 
 #right {
 	background: url('gradient.png') repeat-x;
+	background: url('[% wwwdata_url %]gradient.png') repeat-x;
 	padding-left: 1em;
 	border: 1px solid #262626;
 	padding-top: 2px;
