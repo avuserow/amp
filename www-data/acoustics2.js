@@ -872,10 +872,6 @@ function clearFullscreen() {
 
 function albumSearch(title) {
 	if (title == "_none_") {
-		$("#album-search-status").html("Loading...");
-		while (!nowPlaying.album) {
-			/* Wait until nowPlaying has been updated */
-		}
 		title = nowPlaying.album;
 	}
 	$("#album-search-status").html("Searching for '" + title + "'...");
