@@ -913,6 +913,11 @@ function doAlbumSearch() {
 	return false;
 }
 
+function hideCF() {
+	$(".cf-container").slideUp(300);
+	$("#cf-padding").slideUp(300);
+}
+
 var ajax_cf = new ContentFlow("cf", {maxItemHeight: 200});
 
 $.address.change(function(e) {pageLoadChange(e.value);});
