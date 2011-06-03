@@ -336,6 +336,19 @@ a img {
 			margin-left: auto;
 		}
 
+	#album-search {
+		position: absolute;
+		float: left;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		bottom: 0px;
+		background-color: #444;
+		color: #FFF;
+		padding-left: 0px;
+		margin-left: 0px;
+	}
+
 	#search-results {
 		position: absolute;
 		float: left;
@@ -539,7 +552,7 @@ a img {
 
 	.panel-tab {
 		position: absolute;
-		right: 0px;
+		right: 300px;
 		width: 16px;
 		height: 64px;
 		top: 50%;
@@ -995,4 +1008,22 @@ a img {
 		right: 10px;
 		bottom: 10px;
 	}
+
+.album-icon {
+	width: 220px;
+	height: 120px;
+	text-align: center;
+	margin: 2px;
+	float: left;
+}
+.album-icon-image img {
+	-webkit-box-shadow: 2px 2px 2px #000;
+	-moz-box-shadow: 2px 2px 2px #000;
+	box-shadow: 2px 2px 2px #000; 
+}
+.album-icon span {
+	font-size: 16px;
+	color: #fff;
+	text-shadow: 2px 2px 2px #000;
+}
 

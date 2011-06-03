@@ -44,8 +44,10 @@ $(document).ready(function() {
 	templates.nowPlayingAlbumArt = $("#now-playing-album-art-img").clone();
 	templates.searchResultSong = $("#search-results-entry").clone();
 	templates.advancedSearchEntry = $("#advanced-search-NUM").clone();
+	templates.albumResult = $(".album-icon").clone();
 	$("#advanced-search-NUM").remove();
 	$("#search-results-table tbody").empty();
+	$(".album-icon").remove();
 
 	playerStateRequest();
 	if (stateTimer) clearInterval(stateTimer);
@@ -58,7 +60,7 @@ $(document).ready(function() {
 	}, function() {
 		$(this).hide();
 	});
-	$("#search-results-toggle-right-panel").click(function() { toggleQueueExplicit(); });
+	$("#toggle-right-panel").click(function() { toggleQueueExplicit(); });
 	insertAdvancedSearch(1);
 	insertAdvancedSearch(2);
 	document.addEventListener('touchmove', function(e){ e.preventDefault(); });
@@ -133,6 +135,9 @@ function showQueue() {
 	$(".panel-left").animate({
 		right: '300'
 	}, 400);
+	$("#toggle-right-panel").animate({
+		right: '300'
+	}, 400);
 	queueHidden = false;
 }
 
@@ -141,6 +146,9 @@ function hideQueue() {
 		right: '-300'
 	}, 400);
 	$(".panel-left").animate({
+		right: '0'
+	}, 400);
+	$("#toggle-right-panel").animate({
 		right: '0'
 	}, 400);
 	queueHidden = true;
@@ -805,6 +813,12 @@ function pageLoadChange(hash) {
 		setLeftPanel("search-results");
 		setMenuItem("playlists");
 		showPlaylist();
+	} else if (action == 'Albums') {
+		setLeftPanel("album-search");
+		setMenuItem("albums");
+		hidePlaylist();
+		restoreQueue();
+		albumSearch(args[0]);
 	} else {
 		setLeftPanel("search-results");
 		setMenuItem("now-playing");
@@ -850,6 +864,20 @@ function clearFullscreen() {
 	if (!$.browser.webkit) {
 		$("#fullscreen-album-art-img").reflect({height: 100});
 	}
+}
+
+function albumSearch(title) {
+	$.getJSON(jsonSource + "?mode=album_search;album=" + title,
+		function (data) {
+			$("#album-search-container").empty();
+			for (var album in data) {
+				var entry = templates.albumResult.clone();
+				$("span", entry).html(data[album].album);
+				$("img", entry).attr("src", getAlbumArtUrl("", data[album].album, "", 64));
+				entry.appendTo("#album-search-container");
+			}
+		}
+	);
 }
 
 $.address.change(function(e) {pageLoadChange(e.value);});
