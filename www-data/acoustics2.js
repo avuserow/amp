@@ -134,7 +134,9 @@ function showQueue() {
 	}, 400);
 	$(".panel-left").animate({
 		right: '300'
-	}, 400);
+	}, 400, function() {
+		ajax_cf.resize();
+	});
 	$("#toggle-right-panel").animate({
 		right: '300'
 	}, 400);
@@ -147,7 +149,9 @@ function hideQueue() {
 	}, 400);
 	$(".panel-left").animate({
 		right: '0'
-	}, 400);
+	}, 400, function() {
+		ajax_cf.resize();
+	});
 	$("#toggle-right-panel").animate({
 		right: '0'
 	}, 400);
@@ -867,18 +871,50 @@ function clearFullscreen() {
 }
 
 function albumSearch(title) {
+	if (title == "_none_") {
+		$("#album-search-status").html("Loading...");
+		while (!nowPlaying.album) {
+			/* Wait until nowPlaying has been updated */
+		}
+		title = nowPlaying.album;
+	}
+	$("#album-search-status").html("Searching for '" + title + "'...");
 	$.getJSON(jsonSource + "?mode=album_search;album=" + title,
 		function (data) {
 			$("#album-search-albums").empty();
+			$("#cf .flow").empty();
+			ajax_cf.items = [];
+			$("#itemcontainer").empty();
+			var count = 0;
 			for (var album in data) {
 				var entry = templates.albumResult.clone();
 				$("span", entry).html(data[album].album);
 				$("img", entry).attr("src", getAlbumArtUrl("", data[album].album, "", 64));
 				$("a", entry).attr("href", "#SelectRequest/album/" + uriencode(data[album].album));
 				entry.appendTo("#album-search-albums");
+				$("#itemcontainer").append("<a class=\"item\" href=\"#SelectRequest/album/" + uriencode(data[album].album) + "\"><img class=\"content\" src=\"" + getAlbumArtUrl("",data[album].album,"",64) + "\" title=\"" + data[album].album + "\" /><span class=\"caption\">" + data[album].album + "</span></a>");
+				count++;
+			}
+			var ic = document.getElementById('itemcontainer');
+			var is = ic.getElementsByTagName('a');
+			for (var i=0; i < is.length; i++) {
+				ajax_cf.addItem(is[i], i);
+			}
+			$("#album-search-status").html("Showing Albums matching '" + title + "'");
+			if (count == 1) {
+				$("#album-search-count").html("One album");
+			} else {
+				$("#album-search-count").html(count + " albums");
 			}
 		}
 	);
 }
+
+function doAlbumSearch() {
+	$.address.value("Albums/" + formencode($("#album-search-box").val()));
+	return false;
+}
+
+var ajax_cf = new ContentFlow("cf", {maxItemHeight: 200});
 
 $.address.change(function(e) {pageLoadChange(e.value);});

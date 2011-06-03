@@ -17,6 +17,7 @@
 		<script src="www-data/jquery.reflection.js"></script>
 		<script src="www-data/jquery.favicon.js"></script>
 		<script src="www-data/iscroll.js"></script>
+		<script src="ContentFlow/contentflow.js"></script>
 		<!-- JS core -->
 		<script src="www-data/acoustics2.js"></script>
 		<!-- The following tags are for iOS devices -->
@@ -38,6 +39,7 @@
 					<ul id="header-bar-menu-list">
 						<li><a href="#" id="header-bar-menu-now-playing">Now&nbsp;Playing</a></li>
 						<li><a href="#Playlists" id="header-bar-menu-playlists">Playlists</a></li>
+						<li><a href="#Albums/_none_" id="header-bar-menu-albums">Albums</a></li>
 						<li><a href="#Statistics" id="header-bar-menu-statistics">Statistics</a></li>
 						<li>
 							<ul id="header-bar-menu-players-dropdown" class="header-bar-menu-dropdown">
@@ -169,10 +171,21 @@
 			<div id="album-search" class="panel panel-left">
 				<div id="album-search-toolbar" class="toolbar">
 					<ul id="album-search-toolbar-list" class="toolbar-list">
-						<li><span>Albums</span></li>
+						<li>
+						<form onSubmit="return doAlbumSearch()">
+							<input id="album-search-box" class="input-split-box input-split-button" placeholder="Search" type="search" />
+						</form>
+						</li>
 					</ul>
 				</div>
 				<div id="album-search-container" class="container">
+					<div style="height: 300px; overflow: hidden; background-color: #000;">
+						<div id="cf" class="ContentFlow">
+							<div class="flow"></div>
+							<div class="globalCaption"></div>
+						</div>
+						<div id="itemcontainer" style="height: 0px; width: 0px; visibility: hidden"></div>
+					</div>
 					<div id="album-search-albums">
 						<div class="album-icon">
 							<div class="album-icon-image">
@@ -184,6 +197,7 @@
 				</div>
 				<div id="album-search-statusbar" class="statusbar">
 					<div id="album-search-status">Album Search Results</div>
+					<div id="album-search-count" class="statusbar-right">0 albums</div>
 				</div>
 			</div>
 			<div id="right-panel" class="panel">
