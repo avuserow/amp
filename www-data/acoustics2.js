@@ -12,6 +12,7 @@ var queueHidden = false;
 var queueShouldBeHidden = false;
 var nowPlaying = {}
 var fsControlsHidden = true;
+var fresh = true;
 
 $(document).ready(function() {
 	unfullscreen();
@@ -792,8 +793,9 @@ function pageLoadChange(hash) {
 	if (!args[0]) args[0] = '';
 	if (!args[1]) args[1] = '';
 	hideSongDetails();
-	if (action == '') {
+	if (action == '' && fresh) {
 		loadRandomSongs(20, (new Date()).getTime());
+		fresh = false;
 	} else if (action == 'RandomSongs') {
 		loadRandomSongs(args[0], args[1]);
 	} else if (action == 'RecentSongs') {
@@ -825,7 +827,7 @@ function pageLoadChange(hash) {
 		albumSearch(args[0]);
 	} else {
 		setLeftPanel("search-results");
-		setMenuItem("now-playing");
+		setMenuItem("songs");
 		hidePlaylist();
 		restoreQueue();
 	}
