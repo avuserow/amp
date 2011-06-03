@@ -896,7 +896,7 @@ function albumSearch(title) {
 			var ic = document.getElementById('itemcontainer');
 			var is = ic.getElementsByTagName('a');
 			for (var i=0; i < is.length; i++) {
-				ajax_cf.addItem(is[i], i);
+				ajax_cf.addItem(is[i], 'last');
 			}
 			$("#album-search-status").html("Showing Albums matching '" + title + "'");
 			if (count == 1) {
