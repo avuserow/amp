@@ -913,9 +913,9 @@ function doAlbumSearch() {
 	return false;
 }
 
-function hideCF() {
-	$(".cf-container").slideUp(300);
-	$("#cf-padding").slideUp(300);
+function toggleCF() {
+	$(".cf-container").slideToggle(300);
+	$("#cf-padding").slideToggle(300);
 }
 
 var ajax_cf = new ContentFlow("cf", {maxItemHeight: 200});
