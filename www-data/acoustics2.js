@@ -874,6 +874,8 @@ function albumSearch(title) {
 				var entry = templates.albumResult.clone();
 				$("span", entry).html(data[album].album);
 				$("img", entry).attr("src", getAlbumArtUrl("", data[album].album, "", 64));
+				http://localhost:8080/amp/index2.html#SelectRequest/album/My%20Soul%2C%20Your%20Beats!%20%252f%20Brave%20Song
+				$("a", entry).attr("href", "#SelectRequest/album/" + uriencode(data[album].album));
 				entry.appendTo("#album-search-container");
 			}
 		}

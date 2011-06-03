@@ -1026,4 +1026,7 @@ a img {
 	color: #fff;
 	text-shadow: 2px 2px 2px #000;
 }
+.album-icon a:hover {
+	text-decoration: none !important;
+}
 
