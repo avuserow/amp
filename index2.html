@@ -40,7 +40,8 @@
 						<li><a href="#" id="header-bar-menu-songs">Songs</a></li>
 						<li><a href="#Albums/_none_" id="header-bar-menu-albums">Albums</a></li>
 						<li><a href="#Playlists" id="header-bar-menu-playlists">Playlists</a></li>
-						<li><a href="#Statistics" id="header-bar-menu-statistics">Statistics</a></li>
+						<li><a href="#Manage" id="header-bar-menu-manage">Manage</a></li>
+						<li><a href="#Info" id="header-bar-menu-info">Info</a></li>
 						<li>
 							<ul id="header-bar-menu-players-dropdown" class="header-bar-menu-dropdown">
 								<li><a href="#">Room A</a></li>
@@ -147,25 +148,25 @@
 					<div id="search-results-count" class="statusbar-right">0 songs</div>
 				</div>
 			</div>
-			<div id="statistics" class="panel panel-left">
-				<div id="statistics-results-toolbar" class="toolbar">
-					<ul id="statistics-toolbar-list" class="toolbar-list">
-							<li id="statistics-panel-title"><span>System Statistics</span></li>
+			<div id="info" class="panel panel-left">
+				<div id="info-results-toolbar" class="toolbar">
+					<ul id="info-toolbar-list" class="toolbar-list">
+							<li id="info-panel-title"><span>System info</span></li>
 					</ul>
 				</div>
-				<div id="statistics-container" class="container">
+				<div id="info-container" class="container">
 					<img src="www-data/images/ui2/amp_logo_big.png" alt="Acoustics" /><br />
-					<span id="statistics-song-count" class="statistics-value">...</span> songs are available<br />
-					the top artist is <span id="statistics-top-artist" class="statistics-value">...</span><br />
-					<div id="statistics-about-container">
-						<div id="statistics-about">
+					<span id="info-song-count" class="info-value">...</span> songs are available<br />
+					the top artist is <span id="info-top-artist" class="info-value">...</span><br />
+					<div id="info-about-container">
+						<div id="info-about">
 							Acoustics is free software under the <a href="https://github.com/avuserow/amp/raw/master/LICENSE">NCSA license</a>.<br />
 							<a href="http://github.com/avuserow/amp">Contribute</a>
 						</div>
 					</div>
 				</div>
-				<div id="statistics-statusbar" class="statusbar">
-					<div id="statistics-status">System Statistics</div>
+				<div id="info-statusbar" class="statusbar">
+					<div id="info-status">System info</div>
 				</div>
 			</div>
 			<div id="album-search" class="panel panel-left">
@@ -200,6 +201,20 @@
 				<div id="album-search-statusbar" class="statusbar">
 					<div id="album-search-status">Album Search Results</div>
 					<div id="album-search-count" class="statusbar-right">0 albums</div>
+				</div>
+			</div>
+			<div id="manage" class="panel panel-left">
+				<div id="manage-toolbar" class="toolbar">
+					<ul id="manage-toolbar-list" class="toolbar-list">
+						<li id="manage-title">Management Console</li>
+						<li id="manage-zap-player" class="toolbar-right"><a href="javascript:manageZapPlayer()">Zap Player</a></li>
+					</ul>
+				</div>
+				<div id="manage-container" class="container">
+					Stuff
+				</div>
+				<div id="manage-statusbar" class="statusbar">
+					<div id="manage-status">Management Console</div>
 				</div>
 			</div>
 			<div id="right-panel" class="panel">

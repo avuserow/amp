@@ -15,6 +15,7 @@ var fsControlsHidden = true;
 var fresh = true;
 var ajax_cf = 0;
 var waiting_for = 0;
+var player = 0;
 
 $(document).ready(function() {
 	unfullscreen();
@@ -244,12 +245,12 @@ function playerStateRequest() {
 }
 
 function doStats(who) {
-	$("#statistics-status").html("Getting statistics...");
+	$("#info-status").html("Getting statistics...");
 	$.getJSON(jsonSource + "?mode=stats;who=" + who,
 		function (json) {
-			$("#statistics-status").html("Thank you for using Acoustics, the Social Music Player!");
-			$("#statistics-song-count").html(json.total_songs);
-			$("#statistics-top-artist").html(json.top_artists[0].artist);
+			$("#info-status").html("Thank you for using Acoustics, the Social Music Player!");
+			$("#info-song-count").html(json.total_songs);
+			$("#info-top-artist").html(json.top_artists[0].artist);
 		}
 	);
 }
@@ -455,12 +456,20 @@ function handlePlayerStateRequest(json) {
 	} else {
 		$(".disp-volume").html("-");
 	}
+	player = json.player;
 
 	// user
 	if (json.who) {
 		$("#header-bar-user-message").html("logged in as");
 		$("#user-name").html(json.who);
 		currentUser = json.who;
+	}
+
+	// admin
+	if (!json.who || !json.is_admin) {
+		$("#header-bar-menu-manage").hide();
+	} else if (json.who && json.is_admin) {
+		$("#header-bar-menu-manage").show();
 	}
 
 	// players
@@ -476,7 +485,7 @@ function handlePlayerStateRequest(json) {
 			}
 		}
 	} else {
-		$("#header-bar-menu-players").hide();
+		$("#header-bar-menu-players").remove();
 	}
 
 	// now playing
@@ -817,9 +826,9 @@ function pageLoadChange(hash) {
 	} else if (action == 'SongDetails') {
 		songDetails(args[0]);
 	}
-	if (action == 'Statistics') {
-		setLeftPanel("statistics");
-		setMenuItem("statistics");
+	if (action == 'Info') {
+		setLeftPanel("info");
+		setMenuItem("info");
 		doStats(args[0]);
 		hidePlaylist();
 		hideQueue();
@@ -833,6 +842,11 @@ function pageLoadChange(hash) {
 		hidePlaylist();
 		restoreQueue();
 		albumSearch(args[0]);
+	} else if (action == 'Manage') {
+		setLeftPanel("manage");
+		setMenuItem("manage");
+		hidePlaylist();
+		hideQueue();
 	} else {
 		setLeftPanel("search-results");
 		setMenuItem("songs");
@@ -934,6 +948,17 @@ function doAlbumSearch() {
 function toggleCF() {
 	$(".cf-container").slideToggle(300);
 	$("#cf-padding").slideToggle(300);
+}
+
+/* Management Console */
+
+function manageZapPlayer() {
+	if (player){
+		$.getJSON(
+			jsonSource + '?mode=zap;value=' + player,
+			function(data) { handlePlayerStateRequest(data); }
+		);
+	}
 }
 
 $.address.change(function(e) {pageLoadChange(e.value);});

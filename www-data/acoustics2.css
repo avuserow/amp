@@ -294,7 +294,7 @@ a img {
 	right: 0px;
 	left: 0px;
 }
-	#statistics {
+	#info {
 		position: absolute;
 		float: left;
 		top: 0px;
@@ -307,22 +307,22 @@ a img {
 		margin-left: 0px;
 		display: none;
 	}
-		#statistics-container {
+		#info-container {
 			text-align: center;
 			line-height: 40px;
 			font-size: 20px;
 		}
-		.statistics-value {
+		.info-value {
 			font-weight: bold;
 		}
-		#statistics-about-container {
+		#info-about-container {
 			position: absolute;
 			bottom: 0px;
 			right: 0px;
 			left: 0px;
 			height: 50px;
 		}
-		#statistics-about {
+		#info-about {
 			box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 			background-color: rgba(0,0,0,0.3);
 			-webkit-border-radius: 5px;
