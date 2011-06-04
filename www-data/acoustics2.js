@@ -13,6 +13,8 @@ var queueShouldBeHidden = false;
 var nowPlaying = {}
 var fsControlsHidden = true;
 var fresh = true;
+var ajax_cf = 0;
+var waiting_for = 0;
 
 $(document).ready(function() {
 	unfullscreen();
@@ -46,6 +48,8 @@ $(document).ready(function() {
 	templates.searchResultSong = $("#search-results-entry").clone();
 	templates.advancedSearchEntry = $("#advanced-search-NUM").clone();
 	templates.albumResult = $(".album-icon").clone();
+	templates.contentFlow = $("#cf").clone();
+	$("#cf").remove();
 	$("#advanced-search-NUM").remove();
 	$("#search-results-table tbody").empty();
 	$(".album-icon").remove();
@@ -136,7 +140,9 @@ function showQueue() {
 	$(".panel-left").animate({
 		right: '300'
 	}, 400, function() {
-		ajax_cf.resize();
+		if (ajax_cf) {
+			ajax_cf.resize();
+		}
 	});
 	$("#toggle-right-panel").animate({
 		right: '300'
@@ -151,7 +157,9 @@ function hideQueue() {
 	$(".panel-left").animate({
 		right: '0'
 	}, 400, function() {
-		ajax_cf.resize();
+		if (ajax_cf) {
+			ajax_cf.resize();
+		}
 	});
 	$("#toggle-right-panel").animate({
 		right: '0'
@@ -880,24 +888,34 @@ function albumSearch(title) {
 	$.getJSON(jsonSource + "?mode=album_search;album=" + title,
 		function (data) {
 			$("#album-search-albums").empty();
-			$("#cf .flow").empty();
-			ajax_cf.items = [];
-			$("#itemcontainer").empty();
+			$(".cf-container").empty();
+			var _cf = templates.contentFlow.clone();
 			var count = 0;
+			var imgs = new Array();
 			for (var album in data) {
 				var entry = templates.albumResult.clone();
 				$("span", entry).html(data[album].album);
 				$("img", entry).attr("src", getAlbumArtUrl("", data[album].album, "", 64));
 				$("a", entry).attr("href", "#SelectRequest/album/" + uriencode(data[album].album));
 				entry.appendTo("#album-search-albums");
-				$("#itemcontainer").append("<a class=\"item\" href=\"#SelectRequest/album/" + uriencode(data[album].album) + "\"><img class=\"content\" src=\"" + getAlbumArtUrl("",data[album].album,"",64) + "\" title=\"" + data[album].album + "\" /><span class=\"caption\">" + data[album].album + "</span></a>");
+				imgs[album] = new Image(200,200);
+			}
+			waiting_for = imgs.length;
+			for (var album in data) {
+				imgs[album].onload = function() {
+					waiting_for--;
+					console.log("Waiting for: " + waiting_for);
+					if (waiting_for == 0) {
+						$("#cf-loading").remove();
+						ajax_cf.init();
+					}
+				}
+				imgs[album].src = getAlbumArtUrl("",data[album].album,"",200);
+				$(".flow", _cf).append("<a class=\"item\" href=\"#SelectRequest/album/" + uriencode(data[album].album) + "\">\n\t<img class=\"content\" src=\"" + imgs[album].src + "\" />\n\t<span class=\"caption\">" + data[album].album + "</span>\n</a>\n");
 				count++;
 			}
-			var ic = document.getElementById('itemcontainer');
-			var is = ic.getElementsByTagName('a');
-			for (var i=0; i < is.length; i++) {
-				ajax_cf.addItem(is[i], 'last');
-			}
+			_cf.appendTo(".cf-container");
+			ajax_cf = new ContentFlow('cf');
 			$("#album-search-status").html("Showing Albums matching '" + title + "'");
 			if (count == 1) {
 				$("#album-search-count").html("One album");
@@ -917,7 +935,5 @@ function toggleCF() {
 	$(".cf-container").slideToggle(300);
 	$("#cf-padding").slideToggle(300);
 }
-
-var ajax_cf = new ContentFlow("cf", {maxItemHeight: 200});
 
 $.address.change(function(e) {pageLoadChange(e.value);});
