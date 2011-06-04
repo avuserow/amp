@@ -1049,8 +1049,8 @@ sub album_search
 	my $self  = shift;
 	my $album = $self->cgi->param('album') || '';
 
-	my $sth = $self->acoustics->db->prepare('SELECT album FROM songs WHERE album LIKE ? GROUP BY album');
-	$sth->execute("%$album%");
+	my $sth = $self->acoustics->db->prepare('SELECT album FROM songs WHERE album LIKE ? OR artist LIKE ? GROUP BY album');
+	$sth->execute("%$album%", "%$album%");
 	my @results = @{$sth->fetchall_arrayref({})};
 
 	return [], \@results;
