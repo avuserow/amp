@@ -915,7 +915,7 @@ function albumSearch(title) {
 				count++;
 			}
 			_cf.appendTo(".cf-container");
-			ajax_cf = new ContentFlow('cf');
+			ajax_cf = new ContentFlow('cf',{maxItemHeight: 200});
 			$("#album-search-status").html("Showing Albums matching '" + title + "'");
 			if (count == 1) {
 				$("#album-search-count").html("One album");
