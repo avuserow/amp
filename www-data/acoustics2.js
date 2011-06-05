@@ -631,6 +631,9 @@ function handlePlayerStateRequest(json) {
 		$("#header-bar-user-message").html("logged in as");
 		$("#user-name").html(json.who);
 		currentUser = json.who;
+		$("#header-bar-menu-playlists").show();
+	} else {
+		$("#header-bar-menu-playlists").hide();
 	}
 
 	// admin
