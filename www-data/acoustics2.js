@@ -278,7 +278,7 @@ function loadPlaylist(pl) {
 					$(".queue-song-title a", entry).attr('href',
 						'#SongDetails/' + song.song_id);
 
-					$(".queue-song-artist a", entry).html(song.artist);
+					$(".queue-song-artist a", entry).html("<img class='mini-album-art' src='" + getAlbumArtUrl(song.artist,song.album,song.title,16) + "' width=16 />" + song.artist);
 					$(".queue-song-artist a", entry).attr('href',
 						'#SelectRequest/artist/' + uriencode(song.artist));
 
@@ -735,7 +735,7 @@ function handlePlayerStateRequest(json) {
 			$(".queue-song-title a", entry).attr('href',
 				'#SongDetails/' + song.song_id);
 
-			$(".queue-song-artist a", entry).html(song.artist);
+			$(".queue-song-artist a", entry).html("<img class='mini-album-art' src='" + getAlbumArtUrl(song.artist,song.album,song.title,16) + "' width=20 />" + song.artist);
 			$(".queue-song-artist a", entry).attr('href',
 				'#SelectRequest/artist/' + uriencode(song.artist));
 
