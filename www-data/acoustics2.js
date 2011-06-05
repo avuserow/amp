@@ -1033,6 +1033,7 @@ function pageLoadChange(hash) {
 			showPlaylist();
 		} else {
 			setMenuItem("songs");
+			editingPlaylist = false;
 			hidePlaylist();
 		}
 		restoreQueue();
