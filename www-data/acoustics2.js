@@ -1024,6 +1024,7 @@ function pageLoadChange(hash) {
 	} else if (action == '') {
 		setLeftPanel("search-results");
 		setMenuItem("songs");
+		editingPlaylist = false;
 		hidePlaylist();
 		restoreQueue();
 	} else {
