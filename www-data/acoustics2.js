@@ -1044,8 +1044,8 @@ function pageLoadChange(hash) {
 }
 
 function setLeftPanel(panel) {
-	$(".panel-left").not("#"+panel).hide();
-	$("#"+panel).show();
+	$(".panel-left").not("#"+panel).fadeOut(600);
+	$("#"+panel).fadeIn(600);
 }
 
 function setMenuItem(item) {
