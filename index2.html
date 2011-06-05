@@ -295,15 +295,18 @@
 				<div id="playlist-toolbar" class="toolbar">
 					<ul id="playlist-toolbar-list" class="toolbar-list">
 						<li id="playlist-panel-title"><span>Playlist</span></li>
-						<li id="playlist-save" class="toolbar-right"><a href="#Playlists/">Save</a></li>
+						<li id="playlist-play" class="toolbar-right"><a href="javascript:playlistPlay()">Play</a></li>
+						<li id="playlist-select" class="toolbar-right"><select id="playlist-select-form" class="input-split-button input-split-right"></select></li>
+						<li id="playlist-new" class="toolbar-right"><a href="javascript:playlistNew()">New</a></li>
 					</ul>
 				</div>
 				<div id="playlist-statusbar" class="statusbar">
 					<div id="playlist-status">Editing playlist.</div>
 					<div id="playlist-length" class="statusbar-right">0:00</div>
 				</div>
-				<div id="playlist-contianer" class="container">
-					<a href="javascript:advancedSearchFormSubmit()" class="control-button button-link">Search</a>
+				<div id="playlist-container" class="container">
+					<ul id="playlist-list">
+					</ul>
 				</div>
 			</div>
 		</div>

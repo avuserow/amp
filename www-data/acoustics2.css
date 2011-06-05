@@ -703,6 +703,11 @@ a img {
 			margin: 0;
 		}
 
+		#playlist-list {
+			padding: 0;
+			margin: 0;
+		}
+
 			.queue-song {
 				background-color: #555;
 				color: #fff;
@@ -797,6 +802,10 @@ a img {
 		bottom: 0px;
 		height: 100%;
 	}
+		select {
+			margin-top: -2px;
+			width: 130px !important;
+		}
 
 	/* Control button is styled off the toolbar buttons. I hate code duplication, so this makes me sad */
 	.control-button {
