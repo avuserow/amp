@@ -208,9 +208,7 @@ function restoreQueue() {
 }
 
 function showPlaylist() {
-	$("#playlist-panel").animate({
-		right: '0'
-	}, 300);
+	$("#playlist-panel").fadeIn(600);
 	showQueue();
 	/* Clear the playlist list */
 	$("#playlist-select-form").empty();
@@ -229,9 +227,7 @@ function showPlaylist() {
 }
 
 function hidePlaylist() {
-	$("#playlist-panel").animate({
-		right: '-500'
-	}, 400);
+	$("#playlist-panel").fadeOut(600);
 }
 
 function updatePlaylistOrder(event, ui) {
