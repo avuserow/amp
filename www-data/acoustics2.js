@@ -520,6 +520,29 @@ function playlistPlay() {
 	);
 }
 
+function playlistNew() {
+	var title = prompt(
+		"Playlist name:",
+		"experiment " + Math.floor(Math.random()*10000)
+	);
+	if (title) $.getJSON(
+		jsonSource + '?mode=create_playlist;title=' + title,
+		function() {
+			showPlaylist();
+		}
+	);
+}
+
+function playlistDelete() {
+	var answer = confirm("Really delete this playlist?");
+	if (answer) {
+		$.getJSON(
+			jsonSource + '?mode=delete_playlist;playlist_id=' + currentPlaylist,
+			function() { showPlaylist(); }
+		);
+	}
+}
+
 function unvoteSong(song_id) {
 	if (editingPlaylist) {
 		$.getJSON(
