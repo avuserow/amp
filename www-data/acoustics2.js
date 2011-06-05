@@ -217,7 +217,7 @@ function showPlaylist() {
 	$("#playlist-select-form").append("<option value='-' selected='selected'>Playlists...</option>");
 	/* Load the list of playlists */
 	$.getJSON(
-		jsonSource + '?mode=playlists',
+		jsonSource + '?mode=playlists;who=' + currentUser,
 		function (data) {
 			for (id in data) {
 				var playlist = data[id];
