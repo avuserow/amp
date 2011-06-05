@@ -32,7 +32,6 @@ a img {
 	height: 40px;
 	background-color: #222222;
 	color: #fff;
-	background-image: url(images/ui2/topheader.png);
 }
 	#header-bar-logo {
 		float: left;
@@ -337,6 +336,19 @@ a img {
 		}
 
 	#album-search {
+		position: absolute;
+		float: left;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		bottom: 0px;
+		background-color: #444;
+		color: #FFF;
+		padding-left: 0px;
+		margin-left: 0px;
+	}
+
+	#manage {
 		position: absolute;
 		float: left;
 		top: 0px;

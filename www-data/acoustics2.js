@@ -1,3 +1,7 @@
+/* Configuration data */
+var acoustics_version = "1.99-beta";
+
+/* Globals */
 var currentUser = '';
 var volume;
 var stateTimer;
@@ -69,7 +73,13 @@ $(document).ready(function() {
 	$("#toggle-right-panel").click(function() { toggleQueueExplicit(); });
 	insertAdvancedSearch(1);
 	insertAdvancedSearch(2);
-	document.addEventListener('touchmove', function(e){ e.preventDefault(); });
+	try {
+		/* This has a tendency to break on some desktop browsers */
+		document.addEventListener('touchmove', function(e){ e.preventDefault(); });
+	} catch (e) {};
+
+	/* Set the version number in the management console */
+	$("#manage-version").html("Web Client v." + acoustics_version);
 
 	/* XXX REMOVE THIS IN FINAL RELEASE XXX */
 	/* If they haven't seen it, present users with the
@@ -846,7 +856,7 @@ function pageLoadChange(hash) {
 		setLeftPanel("manage");
 		setMenuItem("manage");
 		hidePlaylist();
-		hideQueue();
+		restoreQueue();
 	} else {
 		setLeftPanel("search-results");
 		setMenuItem("songs");
@@ -959,6 +969,13 @@ function manageZapPlayer() {
 			function(data) { handlePlayerStateRequest(data); }
 		);
 	}
+}
+
+function managePurgeUser(user) {
+	$.getJSON(
+		jsonSource + '?mode=purge;who=' + user,
+		function(data) { handlePlayerStateRequest(data); }
+	);
 }
 
 $.address.change(function(e) {pageLoadChange(e.value);});
