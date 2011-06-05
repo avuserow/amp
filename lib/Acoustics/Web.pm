@@ -1025,11 +1025,11 @@ sub art
 	#      pull from LastFM / Amazon / whatever
 
 	# Fall back to local icon.
-	my $last_try;
+	my $last_try = "www-data/icons/cd_case.png";
 	if ($size < 100) {
-		$last_try = "www-data/icons/cd_big.png";
+		$last_try = "www-data/icons/cd_case_small.png";
 	} else {
-		$last_try = "www-data/icons/big_a.png";
+		$last_try = "www-data/icons/cd_case.png";
 	}
 	open IMAGE, $last_try;
 	local $/;
