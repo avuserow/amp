@@ -899,7 +899,7 @@ a img {
 	right: 0px;
 	background-color: #000;
 	z-index: 2;
-	/* display: none; */
+	display: none;
 }
 	#fullscreen-center {
 		width: 600px;

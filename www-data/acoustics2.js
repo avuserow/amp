@@ -1087,6 +1087,12 @@ function albumSearch(title) {
 		function (data) {
 			$("#album-search-albums").empty();
 			$(".cf-container").empty();
+			if (data.length == 0) {
+				$("#album-search-albums").html("<center><i>No results</i></center>");
+				$("#album-search-status").html("No results.");
+				$("#album-search-count").html("0 albums");
+				return;
+			}
 			var _cf = templates.contentFlow.clone();
 			var count = 0;
 			var imgs = new Array();

@@ -986,6 +986,7 @@ sub art
 
 	# This is a request to set to a specific URL.
 	if ($set && $set eq "yes") {
+		return access_denied('You must log in.') unless $self->who;
 		my $url = $self->cgi->param("image");
 		my $image = get $url;
 		INFO("adding art cache for " . $title . ": " . $url);
