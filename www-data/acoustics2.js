@@ -1100,7 +1100,9 @@ function albumSearch(title) {
 			var imgs = new Array();
 			for (var album in data) {
 				var entry = templates.albumResult.clone();
-				$("span", entry).html(data[album].album);
+				var title = data[album].album;
+				if (!title) { title = "<i>No Album</i>"; }
+				$("span", entry).html(title);
 				$("img", entry).attr("src", getAlbumArtUrl("", data[album].album, "", 64));
 				$("a", entry).attr("href", "#SelectRequest/album/" + uriencode(data[album].album));
 				entry.appendTo("#album-search-albums");
@@ -1116,8 +1118,10 @@ function albumSearch(title) {
 						ajax_cf.init();
 					}
 				}
+				var title = data[album].album;
+				if (!title) { title = "<i>No Album</i>"; }
 				imgs[album].src = getAlbumArtUrl("",data[album].album,"",200);
-				$(".flow", _cf).append("<a class=\"item\" href=\"#SelectRequest/album/" + uriencode(data[album].album) + "\">\n\t<img class=\"content\" src=\"" + imgs[album].src + "\" />\n\t<span class=\"caption\">" + data[album].album + "</span>\n</a>\n");
+				$(".flow", _cf).append("<a class=\"item\" href=\"#SelectRequest/album/" + uriencode(data[album].album) + "\">\n\t<img class=\"content\" src=\"" + imgs[album].src + "\" />\n\t<span class=\"caption\">" + title + "</span>\n</a>\n");
 				count++;
 			}
 			_cf.appendTo(".cf-container");
