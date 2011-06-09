@@ -134,7 +134,7 @@ sub finish_song {
 		$acoustics->query('insert_history', {
 			song_id   => $song->{song_id},
 			who       => $vote->{who},
-			time      => $player->{start_time},
+			time      => $player->{song_start},
 			player_id => $acoustics->player_id,
 		});
 	}
