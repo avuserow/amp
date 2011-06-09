@@ -718,7 +718,7 @@ function voteSong(song_id) {
 		$.getJSON(
 			jsonSource + '?mode=add_to_playlist;playlist_id='
 			+ playlist_pane + ';song_id=' + song_id,
-			showPlaylist(data)
+			showPlaylist
 		);
 	} else {
 		$.getJSON(
