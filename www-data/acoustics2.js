@@ -73,8 +73,29 @@ $(document).ready(function() {
 
 	playerStateRequest();
 	if (stateTimer) clearInterval(stateTimer);
-	stateTimer = setInterval(function() {playerStateRequest();}, 15000)
-	$("#search-results-table").tablesorter({widgets: ['zebra']});
+	stateTimer = setInterval(function() {playerStateRequest();}, 15000);
+	/* Table sorting */
+	var table = $("#search-results-table");
+	$("#search-results-table th").wrapInner("<span title='Click to Sort'/>")
+		.each(function() {
+			var th = $(this),
+				thIndex = th.index(),
+				inverse = false;
+			th.click(function() {
+				table.find('td').filter(function() {
+					return $(this).index() === thIndex;
+				}).sortElements(function(a, b) {
+					return $.text([a]) > $.text([b]) ?
+					inverse ? -1 : 1 :
+					inverse ? 1 : -1;
+				}, function() {
+					return this.parentNode;
+				});
+				inverse = !inverse;
+			});
+		});
+
+	//$("#search-results-table").tablesorter({widgets: ['zebra']});
 	$(".header-bar-menu-root").hover(function() {
 		$("#"+$(this).attr('id')+"-dropdown").show();
 	});
@@ -429,7 +450,6 @@ function hideShowSlide(what) {
 
 function fillResultTable(json) {
 	$("#search-results-table tbody tr").remove();
-	$("#search-results-table").trigger("update");
 	if (json.length < 1) {
 		$("#search-results-table tbody").append("<tr><td colspan=\"6\"><center><i>No results.</i></center></td></tr>");
 		$("#search-results-time").html("0 seconds");
@@ -463,8 +483,6 @@ function fillResultTable(json) {
 
 		total_length += parseInt(song.length);
 	}
-	$("#search-results-table").trigger("update");
-	$("#search-results-table").trigger("applyWidgets");
 	$("#search-results-time").html(readableTime(total_length));
 	if (json.length == 1) {
 		$("#search-results-count").html("One song");

@@ -493,7 +493,7 @@ a img {
 		#search-results-table tbody tr:hover td a {
 			color: #000;
 		}
-		#search-results-table tbody tr.odd td {
+		#search-results-table tbody tr:nth-child(odd) td {
 			background-color: #444;
 		}
 		.sr-th {
