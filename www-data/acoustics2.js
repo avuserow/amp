@@ -1012,12 +1012,12 @@ function pageLoadChange(hash) {
 		songDetails(args[0]);
 	}
 	if (action == 'Info') {
+		hideQueue();
 		setLeftPanel("info");
 		setMenuItem("info");
 		editingPlaylist = false;
 		doStats(args[0]);
 		hidePlaylist();
-		hideQueue();
 	} else if (action == 'Playlists') {
 		setLeftPanel("search-results");
 		setMenuItem("playlists");
@@ -1027,25 +1027,26 @@ function pageLoadChange(hash) {
 			loadPlaylist(args[0]);
 		}
 	} else if (action == 'Albums') {
+		restoreQueue();
 		setLeftPanel("album-search");
 		setMenuItem("albums");
 		editingPlaylist = false;
 		hidePlaylist();
-		restoreQueue();
 		albumSearch(args[0]);
 	} else if (action == 'Manage') {
+		restoreQueue();
 		setLeftPanel("manage");
 		setMenuItem("manage");
 		editingPlaylist = false;
 		hidePlaylist();
-		restoreQueue();
 	} else if (action == '') {
+		restoreQueue();
 		setLeftPanel("search-results");
 		setMenuItem("songs");
 		editingPlaylist = false;
 		hidePlaylist();
-		restoreQueue();
 	} else {
+		restoreQueue();
 		setLeftPanel("search-results");
 		if (editingPlaylist) {
 			setMenuItem("playlists");
@@ -1055,7 +1056,6 @@ function pageLoadChange(hash) {
 			editingPlaylist = false;
 			hidePlaylist();
 		}
-		restoreQueue();
 	}
 }
 
