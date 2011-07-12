@@ -728,6 +728,13 @@ function handlePlayerStateRequest(json) {
 		jQuery.favicon(getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,20));
 		/* Title Bar */
 		document.title = nowPlaying.title + " - " + nowPlaying.artist + " [Acoustics]";
+		/* Play / Pause */
+		$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/pause.png");
+		/*
+		if (nowPlaying.state == 'paused') {
+			$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/play.png");
+		}
+		*/
 	} else {
 		var nowPlayingPanel = templates.nowPlayingPanel.clone();
 		$("#now-playing-album-art", nowPlayingPanel).hide();
@@ -738,6 +745,7 @@ function handlePlayerStateRequest(json) {
 		jQuery.favicon("www-data/images/ui2/favicon.ico");
 		document.title = "Acoustics";
 		totalTime = -1;
+		$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/play.png");
 	}
 
 	if (!queueLocked) {
