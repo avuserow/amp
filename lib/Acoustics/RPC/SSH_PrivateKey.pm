@@ -26,6 +26,13 @@ sub stop {
 	$class->do_call($acoustics, 'stop');
 }
 
+sub pause {
+	my $class     = shift;
+	my $acoustics = shift;
+
+	$class->do_call($acoustics, 'pause');
+}
+
 sub volume {
 	my $class     = shift;
 	my $acoustics = shift;

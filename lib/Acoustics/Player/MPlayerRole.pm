@@ -60,6 +60,12 @@ sub stop {
 	send_signal($acoustics, 'INT');
 }
 
+sub pause {
+	my $class     = shift;
+	my $acoustics = shift;
+	$class->send_signal($acoustics, 'USR2');
+}
+
 sub skip {
 	my $class = shift;
 	my $acoustics = shift;

@@ -266,6 +266,23 @@ sub stop {
 	$self->status;
 }
 
+=head2 pause
+
+Toggles between pause / playing.
+
+=cut
+
+sub pause {
+	my $self = shift;
+	return access_denied('You must log in.') unless $self->who;
+	return access_denied('You cannot pause this song.') unless $self->can_skip;
+
+	INFO("pause requested by ". $self->who);
+	$self->acoustics->rpc('pause');
+
+	$self->status;
+}
+
 =head2 zap
 
 removes the specified player from the database by force. sleeps for 0.25 seconds

@@ -789,8 +789,12 @@ function login() {
 }
 
 function controlPlayPause() {
+	var command = 'start';
+	if (nowPlaying) {
+		command = 'pause';
+	}
 	$.getJSON(
-			jsonSource + '?mode=start',
+			jsonSource + '?mode=' + command,
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }
@@ -1083,8 +1087,7 @@ function unfullscreen() {
 }
 
 function fullscreen() {
-	$("#fullscreen-view").fadeIn(300, function() {
-		});
+	$("#fullscreen-view").fadeIn(300);
 }
 
 function clearFullscreen() {

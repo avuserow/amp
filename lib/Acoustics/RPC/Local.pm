@@ -26,6 +26,13 @@ sub stop {
 	$acoustics->player('stop');
 }
 
+sub pause {
+	my $self      = shift;
+	my $acoustics = shift;
+
+	$acoustics->player('pause');
+}
+
 sub volume {
 	my $self      = shift;
 	my $acoustics = shift;

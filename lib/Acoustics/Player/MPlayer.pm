@@ -59,6 +59,12 @@ sub stop {
 	$class->send_signal($acoustics, 'INT');
 }
 
+sub pause {
+	my $class     = shift;
+	my $acoustics = shift;
+	$class->send_signal($acoustics, 'USR2');
+}
+
 sub zap {
 	my $class = shift;
 	my $acoustics = shift;
@@ -202,6 +208,12 @@ sub player_loop {
 			WARN "changing volume to $volume";
 			print $child_in "volume $volume 1\n";
 			print $child_in "get_volume\n";
+		};
+
+		local $SIG{USR2} = sub {
+			WARN "(un)pausing song: $song->{path}";
+			print $child_in "pause\n";
+			return;
 		};
 
 		local $SIG{__DIE__} = local $SIG{TERM} = local $SIG{INT} = sub {
