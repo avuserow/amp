@@ -638,7 +638,7 @@ function handlePlayerStateRequest(json) {
 	} else {
 		$(".disp-volume").html("-");
 	}
-	player = json.player;
+	player = json.selected_player;
 
 	// user
 	if (json.who) {
