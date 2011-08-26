@@ -412,3 +412,12 @@ a:hover {
 	line-height: 25px;
 }
 
+/* jquery UI fixes */
+.ui-progressbar {
+	background: #222222 !important;
+	border: 1px solid #fff;
+}
+.ui-progressbar-value {
+	border: 1px solid #fff;
+	background: #fff !important;
+}
