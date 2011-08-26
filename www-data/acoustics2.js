@@ -801,6 +801,7 @@ function controlVolumeDown() {
 function controlVolumeUp() {
 	if (volume != undefined) {
 		volume += 10;
+		if (volume > 100) { volume = 100; }
 		$.getJSON(
 			jsonSource + '?mode=volume;value=' + volume,
 			function (data) {handlePlayerStateRequest(data);}
