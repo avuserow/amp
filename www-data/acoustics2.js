@@ -57,6 +57,32 @@ $(document).ready(function() {
 		update: updatePlaylistOrder
 	});
 
+	$("#search-box").keyup(function () {
+		var search_value = $("#search-box").val().toLowerCase();
+		$.getJSON(
+			jsonSource + '?mode=quick_search;q=' + search_value,
+			function (data) {
+				var output = "";
+				var replacement = "<b>$1</b>";
+				var delimiter = " | ";
+				var regex = new RegExp( '(' + search_value + ')', 'gi' );
+				for (id in data) {
+					var result = data[id];
+					if (result.artist.toLowerCase().indexOf(search_value) != -1) {
+						output += result.artist.replace(regex, "<b>$1</b>") + delimiter;
+					}
+					if (result.album.toLowerCase().indexOf(search_value) != -1) {
+						output += result.album.replace(regex, "<b>$1</b>") + delimiter;
+					}
+					if (result.title.toLowerCase().indexOf(search_value) != -1) {
+						output += result.title.replace(regex, "<b>$1</b>") + delimiter;
+					}
+				}
+				$("#search-results-suggestions").html(output);
+			}
+		);
+	});
+
 	// templating
 	templates.queueSong = $("li.queue-song").first().clone();
 	templates.nowPlayingInfo = $("#now-playing-info").clone();
