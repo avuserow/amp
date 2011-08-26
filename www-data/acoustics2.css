@@ -25,7 +25,7 @@ a img {
 }
 	#header-bar-logo {
 		float: left;
-		padding-left: 20px;
+		padding-left: 10px;
 		width: 100px;
 		vertical-align: center;
 		text-align: center;
@@ -35,7 +35,7 @@ a img {
 		}
 	#header-bar-spacer {
 		float: left;
-		width: 60px;
+		width: 20px;
 	}
 	#header-bar-menu {
 		float: left;
@@ -740,4 +740,8 @@ a img {
 	background-image: url(images/ui2/ajax-loader.gif);
 	background-position: center center;
 	background-repeat: no-repeat;
+}
+
+#queue-fullscreen a img {
+	vertical-align: text-top;
 }
