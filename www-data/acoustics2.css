@@ -47,6 +47,7 @@ a img {
 		#header-bar-menu-container {
 			padding: 0px;
 			height: 40px;
+			padding-left: 5px;
 			overflow: hidden;
 		}
 		#header-bar-menu-container ul {
