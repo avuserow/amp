@@ -57,6 +57,10 @@ my $app = sub {
 };
 
 builder {
+	enable 'Static', path => sub { s{^/?www-data}{} }, root => './www-data/';
+	enable 'Static', path => qr{^/?index2?\.html}, root => './';
 	enable 'Session', store => 'File';
 	$app;
 };
+
+# vim: ft=perl:
