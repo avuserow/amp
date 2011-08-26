@@ -616,8 +616,7 @@ a img {
 		position: absolute;
 		right: 0px;
 		bottom: 0px;
-		padding-right: 4px;
-		padding-bottom: 4px;
+		padding-right: 15px;
 	}
 	#fullscreen-controls {
 		position: absolute;
