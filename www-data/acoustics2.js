@@ -107,50 +107,9 @@ $(document).ready(function() {
 	$("#playlist-select-form").change(function() { loadPlaylist(-1); });
 	insertAdvancedSearch(1);
 	insertAdvancedSearch(2);
-	try {
-		/* This has a tendency to break on some desktop browsers */
-		document.addEventListener('touchmove', function(e){ e.preventDefault(); });
-	} catch (e) {};
 
 	/* Set the version number in the management console */
 	$("#manage-version").html("Web Client v." + acoustics_version);
-
-	/* XXX REMOVE THIS IN FINAL RELEASE XXX */
-	/* If they haven't seen it, present users with the
-	 * "Welcome to Acoustics Beta" dialog, which appears
-	 * in a warning box. */
-
-	function setCookie(name, value, expires) {
-		var exdate = new Date();
-		exdate.setDate(exdate.getDate() + expires);
-		var value = escape(value) + ((expires == null) ? "" : "; expires=" + exdate.toUTCString());
-		document.cookie = name + "=" + value;
-	}
-	function getCookie(name) {
-		var i, x, y, cookies = document.cookie.split(";");
-		for (i = 0; i < cookies.length; i++) {
-			x = cookies[i].substr(0, cookies[i].indexOf("="));
-			y = cookies[i].substr(cookies[i].indexOf("=")+1);
-			x = x.replace(/^\s+|\s+$/g,"");
-			if (x == name) {
-				return unescape(y);
-			}
-		}
-		return null;
-	}
-
-	if (getCookie("_seen_beta") != "yes") {
-		showMessage("Wecome to Acoustics Beta!",
-			"You are using the Beta release of Acoustics 2.0, "+
-			"a massive new release featuring a brand new interface. "+
-			"This release is not finished, and as such may have bugs "+
-			"or general usability issues or missing features.<br /><br />"+
-			"Thank you for taking the time to test the Beta.");
-		setCookie("_seen_beta","yes",10000);
-	}
-
-
-	/* XXX REMOVE THE ABOVE IN FINAL RELEASE XXX */
 
 });
 
