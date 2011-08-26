@@ -1,0 +1,401 @@
+body {
+	background-color: #FFF;
+}
+
+a, a:visited {
+	color: #4444FF;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+#header-bar {
+	background-color: #000;
+	color: #000;
+}
+
+#header-bar-menu-container ul li a {
+	color: #000;
+	text-shadow: 0px 0px 3px #33D;
+}
+#header-bar-menu-container ul li a:hover {
+	color: #fff;
+}
+.header-bar-menu-selected {
+	color: #fff !important;
+}
+
+.header-bar-menu-dropdown {
+	background-color: #222;
+	-webkit-border-bottom-right-radius: 8px;
+	-webkit-border-bottom-left-radius: 8px;
+	-moz-border-radius-bottomright: 8px;
+	-moz-border-radius-bottomleft: 8px;
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+	-moz-box-shadow: 0 5px 5px #000;
+	-webkit-box-shadow: 0 5px 5px #000;
+	box-shadow: 0 5px 5px #000;
+}
+.header-bar-menu-dropdown li a {
+	color: #ddd;
+}
+.header-bar-menu-dropdown li a:hover {
+	color: #fff;
+}
+
+#header-bar-user {
+	color: #444;
+}
+
+#user-name {
+	color: #33D;
+}
+
+.toolbar {
+	background-color: #DDD;
+}
+.toolbar ul li {
+	margin-top: 5px;
+	margin-left: 4px;
+	margin-right: 4px;
+	color: #000;
+}
+.toolbar ul li span {
+	color: #000;
+	text-shadow: 1px 1px 1px #000;
+}
+/*
+ * Bunch of styling from Chad Mazzola's CSS3 Buttons set
+ */
+.toolbar ul li a {
+	padding: 3px 3px 3px 3px;
+	background-color: #000;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	border: 1px solid #222;
+	-moz-box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+	-webkit-box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+	box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+	background: #111;
+	background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+				rgba(0, 0, 0, 0.9) 0%,
+				rgba(20, 20, 20, 0.9) 50%,
+				rgba(30, 30, 30, 0.9) 50%,
+				rgba(50, 50, 50, 0.9) 100%);
+	background: -webkit-gradient(linear, 0 0, 0 100%,
+				color-stop(0, rgba(50, 50, 50, 0.9)),
+				color-stop(0.5, rgba(30, 30, 30, 0.9)),
+				color-stop(0.5, rgba(20, 20, 20, 0.9)),
+				color-stop(1, rgba(0, 0, 0, 0.9)));
+	font-size: 14px;
+	color: #fff;
+	text-decoration: none;
+	text-shadow: 0px -1px 1px rgba(0, 0, 0, .8), 0 1px 1px rgba(255, 255, 255, 0.3);
+	outline: none;
+}
+.toolbar ul li a:hover {
+	background: #222;
+	background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+				rgba(20, 20, 20, 0.9) 0%,
+				rgba(40, 40, 40, 0.9) 50%,
+				rgba(50, 50, 50, 0.9) 50%,
+				rgba(70, 70, 70, 0.9) 100%);
+	background: -webkit-gradient(linear, 0 0, 0 100%,
+				color-stop(0, rgba(70, 70, 70, 0.9)),
+				color-stop(0.5, rgba(50, 50, 50, 0.9)),
+				color-stop(0.5, rgba(40, 40, 40, 0.9)),
+				color-stop(1, rgba(20, 20, 20, 0.9)));
+	text-shadow: 1px 1px 1px #333;
+}
+.toolbar ul li a:active {
+	background: #000;
+	background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+				rgba(0, 0, 0, 0.9) 0%,
+				rgba(10, 10, 10, 0.9) 50%,
+				rgba(20, 20, 20, 0.9) 50%,
+				rgba(30, 30, 30, 0.9) 100%);
+	background: -webkit-gradient(linear, 0 0, 0 100%,
+				color-stop(0, rgba(30, 30, 30, 0.9)),
+				color-stop(0.5, rgba(20, 20, 20, 0.9)),
+				color-stop(0.5, rgba(10, 10, 10, 0.9)),
+				color-stop(1, rgba(0, 0, 0, 0.9)));
+}
+
+.statusbar {
+	background: url(images/ui2/statusbar.png);
+}
+.statusbar div {
+	color: #fff;
+	text-shadow: 1px 1px 1px #000;
+}
+
+.container {
+	background-color: #666;
+}
+
+.float {
+	border: 1px solid #000;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	box-shadow: 2px 2px 2px rgba(0,0,0,0.25);
+	background-color: #333;
+}
+
+#info {
+	background-color: #666;
+	color: #FFF;
+}
+#info-about {
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	background-color: rgba(0,0,0,0.3);
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.info-value {
+	font-weight: bold;
+}
+#album-search {
+	background-color: #444;
+	color: #FFF;
+}
+#manage {
+	background-color: #444;
+	color: #FFF;
+}
+#search-results {
+	background-color: #444;
+	color: #FFF;
+}
+.input-split-box {
+	-webkit-border-top-right-radius: 6px;
+	-webkit-border-bottom-right-radius: 6px;
+	-moz-border-radius-topright: 6px;
+	-moz-border-radius-bottomright: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	border: 1px solid #000;
+	background-color: #888;
+}
+.input-split-button {
+	-webkit-border-top-left-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border: 1px solid #000;
+	background-color: #777;
+}
+.input-split-dropdown {
+	border: 1px solid #000;
+	background-color: #777;
+}
+.input-split-dropdown input:checked + label.expanded {
+	border: 1px solid #999;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-color: #999;
+	color: #000;
+}
+.input-split-right {
+	-webkit-border-top-right-radius: 6px;
+	-webkit-border-bottom-right-radius: 6px;
+	-moz-border-radius-topright: 6px;
+	-moz-border-radius-bottomright: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	border: 1px solid #000;
+	background-color: #777;
+}
+.input-split-disabled {
+	background-color: #555;
+	color: #777;
+}
+#search-box:focus {
+	background-color: #fff;
+}
+#search-results-advanced-container {
+	background-image: url(images/ui2/shadow.png);
+	background-repeat: repeat-x;
+	background-position: 0 100%;
+}
+#search-results-table tbody tr td a {
+	color: #fff;
+}
+#search-results-table tbody tr:hover td {
+	background-color: #888 !important;
+	color: #000;
+}
+#search-results-table tbody tr:hover td a {
+	color: #000;
+}
+#search-results-table tbody tr:nth-child(odd) td {
+	background-color: #444;
+}
+.sr-th {
+	font-weight: bold;
+	text-shadow: 1px 1px 1px #000;
+	border-bottom: 1px solid #000;
+}
+.search-results-entry-vote {
+	font-size: 10px !important;
+	padding: 1px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	margin: 1px !important;
+	color: #fff !important;
+}
+.search-results-entry-vote:hover {
+	color: #fff !important;
+	text-decoration: none;
+}
+#search-results-song-details div a {
+	color: #fff;
+}
+#song-details-title {
+	font-weight: bold;
+	text-shadow: 0px 1px 1px #ccc;
+}
+.panel-tab {
+	color: #FFF;
+	-webkit-border-top-left-radius: 8px;
+	-webkit-border-bottom-left-radius: 8px;
+	-moz-border-radius-topleft: 8px;
+	-moz-border-radius-bottomleft: 8px;
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 8px;
+	opacity: 0.3;
+}
+.panel-tab:hover {
+	opacity: 1.0;
+}
+#now-playing-panel {
+	background-color: #222;
+	color: #fff;
+}
+#now-playing-panel div a {
+	color: #fff;
+}
+#nothing-playing-info {
+	font-weight: bold;
+	text-shadow: 1px 1px 1px #888;
+}
+#controls {
+	background-color: #222;
+}
+#controls div a {
+	color: #fff;
+}
+#queue {
+	background-color: #000;
+}
+.queue-song {
+	background-color: #555;
+	color: #fff;
+}
+.queue-song a {
+	color: #fff;
+}
+.queue-song-voted {
+	background-color: #524057 !important;
+}
+.queue-song-handle {
+	background: url(images/ui2/handle.png);
+}
+.queue-song-placeholder {
+	background-color: #666;
+	border-bottom: 1px solid black;
+}
+#playlist-panel {
+	background-color: #666;
+}
+
+/* Control button is styled off the toolbar buttons. I hate code duplication, so this makes me sad */
+.control-button {
+	background-color: #000;
+	border: 1px solid #222;
+	-moz-box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+	-webkit-box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+	box-shadow: inset 1px 1px 1px 0px rgba(135, 135, 135, 0.1), inset -1px -1px 1px 0px rgba(135, 135, 135, 0.1);
+	background: #111;
+	background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+				rgba(0, 0, 0, 0.9) 0%,
+				rgba(20, 20, 20, 0.9) 50%,
+				rgba(30, 30, 30, 0.9) 50%,
+				rgba(50, 50, 50, 0.9) 100%);
+	background: -webkit-gradient(linear, 0 0, 0 100%,
+				color-stop(0, rgba(50, 50, 50, 0.9)),
+				color-stop(0.5, rgba(30, 30, 30, 0.9)),
+				color-stop(0.5, rgba(20, 20, 20, 0.9)),
+				color-stop(1, rgba(0, 0, 0, 0.9)));
+	font-size: 14px;
+	color: #fff;
+	text-decoration: none;
+	text-shadow: 0px -1px 1px rgba(0, 0, 0, .8), 0 1px 1px rgba(255, 255, 255, 0.3);
+	outline: none;
+}
+.control-button:hover {
+	background: #222;
+	background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+				rgba(20, 20, 20, 0.9) 0%,
+				rgba(40, 40, 40, 0.9) 50%,
+				rgba(50, 50, 50, 0.9) 50%,
+				rgba(70, 70, 70, 0.9) 100%);
+	background: -webkit-gradient(linear, 0 0, 0 100%,
+				color-stop(0, rgba(70, 70, 70, 0.9)),
+				color-stop(0.5, rgba(50, 50, 50, 0.9)),
+				color-stop(0.5, rgba(40, 40, 40, 0.9)),
+				color-stop(1, rgba(20, 20, 20, 0.9)));
+	text-shadow: 1px 1px 1px #333;
+}
+.control-button:active {
+	background: #000;
+	background: -moz-linear-gradient(0% 100% 90deg, #FFFFFF, #000000,
+				rgba(0, 0, 0, 0.9) 0%,
+				rgba(10, 10, 10, 0.9) 50%,
+				rgba(20, 20, 20, 0.9) 50%,
+				rgba(30, 30, 30, 0.9) 100%);
+	background: -webkit-gradient(linear, 0 0, 0 100%,
+				color-stop(0, rgba(30, 30, 30, 0.9)),
+				color-stop(0.5, rgba(20, 20, 20, 0.9)),
+				color-stop(0.5, rgba(10, 10, 10, 0.9)),
+				color-stop(1, rgba(0, 0, 0, 0.9)));
+}
+
+#controls-stop {
+	-webkit-border-top-left-radius: 15px;
+	-moz-border-radius-topleft: 15px;
+	border-top-left-radius: 15px;
+}
+#controls-next {
+	-webkit-border-top-right-radius: 15px;
+	-moz-border-radius-topright: 15px;
+	border-top-right-radius: 15px;
+}
+#controls-volume-down {
+	-webkit-border-bottom-left-radius: 15px;
+	-moz-border-radius-bottomleft: 15px;
+	border-bottom-left-radius: 15px;
+}
+#controls-volume-up {
+	-webkit-border-bottom-right-radius: 15px;
+	-moz-border-radius-bottomright: 15px;
+	border-bottom-right-radius: 15px;
+}
+
+.button-link {
+	padding: 3px 3px 3px 3px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	margin: 5px !important;
+	line-height: 25px;
+}
+
