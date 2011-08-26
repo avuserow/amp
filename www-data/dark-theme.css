@@ -239,6 +239,7 @@ a:hover {
 #search-results-table tbody tr td a {
 	color: #fff;
 }
+/*
 #search-results-table tbody tr:hover td {
 	background-color: #888 !important;
 	color: #000;
@@ -246,6 +247,7 @@ a:hover {
 #search-results-table tbody tr:hover td a {
 	color: #000;
 }
+ */
 #search-results-table tbody tr:nth-child(odd) td {
 	background-color: #444;
 }
