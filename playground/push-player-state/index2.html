@@ -1,0 +1,363 @@
+<!doctype html>
+<html manifest="cache.manifest">
+	<head>
+		<title>Acoustics</title>
+		<meta charset="utf-8" />
+		<!-- CSS sheets -->
+		<link rel="stylesheet" href="www-data/acoustics2.css" />
+		<link rel="stylesheet" href="www-data/dark-theme.css" />
+		<link rel="stylesheet" href="www-data/jquery-ui-1.8.6.custom.css" />
+		<!-- Default favicon -->
+		<link rel="shortcut icon" href="www-data/images/ui2/favicon.ico" />
+		<!-- JS includes -->
+		<script src="www-data/json2.js"></script>
+		<script src="www-data/jquery.min.js"></script>
+		<script src="www-data/jquery-ui-1.8.6.custom.min.js"></script>
+		<script src="www-data/jquery.tablesorter.min.js"></script>
+		<script src="www-data/jquery.address-1.3.min.js"></script>
+		<script src="www-data/jquery.reflection.js"></script>
+		<script src="www-data/jquery.favicon.js"></script>
+		<script src="www-data/jquery.sortElements.js"></script>
+		<script src="www-data/iscroll.js"></script>
+		<script src="www-data/ContentFlow/contentflow.js"></script>
+		<!-- JS core -->
+		<script src="www-data/acoustics2.js"></script>
+		<!-- socket.io hack -->
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			$(document).ready(function () {
+				var socket = io.connect();
+				socket.on('check', function () {
+					playerStateRequest();
+				});
+			});
+		</script>
+		<!-- The following tags are for iOS devices -->
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;"/>
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<link rel="apple-touch-icon-precomposed" href="www-data/icons/ios/57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="www-data/icons/ios/72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="www-data/icons/ios/114.png" />
+	</head>
+	<body>
+		<div id="header-bar">
+			<div id="header-bar-logo">
+				<img src="www-data/images/ui2/amp_logo.png" />
+			</div>
+			<div id="header-bar-spacer">&nbsp;</div>
+			<div id="header-bar-menu">
+				<div id="header-bar-menu-container">
+					<ul id="header-bar-menu-list">
+						<li><a href="#" id="header-bar-menu-songs">Songs</a></li>
+						<li><a href="#Albums/_none_" id="header-bar-menu-albums">Albums</a></li>
+						<li><a href="#Playlists" id="header-bar-menu-playlists">Playlists</a></li>
+						<li><a href="#Manage" id="header-bar-menu-manage">Manage</a></li>
+						<li><a href="#Info" id="header-bar-menu-info">Info</a></li>
+						<li>
+							<ul id="header-bar-menu-players-dropdown" class="header-bar-menu-dropdown">
+								<li><a href="#">Room A</a></li>
+								<li><a href="#">Room B</a></li>
+							</ul>
+						</li>
+						<li><a id="header-bar-menu-players" class="header-bar-menu-root" href="#">Players</a></li>
+					</ul>
+				</div>
+			</div>
+			<div id="header-bar-user">
+				<span id="header-bar-user-message"><a href="javascript:login()">login</a></span> <span id="user-name"></span>
+			</div>
+		</div>
+		<div id="main-content">
+			<div id="toggle-right-panel" class="panel-tab control-button">&nbsp;</div>
+			<div id="search-results" class="panel panel-left">
+				<div id="search-results-toolbar" class="toolbar">
+					<ul id="search-results-toolbar-list" class="toolbar-list">
+						<li id="search-results-search">
+							<form onSubmit="return formSearch();" class="input-split-form">
+								<span class="input-split-button" onClick="javascript:toggleAdvancedSearch();">V</span>
+								<input id="search-box" class="input-split-box" placeholder="Search" type="search" />
+							</form>
+						</li>
+						<li id="search-results-new" class="toolbar-right"><a href="#RecentSongs/20">New</a></li>
+						<li id="search-results-recent" class="toolbar-right"><a href="#PlayHistory/20">Recent</a></li>
+						<li id="search-results-random" class="toolbar-right"><a href="#RandomSongs/20">Random</a></li>
+						<li id="search-results-voteall" class="toolbar-right"><a href="javascript:voteAll();">Vote All</a></li>
+						<li id="search-results-voteone" class="toolbar-right"><a href="javascript:voteOne();">Vote One</a></li>
+					</ul>
+				</div>
+				<div id="search-results-container" class="container">
+					<div id="search-results-advanced-container">
+						<form id="search-results-advanced-form" onSubmit="return advancedSearchFormSubmit();">
+							<div id="advanced-search-NUM" class="input-split-form-wide advanced-search-row">
+								<span class="input-split-button input-split-dropdown  adv-search-combine">
+									<input type="radio" id="adv-search-if-NUM"  name="adv-search-combine-NUM" value="if" checked="checked" /><label id="adv-label-if-NUM" for="adv-search-if-NUM" onClick="javascript:expandSplitDropdown(this);">if</label>
+									<input type="radio" id="adv-search-and-NUM" name="adv-search-combine-NUM" value="and" checked="checked" /><label id="adv-label-and-NUM" for="adv-search-and-NUM" onClick="javascript:expandSplitDropdown(this);">and</label>
+									<input type="radio" id="adv-search-or-NUM"  name="adv-search-combine-NUM" value="or"  /><label id="adv-label-or-NUM" for="adv-search-or-NUM" onClick="javascript:expandSplitDropdown(this);">or</label>
+								</span>
+								<span class="input-split-dropdown adv-search-type">
+									<input type="radio" id="adv-search-artist-NUM" name="adv-search-type-NUM" value="artist" checked="checked"/><label for="adv-search-artist-NUM" onClick="javascript:expandSplitDropdown(this);">artist</label>
+									<input type="radio" id="adv-search-album-NUM"  name="adv-search-type-NUM" value="album" /><label for="adv-search-album-NUM" onClick="javascript:expandSplitDropdown(this);">album</label>
+									<input type="radio" id="adv-search-title-NUM"  name="adv-search-type-NUM" value="title" /><label for="adv-search-title-NUM" onClick="javascript:expandSplitDropdown(this);">title</label>
+									<input type="radio" id="adv-search-path-NUM"   name="adv-search-type-NUM" value="path"  /><label for="adv-search-path-NUM" onClick="javascript:expandSplitDropdown(this);">path</label>
+								</span>
+								<span class="input-split-dropdown adv-search-compare">
+									<input type="radio" id="adv-search-equals-NUM"   name="adv-search-compare-NUM" value="equals" checked/><label for="adv-search-equals-NUM" onClick="javascript:expandSplitDropdown(this);">equals</label>
+									<input type="radio" id="adv-search-contains-NUM" name="adv-search-compare-NUM" value="contains" /><label for="adv-search-contains-NUM" onClick="javascript:expandSplitDropdown(this);">contains</label>
+								</span>
+								<input id="adv-search-value-NUM" class="input-split-box     adv-search-value" value="herp" />
+								<span style="font-size: 13px;">&nbsp;&nbsp;</span>
+								<span class="input-split-button" id="adv-search-add-NUM">add</span>
+								<span class="input-split-right input-split-disabled" id="adv-search-remove-NUM">remove</span>
+							</div>
+							<div id="advanced-search-submit">
+								<input type="submit" class="control-button button-link" value="Search" />
+								<input type="reset"  class="control-button button-link" value="Clear" />
+							</div>
+						</form>
+						<br />
+					</div>
+					<table id="search-results-table">
+						<thead>
+							<tr>
+								<th id="sr-vote"   class="sr-th">+</th>
+								<th id="sr-track"  class="sr-th">Tr</th>
+								<th id="sr-title"  class="sr-th">Title</th>
+								<th id="sr-album"  class="sr-th">Album</th>
+								<th id="sr-artist" class="sr-th">Artist</th>
+								<th id="sr-length" class="sr-th">Time</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="search-results-entry">
+								<td>
+									<div class="search-results-entry-song-id">0</div>
+									<a class="search-results-entry-vote control-button" href="#" title="Vote for this song">vote</a>
+								</td>
+								<td class="search-results-entry-track">-</td>
+								<td class="search-results-entry-title"><a href="#">title</a></td>
+								<td class="search-results-entry-album"><a href="#">album</a></td>
+								<td class="search-results-entry-artist"><a href="#">artist</a></td>
+								<td class="search-results-entry-length">0:00</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div id="search-results-song-details" class="floaty">
+					<div id="song-details-album-art">
+						<img id="song-details-album-art-img" width="128" src="www-data/icons/cd_case.png" />
+					</div>
+					<div id="song-details-title"><a href="#">That One Song</a></div>
+					<div id="song-details-artist"><a href="#">The Artist You Like</a></div>
+					<div id="song-details-album"><a href="#">Their Big Album</a></div>
+					<div id="song-details-file"><a href="#">Path</a></div>
+					<div id="song-details-voters">Voters</div>
+					<div id="song-details-close"><a href="javascript:hideSongDetails()" class="control-button button-link">close</a></div>
+				</div>
+				<div id="search-results-statusbar" class="statusbar">
+					<div id="search-results-status"></div>
+					<div id="search-results-time"  class="statusbar-right">0:00</div>
+					<div id="search-results-count" class="statusbar-right">0 songs</div>
+				</div>
+			</div>
+			<div id="info" class="panel panel-left">
+				<div id="info-results-toolbar" class="toolbar">
+					<ul id="info-toolbar-list" class="toolbar-list">
+							<li id="info-panel-title"><span>System info</span></li>
+					</ul>
+				</div>
+				<div id="info-container" class="container">
+					<img src="www-data/images/ui2/amp_logo_big.png" alt="Acoustics" /><br />
+					<span id="info-song-count" class="info-value">...</span> songs are available<br />
+					the top artist is <span id="info-top-artist" class="info-value">...</span><br />
+					<div id="info-about-container">
+						<div id="info-about">
+							Acoustics is free software under the <a href="www-data/license.html">NCSA license</a>.<br />
+							<a href="http://github.com/avuserow/amp">Contribute</a>
+						</div>
+					</div>
+				</div>
+				<div id="info-statusbar" class="statusbar">
+					<div id="info-status">System info</div>
+				</div>
+			</div>
+			<div id="album-search" class="panel panel-left">
+				<div id="album-search-toolbar" class="toolbar">
+					<ul id="album-search-toolbar-list" class="toolbar-list">
+						<li>
+						<form onSubmit="return doAlbumSearch()">
+							<input id="album-search-box" class="input-split-box input-split-button" placeholder="Search" type="search" />
+						</form>
+						</li>
+						<li id="cf-close" class="toolbar-right"><a href="javascript:toggleCF()">Flow</a></li>
+					</ul>
+				</div>
+				<div id="album-search-container" class="container">
+					<div class="cf-container">
+						<div id="cf" class="ContentFlow">
+							<div id="cf-loading"></div>
+							<div class="flow"></div>
+							<div class="globalCaption"></div>
+						</div>
+					</div>
+					<div id="cf-padding"></div>
+					<div id="album-search-albums">
+						<div class="album-icon">
+							<div class="album-icon-image">
+								<a><img src="www-data/icons/cd_case_small.png" width="64" /></a>
+							</div>
+							<a><span>[Album Title]</span></a>
+						</div>
+					</div>
+				</div>
+				<div id="album-search-statusbar" class="statusbar">
+					<div id="album-search-status">Album Search Results</div>
+					<div id="album-search-count" class="statusbar-right">0 albums</div>
+				</div>
+			</div>
+			<div id="manage" class="panel panel-left">
+				<div id="manage-toolbar" class="toolbar">
+					<ul id="manage-toolbar-list" class="toolbar-list">
+						<li id="manage-title">Management Console</li>
+						<li id="manage-zap-player" class="toolbar-right"><a href="javascript:manageZapPlayer()">Zap Player</a></li>
+					</ul>
+				</div>
+				<div id="manage-container" class="container">
+					Stuff
+				</div>
+				<div id="manage-statusbar" class="statusbar">
+					<div id="manage-status">You can use this page to manage users and reset the player.</div>
+					<div id="manage-version">v. 0.0.0</div>
+				</div>
+			</div>
+			<div id="right-panel" class="panel">
+				<div id="now-playing-panel" class="panel">
+					<div id="nothing-playing-info">
+						Nothing playing.
+					</div>
+					<div id="now-playing-album-art">
+						<img id="now-playing-album-art-img" src="www-data/icons/cd_case_small.png" />
+					</div>
+					<div id="now-playing-info">
+						<div id="now-playing-title"><a href="#">Nothing Playing</a></div>
+						<div id="now-playing-artist"><a href="#">No One</a></div>
+						<div id="now-playing-album"><a href="#">No Album</a></div>
+						<div id="now-playing-times"><span id="now-playing-time">0:00</span> / <span id="now-playing-total">0:00</span></div>
+					</div>
+					<div id="now-playing-progress-container">
+						<div id="now-playing-progress">
+						</div>
+					</div>
+				</div>
+				<div id="controls" class="panel">
+					<div id="controls-top">
+						<a href="javascript:controlStop()" id="controls-stop" class="control-button"><img src="www-data/images/ui2/buttons/stop.png" /></a>
+						<a href="javascript:controlPlayPause()" id="controls-play-pause" class="control-button"><img src="www-data/images/ui2/buttons/play.png" /></a>
+						<a href="javascript:controlNext()" id="controls-next" class="control-button"><img src="www-data/images/ui2/buttons/next.png" /></a>
+					</div>
+					<div id="controls-bottom">
+						<a href="javascript:controlVolumeDown()" id="controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.png" /></a>
+						<a href="#" id="controls-volume" class="control-button disp-volume">-</a>
+						<a href="javascript:controlVolumeUp()" id="controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.png" /></a>
+					</div>
+				</div>
+				<div id="queue" class="panel">
+					<div id="queue-toolbar" class="toolbar">
+						<ul id="queue-toolbar-list" class="toolbar-list">
+							<li id="queue-panel-title"><span>Queue</span></li>
+							<li id="queue-clear" class="toolbar-right"><a href="javascript:clearQueue();">Clear</a></li>
+							<li id="queue-randomize" class="toolbar-right"><a href="#">Shuffle</a></li>
+						</ul>
+					</div>
+					<div id="queue-container" class="container">
+						<ul id="queue-list">
+							<li class="queue-song"><div class="queue-song">
+								<div class="queue-song-id queue-song-data"></div>
+								<div class="queue-song-handle">&nbsp;</div>
+								<div class="queue-song-info">
+									<div class="queue-song-toprow">
+										<div class="queue-song-vote-button">
+											<a class="queue-song-vote-link" href="#">+</a>
+											<a class="queue-song-unvote-link" href="#">-</a>
+										</div>
+										<div class="queue-song-title">
+											<a href="#">Song Title</a>
+										</div>
+									</div>
+									<div class="queue-song-bottomrow">
+										<div class="queue-song-vote-count">0</div>
+										<div class="queue-song-artist">
+											<a href="#">Artist</a>
+										</div>
+										<div class="queue-song-time">0:00</div>
+									</div>
+								</div>
+								<br class="queue-song-clear" />
+							</div></li>
+						</ul>
+					</div>
+					<div id="queue-statusbar" class="statusbar">
+						<div id="queue-song-count">0 songs</div>
+						<div id="queue-fullscreen" class="statusbar-right"><a href="javascript:fullscreen()"><img src="www-data/images/ui2/fullscreen.png"/></a></div>
+						<div id="queue-length" class="statusbar-right">0:00</div>
+					</div>
+				</div>
+			</div>
+			<div id="playlist-panel" class="panel">
+				<div id="playlist-toolbar" class="toolbar">
+					<ul id="playlist-toolbar-list" class="toolbar-list">
+						<li id="playlist-select"><select id="playlist-select-form" class="input-split-button input-split-right"></select></li>
+						<li id="playlist-play" class="toolbar-right"><a href="javascript:playlistPlay()">Play</a></li>
+						<li id="playlist-delete" class="toolbar-right"><a href="javascript:playlistDelete()">Delete</a></li>
+						<li id="playlist-new" class="toolbar-right"><a href="javascript:playlistNew()">New</a></li>
+					</ul>
+				</div>
+				<div id="playlist-statusbar" class="statusbar">
+					<div id="playlist-status">Editing playlist.</div>
+					<div id="playlist-length" class="statusbar-right">0:00</div>
+				</div>
+				<div id="playlist-container" class="container">
+					<ul id="playlist-list">
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="fullscreen-view">
+			<div id="fullscreen-center">
+				<div id="fullscreen-album-art">
+					<img id="fullscreen-album-art-img" width="300" src="www-data/icons/big_a.png" />
+				</div>
+				<div id="fullscreen-info">
+					<div id="fullscreen-spacer"></div>
+					<div id="fullscreen-spacer-h"></div>
+					<span class="fullscreen-span" id="fullscreen-title">Title</span><br />
+					<span class="fullscreen-extra">by</span>
+					<span class="fullscreen-span" id="fullscreen-artist">Artist</span><br />
+					<span class="fullscreen-extra">from</span>
+					<span class="fullscreen-span" id="fullscreen-album">Album</span><br />
+				</div>
+			</div>
+			<div id="fullscreen-controls">
+				<div id="fullscreen-control-spacing">&nbsp;</div>
+				<a href="javascript:controlStop()" id="fs-controls-stop" class="control-button"><img src="www-data/images/ui2/buttons/stop.png" /></a>
+				<a href="javascript:controlPlayPause()" id="fs-controls-play-pause" class="control-button"><img src="www-data/images/ui2/buttons/play.png" /></a>
+				<a href="javascript:controlNext()" id="fs-controls-next" class="control-button"><img src="www-data/images/ui2/buttons/next.png" /></a>
+				<a href="javascript:controlVolumeDown()" id="fs-controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.png" /></a>
+				<a href="#" id="fs-controls-volume" class="control-button disp-volume">-</a>
+				<a href="javascript:controlVolumeUp()" id="fs-controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.png" /></a>
+			</div>
+			<div id="fullscreen-close">
+				<a href="javascript:unfullscreen()"><img src="www-data/images/ui2/fullscreen.png" ?></a>
+			</div>
+		</div>
+		<div id="message-box">
+			<div id="message-box-inner">
+				<h1 id="message-box-title">Title</h1>
+				<span id="message-box-message">Content</span>
+			</div>
+			<div id="message-box-close">
+				<a class="control-button button-link" href="javascript:closeMessageBox();">Okay</a>
+			</div>
+		</div>
+	</body>
+</html>
