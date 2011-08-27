@@ -908,6 +908,13 @@ function songDetails(id) {
 			} else {
 				$("#song-details-voters").html("");
 			}
+			if (json.who.indexOf(currentUser) != -1) {
+				$("#song-details-vote").attr("href","javascript:unvoteSong(" + id + ")");
+				$("#song-details-vote").html("unvote");
+			} else {
+				$("#song-details-vote").attr("href","javascript:voteSong(" + id + ")");
+				$("#song-details-vote").html("vote");
+			}
 		}
 	);
 }

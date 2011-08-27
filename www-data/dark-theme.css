@@ -367,6 +367,7 @@ a:hover {
 				color-stop(0.5, rgba(40, 40, 40, 0.9)),
 				color-stop(1, rgba(20, 20, 20, 0.9)));
 	text-shadow: 1px 1px 1px #333;
+	text-decoration: none;
 }
 .control-button:active {
 	background: #000;
