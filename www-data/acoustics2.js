@@ -90,21 +90,22 @@ $(document).ready(function() {
 				if (currentId != _myid) return;
 				var output = Array();
 				var replacement = "<b>$1</b>";
-				var delimiter = " | ";
+				var link = "<a onClick='quickComplete(this);'>";
+				var link_tail = "</a>";
 				var regex = new RegExp( '(' + search_value + ')', 'gi' );
 				for (id in data) {
 					var result = data[id];
 					if (result.artist.toLowerCase().indexOf(search_value) != -1) {
-						output.push(result.artist.replace(regex, "<b>$1</b>"));
+						output.push(link + result.artist.replace(regex, "<b>$1</b>") + link_tail);
 					}
 					if (result.album.toLowerCase().indexOf(search_value) != -1) {
-						output.push(result.album.replace(regex, "<b>$1</b>"));
+						output.push(link + result.album.replace(regex, "<b>$1</b>") + link_tail);
 					}
 					if (result.title.toLowerCase().indexOf(search_value) != -1) {
-						output.push(result.title.replace(regex, "<b>$1</b>"));
+						output.push(link + result.title.replace(regex, "<b>$1</b>") + link_tail);
 					}
 				}
-				$("#search-results-suggestions").html(dedupArray(output).join(" | "));
+				$("#search-results-suggestions").html(dedupArray(output).join(" "));
 			}
 		);
 	});
@@ -164,6 +165,12 @@ $(document).ready(function() {
 	$("#manage-version").html("Web Client v." + acoustics_version);
 
 });
+
+function quickComplete(block) {
+	var out = block.textContent;
+	$("#search-box").val(out);
+	formSearch();
+}
 
 
 function insertAdvancedSearch(id) {

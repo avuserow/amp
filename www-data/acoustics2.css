@@ -761,12 +761,6 @@ a img {
 }
 
 #search-results-suggestions {
-	font-size: 10px;
-	text-overflow: ellipsis;
-	text-overflow-mode: ellipsis;
 	height: 24px;
-	width: 200px;
-	z-index: 1;
 	white-space: nowrap;
-	padding-top: 4px;
 }
