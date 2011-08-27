@@ -112,6 +112,7 @@ a img {
 	left: 0px;
 	right: 0px;
 	height: 32px;
+	overflow: hidden;
 }
 	.toolbar ul li {
 		display: block;
@@ -763,4 +764,5 @@ a img {
 #search-results-suggestions {
 	height: 24px;
 	white-space: nowrap;
+	width: 40px;
 }
