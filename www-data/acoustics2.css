@@ -755,4 +755,5 @@ a img {
 	width: 200px;
 	z-index: 1;
 	white-space: nowrap;
+	padding-top: 4px;
 }
