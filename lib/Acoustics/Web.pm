@@ -561,6 +561,24 @@ sub _search_or_select {
 	return [], \@results;
 }
 
+=head2 quicksearch
+
+Quick search
+
+=cut
+
+sub quick_search {
+	my $self  = shift;
+	my $what  = $self->cgi->param('q') || '';
+
+	my $sth = $self->acoustics->db->prepare('SELECT title, album, artist FROM songs WHERE album LIKE ? OR artist LIKE ? OR title LIKE ? LIMIT 10');
+	$sth->execute("%$what%", "%$what%", "%$what%");
+	my @results = @{$sth->fetchall_arrayref({})};
+
+	return [], \@results;
+}
+
+
 =head2 _newsearch
 
 Takes in a JSON structure and searches for things. Examples:
