@@ -24,6 +24,25 @@ var editingPlaylist = false;
 var playlistLocked = false;
 var playlistsReady = false;
 var currentPlaylist = 0;
+var currentId = 0;
+
+function dedupArray(array)
+{
+	array.sort();
+	var cnt = array.length - 1;
+	var i=0;
+	var keepers = new Array();
+	while(i <= cnt){
+		if(array[i] != array[i + 1]){
+			keepers.push(array[i]);
+			i++;
+		}else{
+			array.shift();
+		}
+		cnt = array.length - 1;
+	}
+	return keepers;
+}
 
 $(document).ready(function() {
 	unfullscreen();
@@ -55,6 +74,39 @@ $(document).ready(function() {
 		start: function() { playlistLocked = true; },
 		stop: function() { playlistLocked = false; },
 		update: updatePlaylistOrder
+	});
+
+	$("#search-box").keyup(function () {
+		var search_value = $("#search-box").val().toLowerCase();
+		currentId += 1;
+		var _myid = currentId;
+		if (search_value.length < 3) { 
+			$("#search-results-suggestions").html("");
+			return;
+		}
+		$.getJSON(
+			jsonSource + '?mode=quick_search;q=' + search_value,
+			function (data) {
+				if (currentId != _myid) return;
+				var output = Array();
+				var replacement = "<b>$1</b>";
+				var delimiter = " | ";
+				var regex = new RegExp( '(' + search_value + ')', 'gi' );
+				for (id in data) {
+					var result = data[id];
+					if (result.artist.toLowerCase().indexOf(search_value) != -1) {
+						output.push(result.artist.replace(regex, "<b>$1</b>"));
+					}
+					if (result.album.toLowerCase().indexOf(search_value) != -1) {
+						output.push(result.album.replace(regex, "<b>$1</b>"));
+					}
+					if (result.title.toLowerCase().indexOf(search_value) != -1) {
+						output.push(result.title.replace(regex, "<b>$1</b>"));
+					}
+				}
+				$("#search-results-suggestions").html(dedupArray(output).join(" | "));
+			}
+		);
 	});
 
 	// templating
@@ -448,8 +500,6 @@ function fillResultTable(json) {
 	} else {
 		$("#search-results-count").html(json.length +" songs");
 	}
-	/* iOS scroll fix */
-	new iScroll('search-results-table');
 }
 
 function updateQueueOrder(event, ui) {
@@ -801,6 +851,7 @@ function controlVolumeDown() {
 function controlVolumeUp() {
 	if (volume != undefined) {
 		volume += 10;
+		if (volume > 100) { volume = 100; }
 		$.getJSON(
 			jsonSource + '?mode=volume;value=' + volume,
 			function (data) {handlePlayerStateRequest(data);}

@@ -465,6 +465,7 @@ a img {
 		#queue-list {
 			padding: 0;
 			margin: 0;
+			-webkit-overflow-scrolling: touch;
 		}
 
 		#playlist-list {
@@ -744,4 +745,15 @@ a img {
 
 #queue-fullscreen a img {
 	vertical-align: text-top;
+}
+
+#search-results-suggestions {
+	font-size: 10px;
+	text-overflow: ellipsis;
+	text-overflow-mode: ellipsis;
+	height: 24px;
+	width: 200px;
+	z-index: 1;
+	white-space: nowrap;
+	padding-top: 4px;
 }
