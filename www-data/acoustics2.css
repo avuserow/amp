@@ -657,6 +657,19 @@ a img {
 			-moz-border-radius-topright: 15px;
 			border-top-right-radius: 15px;
 		}
+	#fullscreen-progress-container {
+		opacity: 0.3;
+		position: absolute;
+		bottom: 4px;
+		height: 20px;
+		left: 50px;
+		right: 50px;
+		margin-left: 10px;
+	}
+	#fullscreen-progress {
+		margin-top: 4px;
+		height: 10px;
+	}
 
 .mini-album-art {
 	height: 16px;

@@ -365,7 +365,8 @@ function startPlayingTimer() {
 function updatePlayingTime() {
 	if (elapsedTime < totalTime) {
 		$('#now-playing-time').html(readableTime(++elapsedTime));
-		$('#now-playing-progress').progressbar({value: Math.floor(100 * (elapsedTime/totalTime))});
+		$('#now-playing-progress').progressbar({value: 100 * (elapsedTime/totalTime)});
+		$('#fullscreen-progress').progressbar({value: 100 * (elapsedTime/totalTime)});
 	} else if (elapsedTime >= totalTime) {
 		playerStateRequest();
 	}
@@ -721,7 +722,8 @@ function handlePlayerStateRequest(json) {
 				jsencode(nowPlaying.album) + "\",\"" + jsencode(nowPlaying.title) + "\")'>" + 
 				"<img id='now-playing-album-art-img' src='" + getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,64) + "' width='64'/></a>");
 		$("#now-playing-album-art-img").reflect({height: 16});
-		$("#now-playing-progress").progressbar({value: Math.floor(100 * (elapsedTime/totalTime))});
+		$("#now-playing-progress").progressbar({value: 100 * (elapsedTime/totalTime)});
+		$("#fullscreen-progress").progressbar({value: 100 * (elapsedTime/totalTime)});
 		/* Full screen view */
 		$("#fullscreen-title").html(nowPlaying.title);
 		$("#fullscreen-artist").html(nowPlaying.artist);
