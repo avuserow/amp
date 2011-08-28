@@ -26,16 +26,14 @@ a img {
 	#header-bar-logo {
 		float: left;
 		padding-left: 10px;
-		width: 100px;
-		vertical-align: center;
-		text-align: center;
+		width: 200px;
+		vertical-align: bottom;
+		height: 100%;
+		padding-top: 4px;
 	}
-		#header-bar-logo img {
-			height: 40px;
-		}
 	#header-bar-spacer {
 		float: left;
-		width: 20px;
+		width: 10px;
 	}
 	#header-bar-menu {
 		float: left;
@@ -188,6 +186,7 @@ a img {
 			text-align: center;
 			line-height: 40px;
 			font-size: 20px;
+			padding-top: 20px;
 		}
 		#info-about-container {
 			position: absolute;
@@ -257,7 +256,6 @@ a img {
 			padding-bottom: 1px;
 			padding-left: 2px;
 			padding-right: 2px;
-			border-right: 0;
 		}
 		.input-split-dropdown {
 			margin-right: 0px;
@@ -266,7 +264,6 @@ a img {
 			padding-bottom: 1px;
 			padding-left: 2px;
 			padding-right: 2px;
-			border-right: 0;
 		}
 		.input-split-dropdown input {
 			display: none;

@@ -1129,7 +1129,7 @@ function clearFullscreen() {
 	$("#fullscreen-artist").html("-");
 	$("#fullscreen-album").html("-");
 	$("#fullscreen-album-art").empty();
-	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons/big_a.png\" />");
+	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons/cd_case.png\" />");
 	if (!$.browser.webkit) {
 		$("#fullscreen-album-art-img").reflect({height: 100});
 	}

@@ -189,8 +189,8 @@ a:hover {
 	-moz-border-radius-bottomright: 6px;
 	border-top-right-radius: 6px;
 	border-bottom-right-radius: 6px;
-	border: 1px solid #000;
 	background-color: #888;
+	border: 1px solid #000;
 }
 .input-split-button {
 	-webkit-border-top-left-radius: 6px;
@@ -201,10 +201,12 @@ a:hover {
 	border-bottom-left-radius: 6px;
 	border: 1px solid #000;
 	background-color: #777;
+	border-right: 0;
 }
 .input-split-dropdown {
 	border: 1px solid #000;
 	background-color: #777;
+	border-right: 0;
 }
 .input-split-dropdown input:checked + label.expanded {
 	border: 1px solid #999;
@@ -317,7 +319,10 @@ a:hover {
 	color: #fff;
 }
 .queue-song-voted {
+ /*
 	background-color: #524057 !important;
+	*/
+ background-color: #006cae !important;
 }
 .queue-song-handle {
 	background: url(images/ui2/handle.png);
