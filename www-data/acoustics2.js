@@ -522,6 +522,31 @@ function updateQueueOrder(event, ui) {
 	);
 }
 
+/*
+ * Jonas Raoni Soares Silva
+ * http://jsfromhell.com/array/shuffle [v1.0]
+ */
+function shuffleArray(o) { //v1.0
+	for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+		return o;
+}
+
+function shuffleQueue() {
+	var _queue = Array();
+	$("#queue-list .queue-song").each(function(index) {
+		_queue.push($(".queue-song-id",this).text())
+	});
+	_queue = shuffleArray(_queue);
+	var block = "";
+	for (i in _queue) {
+		block += "song_id=" + _queue[i] + ";";
+	}
+	$.getJSON(
+		jsonSource + '?mode=reorder_queue;' + block,
+		function (data) {handlePlayerStateRequest(data);}
+	);
+}
+
 function voteSong(song_id) {
 	if (editingPlaylist) {
 		$.getJSON(
@@ -1129,7 +1154,7 @@ function clearFullscreen() {
 	$("#fullscreen-artist").html("-");
 	$("#fullscreen-album").html("-");
 	$("#fullscreen-album-art").empty();
-	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons/cd_case.png\" />");
+	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons;/cd_case.png\" />");
 	if (!$.browser.webkit) {
 		$("#fullscreen-album-art-img").reflect({height: 100});
 	}
