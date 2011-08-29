@@ -90,7 +90,7 @@ $(document).ready(function() {
 				if (currentId != _myid) return;
 				var output = Array();
 				var replacement = "<b>$1</b>";
-				var link = "<a onClick='quickComplete(this);'>";
+				var link = "<a href='#' onClick='quickComplete(this); return false;'>";
 				var link_tail = "</a>";
 				var regex = new RegExp( '(' + search_value + ')', 'gi' );
 				for (id in data) {
@@ -795,6 +795,7 @@ function handlePlayerStateRequest(json) {
 		// the queue
 		$("#queue-list").empty();
 		var total_length = 0;
+		var userList = Array();
 		for (var i in json.playlist) {
 			var song = json.playlist[i];
 			var entry = templates.queueSong.clone();
@@ -818,10 +819,20 @@ function handlePlayerStateRequest(json) {
 						"javascript:voteSong("+ song.song_id +")");
 				$(".queue-song-unvote-link", entry).remove();
 			}
+			for (i in song.who) {
+				if ($.inArray(song.who[i],userList) < 0) {
+					userList.push(song.who[i]);
+				}
+			}
 			$(".queue-song-vote-count", entry).html(song.who.length);
 			total_length += parseInt(song.length);
 			entry.appendTo("#queue-list");
 		}
+		var userList_html = Array();
+		for (var i in userList) {
+			userList_html.push("<a href='#' class='control-button button-link' onClick='managePurgeUser(this.textContent); return false;'>" + userList[i] + "</a>");
+		}
+		$("#manage-purge").html(userList_html.join("<br />"));
 		var length = $("#queue-list").contents().length;
 		if (length == 1) {
 			$("#queue-song-count").html("One song");
@@ -1154,7 +1165,7 @@ function clearFullscreen() {
 	$("#fullscreen-artist").html("-");
 	$("#fullscreen-album").html("-");
 	$("#fullscreen-album-art").empty();
-	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons;/cd_case.png\" />");
+	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons/cd_case.png\" />");
 	if (!$.browser.webkit) {
 		$("#fullscreen-album-art-img").reflect({height: 100});
 	}

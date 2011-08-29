@@ -427,3 +427,16 @@ a:hover {
 	border: 1px solid #fff;
 	background: #fff !important;
 }
+
+#manage-container {
+	padding-left: 10px;
+}
+
+h1 {
+	font-size: 16px;
+	font-weight: bold;
+	color: #008cde;
+	border-bottom: 1px solid #008cde;
+	padding-bottom: 2px;
+	margin-bottom: 2px;
+}
