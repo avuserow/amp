@@ -1,3 +1,5 @@
+/* vim:tabstop=4 shiftwidth=4 noexpandtab
+ */
 /* Configuration data */
 var acoustics_version = "1.99-beta";
 
@@ -752,6 +754,11 @@ function handlePlayerStateRequest(json) {
 		} else {
 			$("#now-playing-time", nowPlayingPanel).html(readableTime(totalTime));
 		}
+		if (nowPlaying.who.length == 0) {
+			$("#now-playing-shuffle").show();
+		} else {
+			$("#now-playing-shuffle").hide();
+		}
 		$("#nothing-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-info").replaceWith(nowPlayingPanel);
 		$("#now-playing-album-art").empty();
@@ -790,6 +797,7 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-panel").replaceWith(nowPlayingPanel);
 		$("#nothing-playing-info").show();
 		clearFullscreen();
+		$("#now-playing-shuffle").hide();
 		jQuery.favicon("www-data/images/ui2/favicon.ico");
 		document.title = "Acoustics";
 		totalTime = -1;
@@ -947,7 +955,7 @@ function songDetails(id) {
 			if (json.who.length > 0) {
 				$("#song-details-voters").html(htmlForVoters(json.who));
 			} else {
-				$("#song-details-voters").html("");
+				$("#song-detaititlevoters").html("");
 			}
 			if (json.who.indexOf(currentUser) != -1) {
 				$("#song-details-vote").attr("href","javascript:unvoteSong(" + id + ")");
@@ -1257,6 +1265,12 @@ function managePurgeUser(user) {
 	$.getJSON(
 		jsonSource + '?mode=purge;who=' + user,
 		function(data) { handlePlayerStateRequest(data); }
+	);
+}
+
+function manageScanDirectory() {
+	$.getJSON(
+		jsonSource + '?mode=scan;path=' + uriEncode($("#manage-scan-directory").val())
 	);
 }
 

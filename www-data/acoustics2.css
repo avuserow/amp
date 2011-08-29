@@ -285,6 +285,9 @@ a img {
 			padding-left: 2px;
 			padding-right: 2px;
 		}
+		.input-split-circular {
+			border-right: 1px solid #000 !important;
+		}
 		#search-results-advanced-container {
 			display: none;
 		}
@@ -762,4 +765,15 @@ a img {
 	height: 24px;
 	white-space: nowrap;
 	width: 40px;
+}
+
+#manage-scan-directory {
+	width: 400px;
+}
+
+#now-playing-shuffle{ 
+	position: absolute;
+	right: 0px;
+	width: 40px;
+	bottom: 20px;
 }

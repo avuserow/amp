@@ -156,7 +156,7 @@
 			<div id="info" class="panel panel-left">
 				<div id="info-results-toolbar" class="toolbar">
 					<ul id="info-toolbar-list" class="toolbar-list">
-							<li id="info-panel-title"><span>System info</span></li>
+						<li id="info-panel-title"><span>System info</span></li>
 					</ul>
 				</div>
 				<div id="info-container" class="container">
@@ -180,7 +180,7 @@
 					<ul id="album-search-toolbar-list" class="toolbar-list">
 						<li>
 						<form onSubmit="return doAlbumSearch()">
-							<input id="album-search-box" class="input-split-box input-split-button" placeholder="Search" type="search" />
+							<input id="album-search-box" class="input-split-box input-split-button input-split-circular" placeholder="Search" type="search" />
 						</form>
 						</li>
 						<li id="cf-close" class="toolbar-right"><a href="javascript:toggleCF()">Flow</a></li>
@@ -222,6 +222,11 @@
 					<div id="manage-purge"></div>
 					<h1>Manage Server</h1>
 					Manage the server.
+					<div id="manage-scan">
+						<form onSubmit="return manageScanDirectory()">
+							Scan a directory: <input id="manage-scan-directory" class="input-split-box input-split-circular input-split-button" />
+						</form>
+					</div>
 				</div>
 				<div id="manage-statusbar" class="statusbar">
 					<div id="manage-status">You can use this page to manage users and reset the player.</div>
@@ -242,6 +247,7 @@
 						<div id="now-playing-album"><a href="#">No Album</a></div>
 						<div id="now-playing-times"><span id="now-playing-time">0:00</span> / <span id="now-playing-total">0:00</span></div>
 					</div>
+						<div id="now-playing-shuffle"><img src="www-data/images/ui2/shuffle.png" title="Random Mode" /></div>
 					<div id="now-playing-progress-container">
 						<div id="now-playing-progress">
 						</div>
