@@ -596,6 +596,21 @@ sub top_voted {
 
 }
 
+=head2 scan
+
+Scan a directory
+
+=cut
+
+sub scan {
+	my $self  = shift;
+	my $path  = $self->cgi->param('path') || '';
+	return access_denied("Access Denied") unless $self->is_admin;
+	INFO("request to scan " . $path);
+	my $output = `bin/acoustics scan '$path'`;
+	return [], $output;
+}
+
 
 =head2 _newsearch
 

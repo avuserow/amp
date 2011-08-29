@@ -1269,8 +1269,12 @@ function managePurgeUser(user) {
 }
 
 function manageScanDirectory() {
+	var path = $("#manage-scan-directory").val();
 	$.getJSON(
-		jsonSource + '?mode=scan;path=' + uriEncode($("#manage-scan-directory").val())
+		jsonSource + '?mode=scan;path=' + path,
+		function(data) {
+			showMessage("Scan Complete","Directory scanning of '" + path + "' has finished.");
+		}
 	);
 }
 

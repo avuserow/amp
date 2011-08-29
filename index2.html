@@ -223,7 +223,7 @@
 					<h1>Manage Server</h1>
 					Manage the server.
 					<div id="manage-scan">
-						<form onSubmit="return manageScanDirectory()">
+						<form onSubmit="manageScanDirectory(); return false;">
 							Scan a directory: <input id="manage-scan-directory" class="input-split-box input-split-circular input-split-button" />
 						</form>
 					</div>
