@@ -431,6 +431,10 @@ a:hover {
 #manage-container {
 	padding-left: 10px;
 }
+#manage-container a {
+	color: #fff;
+	padding: 2px;
+}
 
 h1 {
 	font-size: 16px;
