@@ -561,7 +561,7 @@ sub _search_or_select {
 	return [], \@results;
 }
 
-=head2 quicksearch
+=head2 quick_search
 
 Quick search
 
@@ -576,6 +576,24 @@ sub quick_search {
 	my @results = @{$sth->fetchall_arrayref({})};
 
 	return [], \@results;
+}
+
+=head2 top_voted
+
+Top voted songs.
+
+=cut
+
+sub top_voted {
+	my $self  = shift;
+	my $limit = $self->cgi->param('limit') || 10;
+
+	my $sth = $self->acoustics->db->prepare('SELECT title, history.song_id, COUNT(history.song_id) FROM history, songs WHERE songs.song_id = history.song_id GROUP BY history.song_id ORDER BY COUNT(history.song_id) DESC LIMIT ?');
+	$sth->execute($limit);
+	my @results = @{$sth->fetchall_arrayref({})};
+
+	return [], \@results;
+
 }
 
 

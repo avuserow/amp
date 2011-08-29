@@ -395,6 +395,11 @@ function doStats(who) {
 			$("#info-top-artist").html(json.top_artists[0].artist);
 		}
 	);
+	$.getJSON(jsonSource + "?mode=top_voted;limit=1",
+		function (json) {
+			$("#info-top-voted").html(json[0].title);
+		}
+	);
 }
 
 function doSearch(field, value) {
