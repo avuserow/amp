@@ -746,6 +746,7 @@ function handlePlayerStateRequest(json) {
 
 			}
 		}
+		$("#header-bar-menu-players").html("[" + json.selected_player + "]");
 	} else {
 		$("#header-bar-menu-players").remove();
 	}
