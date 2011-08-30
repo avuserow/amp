@@ -86,10 +86,24 @@ a img {
 				padding-top: 0px;
 			}
 			.header-bar-menu-dropdown li a {
+				display: inline !important;
 				background: none !important;
 				height: 40px;
 				padding-bottom: 0px;
 				outline: none;
+				padding-right: 0px !important;
+				padding-left: 0px !important;
+			}
+			.header-bar-menu-dropdown li a img {
+				opacity: 0.6;
+				vertical-align: middle;
+			}
+			.header-bar-menu-dropdown li a img:hover {
+				opacity: 1.0;
+			}
+			.header-bar-menu-title {
+				display: block !important;
+				padding-top: 12px !important;
 			}
 
 	#header-bar-user {

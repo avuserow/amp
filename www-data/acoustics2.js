@@ -520,7 +520,7 @@ function fillResultTable(json) {
 function updateQueueOrder(event, ui) {
 	$("#search-results-status").html("The queue was reordered.");
 	var block = "";
-	$("#queue-list .queue-song").each(function(index) {
+	$("#queue-list li").each(function(index) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
 	$.getJSON(
@@ -540,7 +540,7 @@ function shuffleArray(o) { //v1.0
 
 function shuffleQueue() {
 	var _queue = Array();
-	$("#queue-list .queue-song").each(function(index) {
+	$("#queue-list li").each(function(index) {
 		_queue.push($(".queue-song-id",this).text())
 	});
 	_queue = shuffleArray(_queue);
@@ -627,6 +627,34 @@ function changePlayer(player_id) {
 	);
 }
 
+function migrateToPlayer(player_id) {
+	block = "";
+	$("#queue-list li").each(function(index) {
+		if ($(".queue-song-id",this).hasClass("queue-song-voted")) {
+			block += "song_id=" + $(".queue-song-id",this).text() + ";";
+		}
+	});
+	var command = "?mode=unvote;";
+	$.getJSON(
+		jsonSource + command + block,
+		function (data) {
+			$.getJSON(
+				jsonSource + "?mode=change_player;player_id=" + player_id,
+				function(data) {
+					command = "?mode=vote;" + block;
+					$.getJSON(
+						jsonSource + command,
+						function(data) {
+							handlePlayerStateRequest(data);
+						}
+					);
+				}
+			);
+		}
+	);
+
+}
+
 function voteAll() {
 	var block = "";
 	$("#search-results-table tbody tr").each(function(index) {
@@ -669,7 +697,7 @@ function voteOne() {
 
 function clearQueue() {
 	block = "";
-	$("#queue-list .queue-song").each(function(index) {
+	$("#queue-list li").each(function(index) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
 	var command = "?mode=unvote;";
@@ -709,12 +737,12 @@ function handlePlayerStateRequest(json) {
 	// players
 	if (json.players.length > 1) {
 		$("#header-bar-menu-players-dropdown li").remove();
-		$("#header-bar-menu-players-dropdown").append("<li><a href='#'>Players</a></li>");
+		$("#header-bar-menu-players-dropdown").append("<li class='header-bar-menu-title'>Players</li>");
 		for (i in json.players) {
 			if (json.players[i] == json.selected_player) {
-				$("#header-bar-menu-players-dropdown").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></b></li>\n");
+				$("#header-bar-menu-players-dropdown").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\" style='color: #FFF;'>" + json.players[i] + "</a></b></li>\n");
 			} else {
-				$("#header-bar-menu-players-dropdown").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a></li>\n");
+				$("#header-bar-menu-players-dropdown").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a> <a href=\"javascript:migrateToPlayer('" + json.players[i] + "');\"><img src='www-data/images/ui2/arrow-left.png'/></a></li>\n");
 
 			}
 		}
