@@ -324,6 +324,17 @@ a:hover {
 	*/
  background-color: #006cae !important;
 }
+.queue-song-vote-button a { opacity: 0.6; }
+.queue-song-vote-button a:hover { opacity: 1.0; }
+.queue-song-move-up a { opacity: 0.1; }
+.queue-song-move-up.queue-song-voted a { opacity: 0.6; }
+.queue-song-move-up a:hover { opacity: 1.0; }
+.queue-song-move-down a { opacity: 0.1; }
+.queue-song-move-down.queue-song-voted a { opacity: 0.6; }
+.queue-song-move-down a:hover { opacity: 1.0; }
+.queue-song-vote-count {
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+}
 .queue-song-handle {
 	background: url(images/ui2/handle.png);
 }
