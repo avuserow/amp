@@ -527,6 +527,9 @@ a img {
 					width: 20px;
 					float: left;
 					text-align: center;
+					padding: 0px;
+					height: 20px;
+					overflow: hidden;
 				}
 				.queue-song-vote-count {
 					float: left;
@@ -546,7 +549,6 @@ a img {
 				}
 				.queue-song-time {
 					float: right;
-					overflow: hidden;
 					font-size: 12px;
 					text-align: right;
 				}
