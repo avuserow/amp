@@ -200,36 +200,40 @@ function toggleQueueExplicit() {
 }
 
 function showQueue() {
+	var speed = 400;
+	if (_firstLoad) speed = 0;
 	$("#right-panel").animate({
 		right: '0'
-	}, 400);
+	}, speed);
 	$(".panel-left").animate({
 		right: '300'
-	}, 400, function() {
+	}, speed, function() {
 		if (ajax_cf) {
 			ajax_cf.resize();
 		}
 	});
 	$("#toggle-right-panel").animate({
 		right: '300'
-	}, 400);
+	}, speed);
 	queueHidden = false;
 }
 
 function hideQueue() {
+	var speed = 400;
+	if (_firstLoad) speed = 0;
 	$("#right-panel").animate({
 		right: '-300'
-	}, 400);
+	}, speed);
 	$(".panel-left").animate({
 		right: '0'
-	}, 400, function() {
+	}, speed, function() {
 		if (ajax_cf) {
 			ajax_cf.resize();
 		}
 	});
 	$("#toggle-right-panel").animate({
 		right: '0'
-	}, 400);
+	}, speed);
 	queueHidden = true;
 }
 
