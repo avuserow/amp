@@ -27,6 +27,7 @@ var playlistLocked = false;
 var playlistsReady = false;
 var currentPlaylist = 0;
 var currentId = 0;
+var _firstLoad = true;
 
 function dedupArray(array)
 {
@@ -249,7 +250,9 @@ function restoreQueue() {
 }
 
 function showPlaylist() {
-	$("#playlist-panel").fadeIn(600);
+	var speed = 600;
+	if (_firstLoad) speed = 0;
+	$("#playlist-panel").fadeIn(speed);
 	showQueue();
 	/* Clear the playlist list */
 	$("#playlist-select-form").empty();
@@ -268,7 +271,9 @@ function showPlaylist() {
 }
 
 function hidePlaylist() {
-	$("#playlist-panel").fadeOut(600);
+	var speed = 600;
+	if (_firstLoad) speed = 0;
+	$("#playlist-panel").fadeOut(speed);
 }
 
 function updatePlaylistOrder(event, ui) {
@@ -1173,16 +1178,21 @@ function pageLoadChange(hash) {
 			hidePlaylist();
 		}
 	}
+	_firstLoad = false;
 }
 
 function setLeftPanel(panel) {
-	$(".panel-left").not("#"+panel).fadeOut(600);
-	$("#"+panel).fadeIn(600);
+	var speed = 600;
+	if (_firstLoad) speed = 0;
+	$(".panel-left").not("#"+panel).fadeOut(speed);
+	$("#"+panel).fadeIn(speed);
 }
 
 function setMenuItem(item) {
-	$("#header-bar-menu-list li a").not("#header-bar-menu-"+item).removeClass("header-bar-menu-selected", 100);
-	$("#header-bar-menu-" + item).addClass("header-bar-menu-selected", 100);
+	var speed = 100;
+	if (_firstLoad) speed = 0;
+	$("#header-bar-menu-list li a").not("#header-bar-menu-"+item).removeClass("header-bar-menu-selected", speed);
+	$("#header-bar-menu-" + item).addClass("header-bar-menu-selected", speed);
 }
 
 function fixArt(artist, album, title) {
