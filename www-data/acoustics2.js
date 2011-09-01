@@ -29,6 +29,18 @@ var currentPlaylist = 0;
 var currentId = 0;
 var _firstLoad = true;
 
+
+var theme = 0;
+var themes = ["dark","light","none"];
+
+function toggleTheme() {
+	theme++;
+	if (theme == themes.length) {
+		theme = 0;
+	}
+	$("#theme").attr("href","www-data/" + themes[theme] + "-theme.css");
+}
+
 function dedupArray(array)
 {
 	array.sort();
