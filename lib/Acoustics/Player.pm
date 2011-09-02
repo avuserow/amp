@@ -18,7 +18,13 @@ pause - pause if supported
 =cut
 
 use constant COMPONENT => 'player';
-
+$SIG{__DIE__} = sub {
+	# we're toast! :(
+	require Carp;
+	open my $fh, '>>', '/tmp/acoustics-panic.log';
+	print $fh Carp::longmess(@_);
+	close $fh;
+};
 requires 'start';
 around 'start' => sub {
 	my $method = shift;
@@ -84,7 +90,8 @@ sub disassociate {
 	open STDIN, '<', '/dev/null' or die "Can't reopen STDIN as /dev/null: $!";
 	open STDOUT, '>', '/dev/null'
 		or die "Can't reopen STDOUT as /dev/null: $!";
-	open STDERR, '>&', 'STDOUT' or die "Can't dup STDERR to STDOUT: $!";
+	#open STDERR, '>&', 'STDOUT' or die "Can't dup STDERR to STDOUT: $!";
+	open STDERR, '>>', '/tmp/acoustics-panic.log' or die "Couldn't reopen STDERR: $!";
 	return $acoustics;
 }
 
