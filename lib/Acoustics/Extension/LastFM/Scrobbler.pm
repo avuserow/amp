@@ -8,6 +8,12 @@ use Data::Dumper;
 use JSON::DWIW ();
 use Try::Tiny;
 
+sub init_db {
+	# TODO: move to phrasebook
+	my $acoustics = shift;
+	$acoustics->db->do('CREATE TABLE lastfm_scrobblers(who VARCHAR(256) UNIQUE, session_key VARCHAR(256) NOT NULL, lastfm_name VARCHAR(256) NOT NULL);');
+}
+
 sub handshake {
 	my $acoustics = shift;
 
