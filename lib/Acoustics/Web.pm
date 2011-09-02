@@ -570,9 +570,10 @@ Quick search
 sub quick_search {
 	my $self  = shift;
 	my $what  = $self->cgi->param('q') || '';
+	my $limit = $self->cgi->param('limit') || 10;
 
-	my $sth = $self->acoustics->db->prepare('SELECT title, album, artist FROM songs WHERE album LIKE ? OR artist LIKE ? OR title LIKE ? GROUP BY album LIMIT 10');
-	$sth->execute("%$what%", "%$what%", "%$what%");
+	my $sth = $self->acoustics->db->prepare('SELECT title, album, artist FROM songs WHERE album LIKE ? OR artist LIKE ? OR title LIKE ? GROUP BY album LIMIT ?');
+	$sth->execute("%$what%", "%$what%", "%$what%", $limit);
 	my @results = @{$sth->fetchall_arrayref({})};
 
 	return [], \@results;
