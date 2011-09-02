@@ -27,6 +27,19 @@ var playlistLocked = false;
 var playlistsReady = false;
 var currentPlaylist = 0;
 var currentId = 0;
+var _firstLoad = true;
+
+
+var theme = 0;
+var themes = ["dark","light","none"];
+
+function toggleTheme() {
+	theme++;
+	if (theme == themes.length) {
+		theme = 0;
+	}
+	$("#theme").attr("href","www-data/" + themes[theme] + "-theme.css");
+}
 
 function dedupArray(array)
 {
@@ -199,36 +212,40 @@ function toggleQueueExplicit() {
 }
 
 function showQueue() {
+	var speed = 400;
+	if (_firstLoad) speed = 0;
 	$("#right-panel").animate({
 		right: '0'
-	}, 400);
+	}, speed);
 	$(".panel-left").animate({
 		right: '300'
-	}, 400, function() {
+	}, speed, function() {
 		if (ajax_cf) {
 			ajax_cf.resize();
 		}
 	});
 	$("#toggle-right-panel").animate({
 		right: '300'
-	}, 400);
+	}, speed);
 	queueHidden = false;
 }
 
 function hideQueue() {
+	var speed = 400;
+	if (_firstLoad) speed = 0;
 	$("#right-panel").animate({
 		right: '-300'
-	}, 400);
+	}, speed);
 	$(".panel-left").animate({
 		right: '0'
-	}, 400, function() {
+	}, speed, function() {
 		if (ajax_cf) {
 			ajax_cf.resize();
 		}
 	});
 	$("#toggle-right-panel").animate({
 		right: '0'
-	}, 400);
+	}, speed);
 	queueHidden = true;
 }
 
@@ -249,7 +266,9 @@ function restoreQueue() {
 }
 
 function showPlaylist() {
-	$("#playlist-panel").fadeIn(600);
+	var speed = 600;
+	if (_firstLoad) speed = 0;
+	$("#playlist-panel").fadeIn(speed);
 	showQueue();
 	/* Clear the playlist list */
 	$("#playlist-select-form").empty();
@@ -268,7 +287,9 @@ function showPlaylist() {
 }
 
 function hidePlaylist() {
-	$("#playlist-panel").fadeOut(600);
+	var speed = 600;
+	if (_firstLoad) speed = 0;
+	$("#playlist-panel").fadeOut(speed);
 }
 
 function updatePlaylistOrder(event, ui) {
@@ -1173,16 +1194,21 @@ function pageLoadChange(hash) {
 			hidePlaylist();
 		}
 	}
+	_firstLoad = false;
 }
 
 function setLeftPanel(panel) {
-	$(".panel-left").not("#"+panel).fadeOut(600);
-	$("#"+panel).fadeIn(600);
+	var speed = 600;
+	if (_firstLoad) speed = 0;
+	$(".panel-left").not("#"+panel).fadeOut(speed);
+	$("#"+panel).fadeIn(speed);
 }
 
 function setMenuItem(item) {
-	$("#header-bar-menu-list li a").not("#header-bar-menu-"+item).removeClass("header-bar-menu-selected", 100);
-	$("#header-bar-menu-" + item).addClass("header-bar-menu-selected", 100);
+	var speed = 100;
+	if (_firstLoad) speed = 0;
+	$("#header-bar-menu-list li a").not("#header-bar-menu-"+item).removeClass("header-bar-menu-selected", speed);
+	$("#header-bar-menu-" + item).addClass("header-bar-menu-selected", speed);
 }
 
 function fixArt(artist, album, title) {
