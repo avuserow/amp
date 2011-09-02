@@ -371,6 +371,7 @@ sub shuffle_votes {
 			'select_votes', {who => $self->who},
 	));
 	my $pri = 0;
+	$self->acoustics->begin_work;
 	for my $vote (@votes) {
 		$vote->{priority} = $pri;
 		$self->acoustics->query('update_votes', $vote, {
@@ -378,6 +379,7 @@ sub shuffle_votes {
 		});
 		$pri++;
 	}
+	$self->acoustics->commit;
 
 	$self->status;
 }
