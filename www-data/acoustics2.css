@@ -364,6 +364,18 @@ a img {
 			#song-details-file {
 				font-size: 13px;
 			}
+		#search-results-dim {
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			background-color: #000;
+			background-image: url(images/ui2/ajax-loader.gif);
+			background-position: center center;
+			background-repeat: no-repeat;
+			opacity: 0.6;
+		}
 
 	.panel-tab {
 		position: absolute;
@@ -791,7 +803,7 @@ a img {
 	width: 400px;
 }
 
-#now-playing-shuffle{ 
+#now-playing-shuffle {
 	position: absolute;
 	right: 0px;
 	width: 40px;

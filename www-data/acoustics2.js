@@ -427,6 +427,7 @@ function doStats(who) {
 
 function doSearch(field, value) {
 	$("#search-results-status").html("Searching for '" + value + "'...");
+	$("#search-results-dim").show();
 	$.getJSON(jsonSource + "?mode=search;field=" + field + ";value=" + value,
 		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
@@ -437,22 +438,26 @@ function doSearch(field, value) {
 			}
 			fillResultTable(data);
 			$("#search-results-status").html("Search results for '" + value + "'.");
+			$("#search-results-dim").hide();
 	});
 	return false;
 }
 
 function selectRequest(field, value) {
 	$("#search-results-status").html("Searching for '" + value + "'...");
+	$("#search-results-dim").show();
 	$.getJSON(jsonSource + "?mode=select;field=" + field + ";value=" + value,
 		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
 			fillResultTable(data);
 			$("#search-results-status").html("Songs where " + field + " is '"
 				+ value + "'.");
+			$("#search-results-dim").hide();
 	});
 }
 
 function loadRandomSongs(amount, seed) {
+	$("#search-results-dim").show();
 	$.getJSON(
 		jsonSource + "?mode=random;amount=" + amount + ";seed=" + seed,
 		function (data) {
@@ -460,21 +465,25 @@ function loadRandomSongs(amount, seed) {
 				'#RandomSongs/20/' + (Math.floor(Math.random()*1e9)));
 			fillResultTable(data);
 			$("#search-results-status").html(amount + " Random Songs");
+			$("#search-results-dim").hide();
 		}
 	);
 }
 
 function loadRecentSongs(amount) {
+	$("#search-results-dim").show();
 	$.getJSON(
 		jsonSource + '?mode=recent;amount=' + amount,
 		function (data) {
 			fillResultTable(data);
 			$("#search-results-status").html(amount + " Recently Added Songs");
+			$("#search-results-dim").hide();
 		}
 	);
 }
 
 function loadPlayHistory(amount, who) {
+	$("#search-results-dim").show();
 	$.getJSON(
 		jsonSource + '?mode=history;amount=' + amount + ";who=" + who,
 		function (data) {
@@ -483,6 +492,7 @@ function loadPlayHistory(amount, who) {
 			if (who) bywho = " By " + who;
 			$("#search-results-status").html(amount + " Recently Played Songs"
 				+ bywho);
+			$("#search-results-dim").hide();
 		}
 	);
 }
