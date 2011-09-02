@@ -42,6 +42,14 @@ around 'start' => sub {
 requires 'stop';
 requires 'skip';
 
+sub zap {
+	my $class = shift;
+	my $acoustics = shift;
+	# TODO: try to stop the player and see if it responds
+	$acoustics->query('delete_players', {player_id => $acoustics->player_id});
+	return 0;
+}
+
 =head2 PLAYER HELPER METHODS / CALLBACKS
 
 Common things that the player wants to have us help with with (helper methods)

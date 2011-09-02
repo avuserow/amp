@@ -14,6 +14,12 @@ sub start {
 	my $song_end_reason = 'complete';
 
 	local $SIG{CHLD} = 'IGNORE'; # we don't want zombies on our lawn
+	local $SIG{HUP}  = 'IGNORE'; # ignore extra skip requests
+	# process stop requests
+	local $SIG{TERM} = local $SIG{INT} = sub {
+		$song_end_reason = 'stop';
+		return;
+	};
 	while ($song_end_reason ne 'stop') {
 		$song_end_reason = 'complete';
 		my $song = get_song_to_play($acoustics);
@@ -22,8 +28,6 @@ sub start {
 			'mplayer', '-slave', '-quiet',
 			# TODO: other args
 			$song->{path});
-
-		begin_song($acoustics, $song);
 
 		# TODO: figure out a better way to do signal stuff with a role
 		local $SIG{HUP} = sub {
@@ -44,6 +48,8 @@ sub start {
 			return;
 		};
 
+		begin_song($acoustics, $song);
+
 		# block on the mplayer process
 		while (<$child_out>) {}
 
@@ -63,7 +69,7 @@ sub stop {
 sub pause {
 	my $class     = shift;
 	my $acoustics = shift;
-	$class->send_signal($acoustics, 'USR2');
+	send_signal($acoustics, 'USR2');
 }
 
 sub skip {
