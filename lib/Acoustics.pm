@@ -82,13 +82,14 @@ sub BUILD {
 		# make this work for scripts in the root of the Acoustics dir, or for
 		# ones in the bin subdirectory
 		$base_acoustics_dir =~ s{bin/?$}{};
-		my @AUTO_CONFIG_PATHS = (
-			$ENV{ACOUSTICS_CONFIG_FILE},
-			$base_acoustics_dir . '/conf/acoustics.ini',
-			cwd() . '/conf/acoustics.ini',
-			(glob('~') . '/.acoustics.ini'),
-			'/etc/acoustics/acoustics.ini',
-		);
+		my @AUTO_CONFIG_PATHS;
+		push @AUTO_CONFIG_PATHS, $ENV{ACOUSTICS_CONFIG_FILE},
+		push @AUTO_CONFIG_PATHS, $base_acoustics_dir . '/conf/acoustics.ini';
+		push @AUTO_CONFIG_PATHS, cwd() . '/conf/acoustics.ini';
+
+		my $homedir = glob('~') || $ENV{'HOME'};
+		push @AUTO_CONFIG_PATHS, "$homedir/.acoustics.ini" if $homedir;
+		push @AUTO_CONFIG_PATHS, '/etc/acoustics/acoustics.ini';
 
 		for my $config (@AUTO_CONFIG_PATHS) {
 			if (defined $config && -r $config) {
@@ -166,6 +167,22 @@ sub info {
 	$self->_log('info', $mess, [caller], @_);
 }
 
+=head3 progress('message', 'event', {args})
+=head3 progress('message', 'event')
+=head3 progress('message')
+
+Log a message at the "progress" level. Meant to allow long-running processes to
+give user feedback in the web interface or elsewhere. This data is considered
+public (such as scanning a music database).
+
+=cut
+
+sub progress {
+	my $self = shift;
+	my $mess = shift;
+	$self->_log('progress', $mess, [caller], @_);
+}
+
 sub _log {
 	my $self = shift;
 	my $type = shift;
@@ -215,7 +232,7 @@ sub _log {
 
 sub select_player {
 	my $self   = shift;
-	my $player = shift;
+	my $player = shift || '';
 
 	my @players = split /\s*,\s*/, $self->config->{_}{players};
 

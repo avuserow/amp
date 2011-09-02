@@ -14,6 +14,16 @@ sub start {
 	my $song_end_reason = 'complete';
 
 	local $SIG{CHLD} = 'IGNORE'; # we don't want zombies on our lawn
+	local $SIG{HUP}  = 'IGNORE'; # ignore extra skip requests
+	# process stop requests
+	local $SIG{TERM} = local $SIG{INT} = sub {
+		$song_end_reason = 'stop';
+		return;
+	};
+	local $SIG{USR1} = $SIG{USR2} = sub {
+		print STDERR "Not implemented! Go bug avuserow to do so!\n";
+		return;
+	};
 	while ($song_end_reason ne 'stop') {
 		$song_end_reason = 'complete';
 		my $song = get_song_to_play($acoustics);
@@ -23,26 +33,30 @@ sub start {
 			# TODO: other args
 			$song->{path});
 
-		begin_song($acoustics, $song);
-
 		# TODO: figure out a better way to do signal stuff with a role
 		local $SIG{HUP} = sub {
 			$song_end_reason = 'skip';
-			print $child_in "quit\n";
+			if ($child_in && kill 0, $pid) {
+				print $child_in "quit\n";
+			}
 			return;
 		};
 
 		local $SIG{__DIE__} = sub {
 			# we're toast! :(
 			require Carp;
-			print Carp::confess(@_);
+			print Carp::longmess(@_);
 			print $child_in "quit\n";
 		};
 		local $SIG{TERM} = local $SIG{INT} = sub {
 			$song_end_reason = 'stop';
-			print $child_in "quit\n";
+			if ($child_in && kill 0, $pid) {
+				print $child_in "quit\n";
+			}
 			return;
 		};
+
+		begin_song($acoustics, $song);
 
 		# block on the mplayer process
 		while (<$child_out>) {}
@@ -63,7 +77,7 @@ sub stop {
 sub pause {
 	my $class     = shift;
 	my $acoustics = shift;
-	$class->send_signal($acoustics, 'USR2');
+	send_signal($acoustics, 'USR2');
 }
 
 sub skip {
