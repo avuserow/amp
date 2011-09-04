@@ -495,12 +495,17 @@ a img {
 		#queue-list {
 			padding: 0;
 			margin: 0;
-			-webkit-overflow-scrolling: touch;
 		}
 
 		#playlist-list {
 			padding: 0;
 			margin: 0;
+		}
+		#playlist-container {
+			-webkit-overflow-scrolling: touch;
+		}
+		#queue-container {
+			-webkit-overflow-scrolling: touch;
 		}
 
 			.queue-song {
@@ -797,6 +802,9 @@ a img {
 	height: 24px;
 	white-space: nowrap;
 	width: 40px;
+}
+#search-results-container {
+	-webkit-overflow-scrolling: touch;
 }
 
 #manage-scan-directory {
