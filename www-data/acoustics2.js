@@ -214,7 +214,7 @@ function toggleQueueExplicit() {
 function showQueue() {
 	var speed = 400;
 	if (_firstLoad) speed = 0;
-	$("#right-panel").animate({
+	$("#right-panel, #playlist-panel").animate({
 		right: '0'
 	}, speed);
 	$(".panel-left").animate({
@@ -233,7 +233,7 @@ function showQueue() {
 function hideQueue() {
 	var speed = 400;
 	if (_firstLoad) speed = 0;
-	$("#right-panel").animate({
+	$("#right-panel, #playlist-panel").animate({
 		right: '-300'
 	}, speed);
 	$(".panel-left").animate({
