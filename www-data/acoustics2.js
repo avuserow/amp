@@ -179,6 +179,11 @@ $(document).ready(function() {
 	/* Set the version number in the management console */
 	$("#manage-version").html("Web Client v." + acoustics_version);
 
+	/* Disable touch scrolling on elements that shouldn't ever be doing it */
+	$("#header-bar, #fullscreen-view, .toolbar, .statusbar, #now-playing-panel, #controls").bind("touchmove", function(event) {
+		event.preventDefault();
+	});
+
 });
 
 function quickComplete(block) {
