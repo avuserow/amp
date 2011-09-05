@@ -236,6 +236,9 @@ a img {
 		margin-left: 0px;
 		display: none;
 	}
+		#album-search-container {
+			-webkit-overflow-scrolling: touch;
+		}
 
 	#manage {
 		position: absolute;
