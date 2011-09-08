@@ -34,6 +34,13 @@ sub start {
 			$song->{path});
 
 		# TODO: figure out a better way to do signal stuff with a role
+		local $SIG{USR2} = sub {
+			if ($child_in && kill 0, $pid) {
+				print STDERR "(un)pausing song!\n";
+				print $child_in "pause\n";
+			}
+			return;
+		};
 		local $SIG{HUP} = sub {
 			$song_end_reason = 'skip';
 			if ($child_in && kill 0, $pid) {
@@ -49,8 +56,10 @@ sub start {
 			print $child_in "quit\n";
 		};
 		local $SIG{TERM} = local $SIG{INT} = sub {
+			print STDERR "exiting!\n";
 			$song_end_reason = 'stop';
 			if ($child_in && kill 0, $pid) {
+				print STDERR "quitting!\n";
 				print $child_in "quit\n";
 			}
 			return;

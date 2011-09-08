@@ -90,8 +90,8 @@ sub disassociate {
 	open STDIN, '<', '/dev/null' or die "Can't reopen STDIN as /dev/null: $!";
 	open STDOUT, '>', '/dev/null'
 		or die "Can't reopen STDOUT as /dev/null: $!";
-	#open STDERR, '>&', 'STDOUT' or die "Can't dup STDERR to STDOUT: $!";
-	open STDERR, '>>', '/tmp/acoustics-panic.log' or die "Couldn't reopen STDERR: $!";
+	open STDERR, '>&', 'STDOUT' or die "Can't dup STDERR to STDOUT: $!";
+	#open STDERR, '>>', '/tmp/acoustics-panic.log' or die "Couldn't reopen STDERR: $!";
 	return $acoustics;
 }
 
