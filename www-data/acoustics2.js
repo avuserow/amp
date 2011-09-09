@@ -794,7 +794,11 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-album-art").show();
 		$("#now-playing-info").show();
 		$("#nothing-playing-info").hide();
-		$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title);
+		if (nowPlaying.title.length > 0) {
+			$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title);
+		} else {
+			$("#now-playing-title a", nowPlayingPanel).html('[untitled]');
+		}
 		$("#now-playing-title a", nowPlayingPanel).attr('href',
 			'#SongDetails/' + nowPlaying.song_id);
 		$("#now-playing-title a", nowPlayingPanel).attr('title',
