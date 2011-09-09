@@ -219,38 +219,26 @@ function toggleQueueExplicit() {
 function showQueue() {
 	var speed = 400;
 	if (_firstLoad) speed = 0;
-	$("#right-panel, #playlist-panel").animate({
-		right: '0'
-	}, speed);
-	$(".panel-left").animate({
-		right: '300'
-	}, speed, function() {
+	$("#right-panel, #playlist-panel").removeClass("panel-right-hidden", speed);
+	$("#toggle-right-panel").removeClass("toggle-right-hidden", speed);
+	$(".panel-left").removeClass("panel-left-expanded", speed, function() {
 		if (ajax_cf) {
 			ajax_cf.resize();
 		}
 	});
-	$("#toggle-right-panel").animate({
-		right: '300'
-	}, speed);
 	queueHidden = false;
 }
 
 function hideQueue() {
 	var speed = 400;
 	if (_firstLoad) speed = 0;
-	$("#right-panel, #playlist-panel").animate({
-		right: '-300'
-	}, speed);
-	$(".panel-left").animate({
-		right: '0'
-	}, speed, function() {
+	$("#right-panel, #playlist-panel").addClass("panel-right-hidden", speed);
+	$("#toggle-right-panel").addClass("toggle-right-hidden", speed);
+	$(".panel-left").addClass("panel-left-expanded", speed, function() {
 		if (ajax_cf) {
 			ajax_cf.resize();
 		}
 	});
-	$("#toggle-right-panel").animate({
-		right: '0'
-	}, speed);
 	queueHidden = true;
 }
 
@@ -1220,7 +1208,9 @@ function setLeftPanel(panel) {
 	var speed = 600;
 	if (_firstLoad) speed = 0;
 	$(".panel-left").not("#"+panel).fadeOut(speed);
-	$("#"+panel).fadeIn(speed);
+	$("#"+panel).fadeIn(1, function() {
+		$("#"+panel).fadeIn(speed);
+	});
 }
 
 function setMenuItem(item) {
@@ -1260,6 +1250,7 @@ function clearFullscreen() {
 
 function albumSearch(title) {
 	if (title == "_none_") {
+		if (!nowPlaying) { return; }
 		title = nowPlaying.album;
 	}
 	$("#album-search-status").html("Searching for '" + title + "'...");
