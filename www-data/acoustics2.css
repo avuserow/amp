@@ -407,25 +407,6 @@ a img {
 		height: 100%;
 	}
 
-		.panel-right-hidden {
-			right: -300px !important;
-		}
-		.toggle-right-hidden {
-			right: 0px;
-		}
-		.panel-left-expanded {
-			right: 0px !important;
-		}
-		.panel-left-visible {
-			visibility: visible;
-			z-index: 1;
-		}
-		.panel-left-hidden {
-			visibility: none;
-			z-index: 0;
-		}
-
-
 		#now-playing-panel {
 			position: relative;
 			height: 100px;
