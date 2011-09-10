@@ -438,7 +438,6 @@ function readableTime(length) {
 }
 
 function startPlayingTimer() {
-	return;
 	if (playingTimer) clearInterval(playingTimer);
 	playingTimer = setInterval(function() { updatePlayingTime() }, 1000);
 }
