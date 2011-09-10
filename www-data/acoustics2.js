@@ -28,7 +28,7 @@ var playlistsReady = false;
 var currentPlaylist = 0;
 var currentId = 0;
 var _firstLoad = true;
-
+var _logged_in_as = "logged in as";
 
 var theme = 0;
 var themes = ["dark","light","none"];
@@ -39,6 +39,40 @@ function toggleTheme() {
 		theme = 0;
 	}
 	$("#theme").attr("href","www-data/" + themes[theme] + "-theme.css");
+}
+
+function orientationAdjust() {
+	if (window.orientation && Math.abs(window.orientation) == 90) {
+		hideQueue();
+		$("#header-bar").slideDown(200);
+		$("#main-content").css("top",'20px');
+	} else {
+		$("#right-panel").css("width", $(window).width());
+		$("#playlist-panel").css("width", $(window).width());
+		showQueue();
+		$("#header-bar").slideUp(200);
+		$("#main-content").css("top",'0px');
+		$("#now-playing-info").css("width",($("#now-playing-panel").width() - $("#now-playing-album-art").width()) + 'px');
+		
+	}
+}
+
+function mobilize() {
+	/* Mobilize the interface by changing the structural CSS to the Mobile one,
+	 * adjusting content widths, moving everything around as nececssary, and being
+	 * generally awesome. */
+	$("#structure").attr("href","www-data/acoustics-mobile.css");
+	$.fx.off = true;
+	_logged_in_as = ":";
+
+	$("#toggle-right-panel").hide();
+
+	var supportsOrientationChange = "onorientationchange" in window,
+		orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
+	orientationAdjust();
+
+	window.addEventListener(orientationEvent, orientationAdjust, false);
+
 }
 
 function dedupArray(array)
@@ -62,6 +96,13 @@ function dedupArray(array)
 $(document).ready(function() {
 	unfullscreen();
 	clearFullscreen();
+	if( navigator.userAgent.match(/Android/i) ||
+		navigator.userAgent.match(/webOS/i) ||
+		navigator.userAgent.match(/iPhone/i) ||
+		navigator.userAgent.match(/iPod/i)
+		){
+		mobilize();
+	}
 	$("#fullscreen-controls").hover(function() {
 		if (fsControlsHidden) {
 			fsControlsHidden = false;
@@ -216,6 +257,10 @@ function toggleQueueExplicit() {
 	queueShouldBeHidden = queueHidden;
 }
 
+function _queue_width() {
+	return $("#right-panel").width().toString();
+}
+
 function showQueue() {
 	var speed = 400;
 	if (_firstLoad) speed = 0;
@@ -223,14 +268,14 @@ function showQueue() {
 		right: '0'
 	}, speed);
 	$(".panel-left").animate({
-		right: '300'
+		right: _queue_width()
 	}, speed, function() {
 		if (ajax_cf) {
 			ajax_cf.resize();
 		}
 	});
 	$("#toggle-right-panel").animate({
-		right: '300'
+		right: _queue_width()
 	}, speed);
 	queueHidden = false;
 }
@@ -239,7 +284,7 @@ function hideQueue() {
 	var speed = 400;
 	if (_firstLoad) speed = 0;
 	$("#right-panel, #playlist-panel").animate({
-		right: '-300'
+		right: '-' + _queue_width()
 	}, speed);
 	$(".panel-left").animate({
 		right: '0'
@@ -393,6 +438,7 @@ function readableTime(length) {
 }
 
 function startPlayingTimer() {
+	return;
 	if (playingTimer) clearInterval(playingTimer);
 	playingTimer = setInterval(function() { updatePlayingTime() }, 1000);
 }
@@ -755,7 +801,7 @@ function handlePlayerStateRequest(json) {
 
 	// user
 	if (json.who) {
-		$("#header-bar-user-message").html("logged in as");
+		$("#header-bar-user-message").html(_logged_in_as);
 		$("#user-name").html(json.who);
 		currentUser = json.who;
 		$("#header-bar-menu-playlists").show();

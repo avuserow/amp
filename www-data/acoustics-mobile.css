@@ -1,0 +1,838 @@
+body {
+	position: fixed;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	font-family: sans-serif;
+	font-size: 14px;
+	overflow: hidden;
+}
+
+* {
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-text-size-adjust: none;
+}
+
+ul { display: inline; }
+ul li { display: inline; }
+
+a img {
+	border: none;
+}
+
+#header-bar {
+	width: 100%;
+	height: 20px;
+	font-size: 10px;
+}
+	#header-bar-logo {
+		float: left;
+		padding-left: 10px;
+		width: 2px;
+		vertical-align: bottom;
+		height: 100%;
+		padding-top: 4px;
+		overflow: hidden;
+	}
+	#header-bar-spacer {
+		float: left;
+		width: 10px;
+	}
+	#header-bar-menu {
+		float: left;
+	}
+		/*
+		 * from Listamatic
+		 * Jeffrey Zeldman's DWWS menu
+		 */
+		#header-bar-menu-container {
+			padding: 0px;
+			height: 20px;
+			padding-left: 5px;
+			overflow: hidden;
+		}
+		#header-bar-menu-container ul {
+			border: 0;
+			margin: 0;
+			padding: 0;
+			list-style-type: none;
+			text-align: center;
+		}
+		#header-bar-menu-container ul li {
+			display: block;
+			float: left;
+			text-align: center;
+			margin: 0;
+			padding: 0;
+			padding-right: 5px;
+		}
+		#header-bar-menu-container ul li a {
+			padding: 2px 1px 0 2px;
+			height: 20px;
+			display: block;
+			font-size: 10px;
+			text-decoration: none;
+			outline: none;
+		}
+			.header-bar-menu-dropdown {
+				display: none;
+				position: absolute;
+				z-index: 1;
+				width: 70px;
+				top: 0px;
+			}
+			.header-bar-menu-dropdown li {
+				display: block;
+				width: 70px;
+				height: 20px;
+				padding-bottom: 0px;
+				font-size: 10px;
+				padding-top: 0px;
+			}
+			.header-bar-menu-dropdown li a {
+				display: inline !important;
+				background: none !important;
+				height: 20px;
+				padding-bottom: 0px;
+				outline: none;
+				padding-right: 0px !important;
+				padding-left: 0px !important;
+			}
+			.header-bar-menu-dropdown li a img {
+				opacity: 0.6;
+				width: 10px;
+				height: 10px;
+				vertical-align: middle;
+			}
+			.header-bar-menu-dropdown li a img:hover {
+				opacity: 1.0;
+			}
+			.header-bar-menu-title {
+				display: block !important;
+				padding-top: 12px !important;
+			}
+
+	#header-bar-user {
+		text-align: right;
+		float: right;
+		width: 120px;
+		padding-top: 4px;
+		padding-right: 4px;
+		margin: 0 0 0 0;
+		font-size: 10px;
+		font-family: sans-serif;
+	}
+
+
+.toolbar {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	height: 32px;
+	overflow: hidden;
+}
+	.toolbar ul li {
+		display: block;
+		float: left;
+		margin: 0;
+		height: 32px;
+	}
+	.toolbar-right {
+		float: right !important;
+	}
+
+.statusbar {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 24px;
+	padding-right: 10px;
+	vertical-align: text-bottom;
+}
+	.statusbar div {
+		float: left;
+		margin-top: 3px;
+		margin-left: 5px;
+		margin-right: 5px;
+		font-family: sans-serif;
+		font-size: 14px;
+		height: 21px;
+		line-height: 21px;
+		vertical-align: text-bottom;
+	}
+	.statusbar-right {
+		float: right !important;
+		text-align: right;
+	}
+
+.container {
+	position: absolute;
+	bottom: 24px;
+	top: 32px;
+	left: 0;
+	right: 0;
+	overflow-y: scroll;
+	overflow-x: auto;
+}
+
+.floaty {
+	display: none;
+	position: absolute;
+	top: 20px;
+	left: 20px;
+}
+
+#main-content {
+	position: absolute;
+	top: 20px;
+	bottom: 0px;
+	right: 0px;
+	left: 0px;
+}
+	#info {
+		position: absolute;
+		float: left;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		bottom: 0px;
+		padding: 10px;
+		margin-left: 0px;
+		display: none;
+		display: none;
+	}
+		#info-container {
+			text-align: center;
+			line-height: 18px;
+			font-size: 16px;
+			padding-top: 10px;
+		}
+		#info-container img {
+			width: 70%;
+		}
+		#info-about-container {
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+			left: 0px;
+			height: 50px;
+		}
+		#info-about {
+			font-size: 10px;
+			width: 95%;
+			padding: 0px;
+			line-height: 12px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+
+	#album-search {
+		position: absolute;
+		float: left;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		bottom: 0px;
+		padding-left: 0px;
+		margin-left: 0px;
+		display: none;
+	}
+		#album-search-container {
+			-webkit-overflow-scrolling: touch;
+		}
+
+	#manage {
+		position: absolute;
+		float: left;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		bottom: 0px;
+		padding-left: 0px;
+		margin-left: 0px;
+		display: none;
+	}
+
+	#search-results {
+		position: absolute;
+		float: left;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		bottom: 0px;
+		padding-left: 0px;
+		margin-left: 0px;
+	}
+		.input-split-form {
+			font-size: 0px;
+		}
+		.input-split-form-wide {
+			font-size: 0px;
+			margin: 2px;
+		}
+		.input-split-box {
+			width: 200px;
+			font-size: 13px;
+			padding-left: 0px;
+			margin-left: 0px;
+		}
+		.input-split-button {
+			margin-right: 0px;
+			font-size: 13px;
+			padding-top: 1px;
+			padding-bottom: 1px;
+			padding-left: 2px;
+			padding-right: 2px;
+		}
+		.input-split-dropdown {
+			margin-right: 0px;
+			font-size: 13px;
+			padding-top: 1px;
+			padding-bottom: 1px;
+			padding-left: 2px;
+			padding-right: 2px;
+		}
+		.input-split-dropdown input {
+			display: none;
+		}
+		.input-split-dropdown label.expanded {
+			display: inline !important;
+		}
+		.input-split-dropdown label {
+			display: none;
+		}
+		.input-split-dropdown input:checked + label {
+			display: inline !important;
+		}
+		.input-split-right {
+			margin-right: 0px;
+			font-size: 13px;
+			padding-top: 1px;
+			padding-bottom: 1px;
+			padding-left: 2px;
+			padding-right: 2px;
+		}
+		.input-split-circular {
+			border-right: 1px solid #000 !important;
+		}
+		#search-results-advanced-container {
+			display: none;
+		}
+		#search-results-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		#search-results-table tbody tr td {
+			font-size: 12px;
+			height: 14px;
+			vertical-align: top;
+			overflow: hidden;
+		}
+		.sr-th {
+			font-size: 14px;
+		}
+		#sr-vote { width: 20px; }
+		#sr-track { width: 20px; }
+		#sr-length { width: 50px; }
+			.search-results-entry-song-id {
+				display: none;
+				width: 0;
+				height: 0;
+				overflow: hidden;
+			}
+		#search-results-song-details {
+			right: 20px;
+			height: 150px;
+			padding: 20px;
+		}
+			#song-details-album-art {
+				height: 180px;
+				width: 138px;
+				float: left;
+				margin-right: 10px;
+			}
+			#song-details-close {
+				position: absolute;
+				right: 10px;
+				bottom: 10px;
+				padding: 10px;
+			}
+			#search-results-song-details div {
+				white-space: nowrap;
+				overflow: hidden;
+				padding-left: 4px;
+			}
+			#song-details-title {
+				font-size: 20px;
+			}
+			#song-details-artist {
+				font-size: 16px;
+			}
+			#song-details-album {
+				font-size: 14px;
+			}
+			#song-details-file {
+				font-size: 13px;
+			}
+		#search-results-dim {
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			background-color: #000;
+			background-image: url(images/ui2/ajax-loader.gif);
+			background-position: center center;
+			background-repeat: no-repeat;
+			opacity: 0.6;
+		}
+
+	.panel-tab {
+		position: absolute;
+		right: 320px;
+		width: 16px;
+		height: 64px;
+		top: 50%;
+		margin-top: -32px;
+		overflow: hidden;
+		z-index: 1;
+	}
+
+	#right-panel {
+		position: absolute;
+		float: right;
+		top: 0px;
+		right: 0px;
+		width: 0px;
+		bottom: 0px;
+		height: 100%;
+	}
+
+		#now-playing-panel {
+			position: relative;
+			height: 100px;
+			width: 100%;
+			overflow: hidden;
+		}
+			#nothing-playing-info {
+				font-size: 16px;
+				text-align: center;
+				width: 100%;
+				height: 100px;
+				line-height: 100px;
+				vertical-align: center;
+			}
+			#now-playing-album-art {
+				height: 80px;
+				width: 64px;
+				float: left;
+			}
+			#now-playing-info {
+				float: left;
+				width: 100%;
+				height: 80px;
+				overflow: hidden;
+				font-family: sans-serif;
+				font-size: 14px;
+			}
+				#now-playing-info div {
+					white-space: nowrap;
+					width: 100%;
+					overflow: hidden;
+					padding-left: 4px;
+					/* Ellipse [...] on overflow, where supported */
+					text-overflow: ellipsis;
+					text-overflow-mode: ellipsis;
+				}
+				#now-playing-title {
+					font-weight: bold;
+					font-size: 16px;
+					text-shadow: 0px 1px 1px #ccc;
+				}
+				#now-playing-album {
+					font-size: 13px;
+				}
+				#now-playing-times {
+					font-style: oblique;
+				}
+			#now-playing-progress-container {
+				position: absolute;
+				top: 80px;
+				height: 20px;
+				width: 90%;
+				margin-left: 5%;
+			}
+			#now-playing-progress {
+				margin-top: 4px;
+				height: 10px;
+			}
+
+		#controls {
+			position: relative;
+			height: 100px;
+			overflow: hidden;
+		}
+			#controls-top {
+				height: 50px;
+				overflow: hidden;
+			}
+			#controls-bottom {
+				height: 50px;
+				overflow: hidden;
+			}
+			#controls div a {
+				display: block;
+				height: 40px;
+				float: left;
+				width: 32.5%;
+				text-align: center;
+				padding-top: 8px;
+				outline: none !important;
+				text-decoration: none;
+				font-weight: bold;
+				font-size: 28px;
+			}
+
+		#queue {
+			position: absolute;
+			top: 200px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+
+		}
+
+		#queue-list {
+			padding: 0;
+			margin: 0;
+		}
+
+		#playlist-list {
+			padding: 0;
+			margin: 0;
+		}
+		#playlist-container {
+			-webkit-overflow-scrolling: touch;
+		}
+		#queue-container {
+			-webkit-overflow-scrolling: touch;
+		}
+
+			.queue-song {
+				border-bottom: 1px solid black;
+				height: 40px;
+				overflow: hidden;
+				font-size: 14px;
+				line-height: 20px;
+				vertical-align: baseline;
+				list-style-type: none;
+			}
+				.queue-song-data {
+					display: none;
+					height: 0;
+					width: 0;
+				}
+				.queue-song-handle {
+					width: 8px;
+					height: 40px;
+					margin-right: 2px;
+					float: left;
+				}
+				.queue-song-info {
+					float: left;
+				}
+				.queue-song-toprow {
+					width: 260px;
+					white-space: nowrap;
+					overflow: hidden;
+				}
+				.queue-song-title {
+					width: 240px;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					text-overflow-mode: ellipsis;
+				}
+				.queue-song-vote-button {
+					width: 20px;
+					float: left;
+					text-align: center;
+					padding: 0px;
+					height: 20px;
+					overflow: hidden;
+				}
+				.queue-song-vote-count {
+					float: left;
+					width: 20px;
+					text-align: center;
+				}
+				.queue-song-artist {
+					float: left;
+					width: 200px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					text-overflow-mode: ellipsis;
+				}
+				.queue-song-bottomrow {
+					width: 260px;
+					white-space: nowrap;
+				}
+				.queue-song-time {
+					float: right;
+					font-size: 12px;
+					text-align: right;
+				}
+				.queue-song-clear {
+					clear: both;
+				}
+			.queue-song-placeholder {
+				height: 40px;
+				overflow: hidden;
+				line-height: 40px;
+				display: block;
+				list-style-type: none;
+			}
+
+	#playlist-panel {
+		position: absolute;
+		float: right;
+		top: 0px;
+		right: 0px;
+		width: 300px;
+		bottom: 0px;
+		height: 100%;
+		display: none;
+	}
+		select {
+			margin-top: -2px;
+			width: 130px !important;
+		}
+
+#fullscreen-view {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background-color: #000;
+	z-index: 2;
+	display: none;
+}
+	#fullscreen-center {
+		width: 400px;
+		height: 200px;
+		/* Half the size */
+		margin-left: -200px;
+		margin-top:  -100px;
+		top: 50%;
+		left: 50%;
+		position: absolute;
+	}
+	#fullscreen-center img {
+		width: 200px;
+	}
+		#fullscreen-spacer {
+			width: 400px;
+			height: 60px;
+		}
+		#fullscreen-spacer-h {
+			float: left;
+			height: 200px;
+			width:  20px;
+		}
+		#fullscreen-album-art {
+			height: 400px;
+			width: 210px;
+			float: left;
+		}
+		#fullscreen-album-art-img {
+			-webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.66,transparent),to(rgba(255,255,255,0.5)));
+		}
+		#fullscreen-title {
+			color: #FFF;
+			font-size: 16px;
+		}
+		#fullscreen-artist {
+			color: #FFF;
+			font-size: 14px;
+		}
+		#fullscreen-album {
+			color: #FFF;
+			font-size: 14px;
+		}
+		.fullscreen-extra {
+			font-size: 12px;
+			color: #333;
+		}
+	#fullscreen-close {
+		position: absolute;
+		right: 0px;
+		bottom: 0px;
+		padding-right: 15px;
+	}
+	#fullscreen-controls {
+		position: absolute;
+		left: 50%;
+		width: 400px;
+		margin-left: -200px;
+		color: #FFF;
+		height: 70px;
+		bottom: -50px;
+		text-align: center;
+	}
+		#fullscreen-control-spacing {
+			width: 400px;
+			height: 20px;
+		}
+		#fullscreen-controls a {
+			display: block;
+			height: 40px;
+			float: left;
+			width: 63px;
+			text-align: center;
+			padding-top: 8px;
+			outline: none !important;
+			text-decoration: none;
+			color: #fff;
+			font-weight: bold;
+			font-size: 28px;
+		}
+		#fs-controls-stop {
+			-webkit-border-top-left-radius: 15px;
+			-moz-border-radius-topleft: 15px;
+			border-top-left-radius: 15px;
+		}
+		#fs-controls-volume-up {
+			-webkit-border-top-right-radius: 15px;
+			-moz-border-radius-topright: 15px;
+			border-top-right-radius: 15px;
+		}
+	#fullscreen-progress-container {
+		opacity: 0.3;
+		position: absolute;
+		bottom: 4px;
+		height: 20px;
+		left: 50px;
+		right: 50px;
+		margin-left: 10px;
+	}
+	#fullscreen-progress {
+		margin-top: 4px;
+		height: 10px;
+	}
+
+.mini-album-art {
+	height: 16px;
+	width:  16px;
+	vertical-align: middle;
+	padding-right: 2px;
+}
+
+#message-box {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 600px;
+	height: 120px;
+	margin-top: -60px;
+	margin-left: -300px;
+	z-index: 3;
+	padding: 20px;
+	padding-top: 5px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-moz-box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+	border: 1px solid #B62222;
+	background-color: #EC3232;
+	background-color: rgba(236,50,50,0.9);
+	color: #FFF;
+	text-align: center;
+
+	display: none;
+}
+	#message-box div h1 {
+		font-size: 16px;
+		font-weight: bold;
+	}
+	#message-box-close {
+		position: absolute;
+		right: 10px;
+		bottom: 10px;
+	}
+
+.album-icon {
+	width: 220px;
+	height: 120px;
+	text-align: center;
+	margin: 2px;
+	float: left;
+}
+.album-icon-image img {
+	-webkit-box-shadow: 2px 2px 2px #000;
+	-moz-box-shadow: 2px 2px 2px #000;
+	box-shadow: 2px 2px 2px #000; 
+}
+.album-icon span {
+	font-size: 16px;
+	color: #fff;
+	text-shadow: 2px 2px 2px #000;
+}
+.album-icon a:hover {
+	text-decoration: none !important;
+}
+	.cf-container {
+		height: 300px;
+		overflow: hidden;
+		background-color: #000;
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		bottom: 300px;
+		top: 0px;
+	}
+	#cf-padding {
+		width: 100%;
+		height: 300px;
+	}
+
+#cf-loading {
+	width: 100%;
+	height: 300px;
+	background-image: url(images/ui2/ajax-loader.gif);
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+#queue-fullscreen a img {
+	vertical-align: text-top;
+}
+
+#search-results-suggestions {
+	height: 24px;
+	white-space: nowrap;
+	width: 40px;
+}
+#search-results-container {
+	-webkit-overflow-scrolling: touch;
+}
+
+#manage-scan-directory {
+	width: 400px;
+}
+
+#now-playing-shuffle {
+	position: absolute;
+	right: 0px;
+	width: 40px;
+	bottom: 20px;
+}
