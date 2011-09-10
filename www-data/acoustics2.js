@@ -1212,7 +1212,9 @@ function pageLoadChange(hash) {
 	} else if (action == 'SongDetails') {
 		songDetails(args[0]);
 	}
-	if (action == 'Info') {
+	if (action == 'SetPlayer') {
+		changePlayer(args[0]);
+	} else if (action == 'Info') {
 		hideQueue();
 		setLeftPanel("info");
 		setMenuItem("info");
