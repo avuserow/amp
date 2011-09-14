@@ -120,7 +120,26 @@ $(document).ready(function() {
 		placeholder: "queue-song-placeholder",
 		axis: "y",
 		start: function() { queueLocked = true; },
-		stop: function() { queueLocked = false; },
+		stop: function(event,ui) {
+			if ($(ui.item).is("tr")) {
+				var entry = templates.queueSong.clone();
+				var song  = $(".search-results-entry-song-id",ui.item).html();
+				silentVote(song);
+				$("div",entry).addClass("queue-song-voted");
+				$(".queue-song-id", entry).html(song);
+				$(".queue-song-title a", entry).html($(".search-results-entry-title a",ui.item).html());
+				$(".queue-song-artist a", entry).html($(".search-results-entry-artist a",ui.item).html());
+				$(".queue-song-artist a img", entry).attr('src',$(".search-results-entry-title a img",ui.item).attr('src'));
+				$(entry).insertBefore($(ui.item));
+				$(ui.item).remove();
+				var block = updateQueueOrder();
+				setTimeout(function() {
+					updateQueueOrder();
+					forceQueueOrder(block);
+				}, 200);
+			}
+			queueLocked = false;
+		},
 		update: updateQueueOrder
 	});
 
@@ -587,6 +606,7 @@ function fillResultTable(json) {
 		$(".search-results-entry-artist a", entry).attr('href',
 			'#SelectRequest/artist/' + uriencode(song.artist));
 		$("#search-results-table tbody").append(entry);
+		$(entry).draggable({appendTo: 'body', helper: 'clone', connectToSortable: '#queue-list'});
 
 		total_length += parseInt(song.length);
 	}
@@ -606,6 +626,15 @@ function updateQueueOrder(event, ui) {
 	});
 	$.getJSON(
 		jsonSource + '?mode=reorder_queue;' + block,
+		function (data) {handlePlayerStateRequest(data);}
+	);
+	return block;
+}
+
+function forceQueueOrder(queue_order) {
+	$("#search-results-status").html("The queue was reordered.");
+	$.getJSON(
+		jsonSource + '?mode=reorder_queue;' + queue_order,
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }
@@ -647,6 +676,14 @@ function voteSong(song_id) {
 			function (data) {handlePlayerStateRequest(data);}
 		);
 	}
+}
+function silentVote(song_id) {
+	if (editingPlaylist) {
+		$.getJSON(jsonSource + '?mode=add_to_playlist;playlist_id=' + currentPlaylist + ';song_id=' + song_id);
+	} else {
+		$.getJSON(jsonSource + '?mode=vote;song_id=' + song_id);
+	}
+
 }
 
 function playlistPlay() {
