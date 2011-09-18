@@ -17,7 +17,7 @@
    inkscape:export-filename="/home/klange/cgiserver/pages/amp/www-data/images/ui2/buttons/play.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   sodipodi:docname="play.svg">
+   sodipodi:docname="pause.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -28,7 +28,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="14.481547"
-     inkscape:cx="9.3639423"
+     inkscape:cx="-2.6168219"
      inkscape:cy="16.107266"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -55,7 +55,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -72,7 +72,7 @@
        x="8"
        y="1028.3622" />
     <path
-       style="fill:#f7f7f7;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#f7f7f7;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 8,1040.3622 c 0,0 2.625,-1 4.125,-4 1.5,-3 1.875,-4 1.875,-4 l 0,12 -6,0 z"
        id="path3757"
        inkscape:connector-curvature="0" />
@@ -94,7 +94,7 @@
        inkscape:connector-curvature="0"
        id="path3763"
        d="m 18,1040.3622 c 0,0 2.625,-1 4.125,-4 1.5,-3 1.875,-4 1.875,-4 l 0,12 -6,0 z"
-       style="fill:#f7f7f7;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       style="fill:#f7f7f7;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <rect
        style="color:#000000;fill:none;stroke:#000000;stroke-width:0.24494898;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect3765"
