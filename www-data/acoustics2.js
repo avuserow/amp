@@ -860,7 +860,7 @@ function handlePlayerStateRequest(json) {
 			if (json.players[i] == json.selected_player) {
 				$("#header-bar-menu-players-dropdown").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\" style='color: #FFF;'>" + json.players[i] + "</a></b></li>\n");
 			} else {
-				$("#header-bar-menu-players-dropdown").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a> <a href=\"javascript:migrateToPlayer('" + json.players[i] + "');\"><img src='www-data/images/ui2/arrow-left.png'/></a></li>\n");
+				$("#header-bar-menu-players-dropdown").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a> <a href=\"javascript:migrateToPlayer('" + json.players[i] + "');\"><img src='www-data/images/ui2/arrow-left.svg'/></a></li>\n");
 
 			}
 		}
