@@ -326,7 +326,7 @@ a:hover {
  /*
 	background-color: #524057 !important;
 	*/
- background-color: #006cae !important;
+ background-color: #006cae;
 }
 .queue-song-vote-button a { opacity: 0.6; }
 .queue-song-vote-button a:hover { opacity: 1.0; }

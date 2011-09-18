@@ -52,8 +52,7 @@ function orientationAdjust() {
 		showQueue();
 		$("#header-bar").slideUp(200);
 		$("#main-content").css("top",'0px');
-		$("#now-playing-info").css("width",($("#now-playing-panel").width() - $("#now-playing-album-art").width()) + 'px');
-		
+		fixNPWidth();
 	}
 }
 
@@ -231,7 +230,14 @@ $(document).ready(function() {
 	}, function() {
 		$(this).hide();
 	});
-	$("#toggle-right-panel").click(function() { toggleQueueExplicit(); });
+	$("#toggle-right-panel").draggable({axis: 'x', snap: "body", snapTolerance: 100, drag: function(event, ui) {
+		var width = ($(window).width() - $("#toggle-right-panel").offset().left - $("#toggle-right-panel").width());
+		setQueueWidth(width);
+	}, stop: function(event, ui) {
+		var width = ($(window).width() - $("#toggle-right-panel").offset().left - $("#toggle-right-panel").width());
+		$("#toggle-right-panel").css("right",width);
+		$("#toggle-right-panel").css("left","-");
+	}});
 	$("#playlist-select-form").change(function() { loadPlaylist(-1); });
 	insertAdvancedSearch(1);
 	insertAdvancedSearch(2);
@@ -245,6 +251,19 @@ $(document).ready(function() {
 	});
 
 });
+
+function setQueueWidth(width) {
+	$("#right-panel").css("width", width);
+	$("#playlist-panel").css("width", width);
+	$(".panel-left").css("right",width);
+	fixNPWidth();
+}
+function fixNPWidth() {
+	$("#now-playing-info").css("width",($("#now-playing-panel").width() - $("#now-playing-album-art").width() - 4) + 'px');
+}
+function fixTabOffset() {
+	$("#toggle-right-panel").offset({top: $("#toggle-right-panel").offset().top, left:($(window).width() - $("#right-panel").width() - $("#toggle-right-panel").width())});
+}
 
 function quickComplete(block) {
 	var out = block.textContent;
@@ -271,11 +290,6 @@ function insertAdvancedSearch(id) {
 	$("#advanced-search-submit").before(entry);
 }
 
-function toggleQueueExplicit() {
-	toggleQueue();
-	queueShouldBeHidden = queueHidden;
-}
-
 function _queue_width() {
 	return $("#right-panel").width().toString();
 }
@@ -293,9 +307,7 @@ function showQueue() {
 			ajax_cf.resize();
 		}
 	});
-	$("#toggle-right-panel").animate({
-		right: _queue_width()
-	}, speed);
+	$("#toggle-right-panel").css("display","block");
 	queueHidden = false;
 }
 
@@ -312,9 +324,7 @@ function hideQueue() {
 			ajax_cf.resize();
 		}
 	});
-	$("#toggle-right-panel").animate({
-		right: '0'
-	}, speed);
+	$("#toggle-right-panel").css("display","none");
 	queueHidden = true;
 }
 
@@ -835,6 +845,8 @@ function handlePlayerStateRequest(json) {
 	}
 	player = json.selected_player;
 
+	fixTabOffset();
+
 	// user
 	if (json.who) {
 		$("#header-bar-user-message").html(_logged_in_as);
@@ -918,6 +930,7 @@ function handlePlayerStateRequest(json) {
 				"<img id='now-playing-album-art-img' src='" + getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,64) + "' width='64'/></a>");
 		$("#now-playing-album-art-img").reflect({height: 16});
 		$("#now-playing-progress").progressbar({value: 100 * (elapsedTime/totalTime)});
+		fixNPWidth();
 		$("#fullscreen-progress").progressbar({value: 100 * (elapsedTime/totalTime)});
 		/* Full screen view */
 		$("#fullscreen-title").html(nowPlaying.title);
