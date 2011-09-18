@@ -1128,5 +1128,16 @@ sub album_search
 	return [], \@results;
 }
 
+sub artist_search {
+	my $self   = shift;
+	my $artist = $self->cgi->param('artist') || '';
+
+	my $sth = $self->acoustics->db->prepare('SELECT artist FROM songs WHERE artist LIKE ? GROUP BY artist');
+	$sth->execute("%$artist%");
+	my @results = @{$sth->fetchall_arrayref({})};
+
+	return [], \@results;
+}
+
 
 1;
