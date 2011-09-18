@@ -22,7 +22,7 @@
 		<!-- JS core -->
 		<script src="www-data/acoustics2.js"></script>
 		<!-- The following tags are for iOS devices -->
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;"/>
+		<meta name="viewport" content="width=device-width; initial-scale=1.0;"/>
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 		<link rel="apple-touch-icon-precomposed" href="www-data/icons/ios/57.png" />
@@ -32,7 +32,7 @@
 	<body>
 		<div id="header-bar">
 			<div id="header-bar-logo">
-				<img src="www-data/images/ui2/amp_logo_new.png" />
+				<img src="www-data/images/ui2/amp_logo_new.svg" />
 			</div>
 			<div id="header-bar-spacer">&nbsp;</div>
 			<div id="header-bar-menu">
@@ -137,7 +137,7 @@
 				</div>
 				<div id="search-results-song-details" class="floaty">
 					<div id="song-details-album-art">
-						<img id="song-details-album-art-img" width="128" src="www-data/icons/cd_case.png" />
+						<img id="song-details-album-art-img" width="128" src="www-data/icons/cd_case.svg" />
 					</div>
 					<div id="song-details-title"><a href="#">That One Song</a></div>
 					<div id="song-details-artist"><a href="#">The Artist You Like</a></div>
@@ -162,7 +162,7 @@
 					</ul>
 				</div>
 				<div id="info-container" class="container">
-					<img src="www-data/images/ui2/amp_logo_big_new.png" alt="Acoustics" /><br />
+					<img src="www-data/images/ui2/amp_logo_new.svg" height="200" alt="Acoustics" /><br />
 					<span id="info-song-count" class="info-value">...</span> songs are available<br />
 					the top artist is <span id="info-top-artist" class="info-value">...</span><br />
 					the most voted song is <span id="info-top-voted" class="info-value">...</span><br />
@@ -200,7 +200,7 @@
 					<div id="album-search-albums">
 						<div class="album-icon">
 							<div class="album-icon-image">
-								<a><img src="www-data/icons/cd_case_small.png" width="64" /></a>
+								<a><img src="www-data/icons/cd_case_small.svg" width="64" /></a>
 							</div>
 							<a><span>[Album Title]</span></a>
 						</div>
@@ -249,7 +249,7 @@
 						<div id="now-playing-album"><a href="#">No Album</a></div>
 						<div id="now-playing-times"><span id="now-playing-time">0:00</span> / <span id="now-playing-total">0:00</span></div>
 					</div>
-					<div id="now-playing-shuffle"><img src="www-data/images/ui2/shuffle.png" title="Random Mode" /></div>
+					<div id="now-playing-shuffle"><img src="www-data/images/ui2/shuffle.svg" title="Random Mode" /></div>
 					<div id="now-playing-progress-container">
 						<div id="now-playing-progress">
 						</div>
@@ -257,14 +257,14 @@
 				</div>
 				<div id="controls" class="panel">
 					<div id="controls-top">
-						<a href="javascript:controlStop()" id="controls-stop" class="control-button"><img src="www-data/images/ui2/buttons/stop.png" /></a>
-						<a href="javascript:controlPlayPause()" id="controls-play-pause" class="control-button"><img src="www-data/images/ui2/buttons/play.png" /></a>
-						<a href="javascript:controlNext()" id="controls-next" class="control-button"><img src="www-data/images/ui2/buttons/next.png" /></a>
+						<a href="javascript:controlStop()" id="controls-stop" class="control-button"><img src="www-data/images/ui2/buttons/stop.svg" width="32" height="32"/></a>
+						<a href="javascript:controlPlayPause()" id="controls-play-pause" class="control-button"><img src="www-data/images/ui2/buttons/play.svg" /></a>
+						<a href="javascript:controlNext()" id="controls-next" class="control-button"><img src="www-data/images/ui2/buttons/next.svg" /></a>
 					</div>
 					<div id="controls-bottom">
-						<a href="javascript:controlVolumeDown()" id="controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.png" /></a>
+						<a href="javascript:controlVolumeDown()" id="controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.svg" /></a>
 						<a href="#" id="controls-volume" class="control-button disp-volume">-</a>
-						<a href="javascript:controlVolumeUp()" id="controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.png" /></a>
+						<a href="javascript:controlVolumeUp()" id="controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.svg" /></a>
 					</div>
 				</div>
 				<div id="queue" class="panel">
@@ -304,7 +304,7 @@
 					</div>
 					<div id="queue-statusbar" class="statusbar">
 						<div id="queue-song-count">0 songs</div>
-						<div id="queue-fullscreen" class="statusbar-right"><a href="javascript:fullscreen()"><img src="www-data/images/ui2/fullscreen.png"/></a></div>
+						<div id="queue-fullscreen" class="statusbar-right"><a href="javascript:fullscreen()"><img src="www-data/images/ui2/fullscreen.svg"/></a></div>
 						<div id="queue-length" class="statusbar-right">0:00</div>
 					</div>
 				</div>
@@ -331,7 +331,7 @@
 		<div id="fullscreen-view">
 			<div id="fullscreen-center">
 				<div id="fullscreen-album-art">
-					<img id="fullscreen-album-art-img" width="300" src="www-data/images/ui2/cd_case.png" />
+					<img id="fullscreen-album-art-img" width="300" src="www-data/images/ui2/cd_case.svg" />
 				</div>
 				<div id="fullscreen-info">
 					<div id="fullscreen-spacer"></div>
@@ -349,15 +349,15 @@
 			</div>
 			<div id="fullscreen-controls">
 				<div id="fullscreen-control-spacing">&nbsp;</div>
-				<a href="javascript:controlStop()" id="fs-controls-stop" class="control-button"><img src="www-data/images/ui2/buttons/stop.png" /></a>
-				<a href="javascript:controlPlayPause()" id="fs-controls-play-pause" class="control-button"><img src="www-data/images/ui2/buttons/play.png" /></a>
-				<a href="javascript:controlNext()" id="fs-controls-next" class="control-button"><img src="www-data/images/ui2/buttons/next.png" /></a>
-				<a href="javascript:controlVolumeDown()" id="fs-controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.png" /></a>
+				<a href="javascript:controlStop()" id="fs-controls-stop" class="control-button"><img src="www-data/images/ui2/buttons/stop.svg" /></a>
+				<a href="javascript:controlPlayPause()" id="fs-controls-play-pause" class="control-button"><img src="www-data/images/ui2/buttons/play.svg" /></a>
+				<a href="javascript:controlNext()" id="fs-controls-next" class="control-button"><img src="www-data/images/ui2/buttons/next.svg" /></a>
+				<a href="javascript:controlVolumeDown()" id="fs-controls-volume-down" class="control-button"><img src="www-data/images/ui2/buttons/volume-down.svg" /></a>
 				<a href="#" id="fs-controls-volume" class="control-button disp-volume">-</a>
-				<a href="javascript:controlVolumeUp()" id="fs-controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.png" /></a>
+				<a href="javascript:controlVolumeUp()" id="fs-controls-volume-up" class="control-button"><img src="www-data/images/ui2/buttons/volume-up.svg" /></a>
 			</div>
 			<div id="fullscreen-close">
-				<a href="javascript:unfullscreen()"><img src="www-data/images/ui2/fullscreen.png" ?></a>
+				<a href="javascript:unfullscreen()"><img src="www-data/images/ui2/fullscreen.svg" ?></a>
 			</div>
 		</div>
 		<div id="message-box">

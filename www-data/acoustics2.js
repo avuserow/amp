@@ -935,10 +935,10 @@ function handlePlayerStateRequest(json) {
 		/* Title Bar */
 		document.title = nowPlaying.title + " - " + nowPlaying.artist + " [Acoustics]";
 		/* Play / Pause */
-		$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/pause.png");
+		$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/pause.svg");
 		/*
 		if (nowPlaying.state == 'paused') {
-			$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/play.png");
+			$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/play.svg");
 		}
 		*/
 	} else {
@@ -952,7 +952,7 @@ function handlePlayerStateRequest(json) {
 		jQuery.favicon("www-data/images/ui2/favicon.ico");
 		document.title = "Acoustics";
 		totalTime = -1;
-		$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/play.png");
+		$("#controls-play-pause img").attr("src","www-data/images/ui2/buttons/play.svg");
 	}
 
 	if (!queueLocked) {
@@ -1336,7 +1336,7 @@ function clearFullscreen() {
 	$("#fullscreen-artist").html("-");
 	$("#fullscreen-album").html("-");
 	$("#fullscreen-album-art").empty();
-	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons/cd_case.png\" />");
+	$("#fullscreen-album-art").html("<img id=\"fullscreen-album-art-img\" width=\"300\" src=\"www-data/icons/cd_case.svg\" />");
 	if (!$.browser.webkit) {
 		$("#fullscreen-album-art-img").reflect({height: 100});
 	}
