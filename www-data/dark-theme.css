@@ -134,6 +134,10 @@ a:hover {
 				color-stop(0.5, rgba(10, 10, 10, 0.9)),
 				color-stop(1, rgba(0, 0, 0, 0.9)));
 }
+.toolbar ul li a img {
+	vertical-align: top;
+	margin-top: -2px;
+}
 
 .statusbar {
 	background: url(images/ui2/statusbar.png);
