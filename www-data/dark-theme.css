@@ -69,8 +69,8 @@ a:hover {
 }
 .toolbar ul li {
 	margin-top: 5px;
-	margin-left: 4px;
-	margin-right: 4px;
+	margin-left: 2px;
+	margin-right: 2px;
 	color: #fff;
 }
 .toolbar ul li span {
@@ -458,4 +458,13 @@ a:hover {
 	border-bottom: 1px solid #008cde;
 	padding-bottom: 2px;
 	margin-bottom: 2px;
+}
+
+.toolbar-fade-out {
+	background-image: url('images/ui2/hack-header.png');
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	width: 200px;
 }
