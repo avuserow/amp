@@ -162,7 +162,7 @@
 					</ul>
 				</div>
 				<div id="info-container" class="container">
-					<img src="www-data/images/ui2/amp_logo_new.svg" height="200" alt="Acoustics" /><br />
+					<img src="www-data/images/ui2/amp_logo_new.svg" height="100" alt="Acoustics" /><br />
 					<span id="info-song-count" class="info-value">...</span> songs are available<br />
 					the top artist is <span id="info-top-artist" class="info-value">...</span><br />
 					the most voted song is <span id="info-top-voted" class="info-value">...</span><br />
@@ -215,7 +215,6 @@
 				<div id="manage-toolbar" class="toolbar">
 					<ul id="manage-toolbar-list" class="toolbar-list">
 						<li id="manage-title">Management Console</li>
-						<li id="manage-zap-player" class="toolbar-right"><a href="javascript:manageZapPlayer()">Zap Player</a></li>
 					</ul>
 				</div>
 				<div id="manage-container" class="container">
@@ -228,6 +227,10 @@
 						<form onSubmit="manageScanDirectory(); return false;">
 							Scan a directory: <input id="manage-scan-directory" class="input-split-box input-split-circular input-split-button" />
 						</form>
+					</div>
+					<div id="manage-zap">
+						Reset this player:
+						<a class="control-button button-link" href="javascript:manageZapPlayer()">Zap Player</a>
 					</div>
 				</div>
 				<div id="manage-statusbar" class="statusbar">
@@ -312,9 +315,9 @@
 				<div id="playlist-toolbar" class="toolbar">
 					<ul id="playlist-toolbar-list" class="toolbar-list">
 						<li id="playlist-select"><select id="playlist-select-form" class="input-split-button input-split-right"></select></li>
-						<li id="playlist-play" class="toolbar-right"><a href="javascript:playlistPlay()">Play</a></li>
-						<li id="playlist-delete" class="toolbar-right"><a href="javascript:playlistDelete()">Delete</a></li>
-						<li id="playlist-new" class="toolbar-right"><a href="javascript:playlistNew()">New</a></li>
+						<li id="playlist-play" class="toolbar-right"><a href="javascript:playlistPlay()"><img src="www-data/images/ui2/buttons/playlist-play.svg" title="Play" /></a></li>
+						<li id="playlist-delete" class="toolbar-right"><a href="javascript:playlistDelete()"><img src="www-data/images/ui2/buttons/delete.svg" title="Delete" /></a></li>
+						<li id="playlist-new" class="toolbar-right"><a href="javascript:playlistNew()"><img src="www-data/images/ui2/buttons/playlist-new.svg" title="New" /></a></li>
 					</ul>
 				</div>
 				<div id="playlist-statusbar" class="statusbar">
