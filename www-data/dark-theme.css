@@ -46,6 +46,9 @@ body > tr > td a img {
 body > tr > td a {
 	color: #fff !important;
 }
+body > tr > td a:hover {
+	text-decoration: none;
+}
 
 a, a:visited {
 	color: #ccc;

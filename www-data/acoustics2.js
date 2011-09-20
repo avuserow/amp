@@ -640,7 +640,7 @@ function fillResultTable(json) {
 		$(".search-results-entry-artist a", entry).attr('title', song.artist);
 
 		$("#search-results-table tbody").append(entry);
-		$(entry).draggable({appendTo: 'body', helper: 'clone', connectToSortable: '#queue-list, #playlist-list'});
+		$(entry).draggable({cursorAt: { top: 20, left: 100 }, appendTo: 'body', helper: 'clone', connectToSortable: '#queue-list, #playlist-list'});
 
 		total_length += parseInt(song.length);
 	}
