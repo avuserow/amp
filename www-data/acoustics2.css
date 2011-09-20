@@ -1,3 +1,4 @@
+/* vim: shiftwidth=4 tabstop=4 noexpandtab */
 body {
 	position: fixed;
 	margin: 0px 0px 0px 0px;
@@ -320,10 +321,6 @@ a img {
 			width: 100%;
 			border-collapse: collapse;
 			table-layout: fixed;
-		}
-		#search-results-table thead tr td {
-			width: auto;
-			width: 100%;
 		}
 		#search-results-table tbody tr td {
 			font-size: 12px;

@@ -229,6 +229,15 @@ $(document).ready(function() {
 				thIndex = th.index(),
 				inverse = false;
 			th.click(function() {
+				if (!inverse) {
+					$("#search-results-table th").removeClass("sortUp");
+					$("#search-results-table th").removeClass("sortDown");
+					$(this).addClass("sortDown");
+				} else {
+					$("#search-results-table th").removeClass("sortUp");
+					$("#search-results-table th").removeClass("sortDown");
+					$(this).addClass("sortUp");
+				}
 				table.find('td').filter(function() {
 					return $(this).index() === thIndex;
 				}).sortElements(function(a, b) {

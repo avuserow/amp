@@ -1,3 +1,4 @@
+/* vim: shiftwidth=4 tabstop=4 noexpandtab */
 body {
 	background-color: #666;
 }
@@ -525,4 +526,24 @@ a:hover {
 	right: 0px;
 	bottom: 0px;
 	width: 200px;
+}
+
+/* Sorting hints for search results */
+.sortDown {
+	background: -moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(125,185,232,0) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,87,153,1)), color-stop(100%,rgba(125,185,232,0)));
+	background: -webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(125,185,232,0) 100%);
+	background: -o-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(125,185,232,0) 100%);
+	background: -ms-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(125,185,232,0) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#007db9e8',GradientType=0 );
+	background: linear-gradient(top, rgba(30,87,153,1) 0%,rgba(125,185,232,0) 100%);
+}
+.sortUp {
+	background: -moz-linear-gradient(top, rgba(125,185,232,0) 0%, rgba(30,87,153,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(125,185,232,0)), color-stop(100%,rgba(30,87,153,1)));
+	background: -webkit-linear-gradient(top, rgba(125,185,232,0) 0%,rgba(30,87,153,1) 100%);
+	background: -o-linear-gradient(top, rgba(125,185,232,0) 0%,rgba(30,87,153,1) 100%);
+	background: -ms-linear-gradient(top, rgba(125,185,232,0) 0%,rgba(30,87,153,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#007db9e8', endColorstr='#1e5799',GradientType=0 );
+	background: linear-gradient(top, rgba(125,185,232,0) 0%,rgba(30,87,153,1) 100%);
 }
