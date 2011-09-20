@@ -117,7 +117,7 @@ $(document).ready(function() {
 
 	$("#queue-list").sortable({
 		placeholder: "queue-song-placeholder",
-		axis: "y",
+		revert: 200,
 		start: function() { queueLocked = true; },
 		stop: function(event,ui) {
 			if ($(ui.item).is("tr")) {
@@ -146,7 +146,7 @@ $(document).ready(function() {
 
 	$("#playlist-list").sortable({
 		placeholder: "queue-song-placeholder",
-		axis: "y",
+		revert: 200,
 		start: function() { playlistLocked = true; },
 		stop: function(event,ui) {
 			if ($(ui.item).is("tr")) {
@@ -653,7 +653,7 @@ function fillResultTable(json) {
 		$(".search-results-entry-artist a", entry).attr('title', song.artist);
 
 		$("#search-results-table tbody").append(entry);
-		$(entry).draggable({revert: "invalid", cursorAt: { top: 20, left: 100 }, appendTo: 'body', helper: 'clone', connectToSortable: '#queue-list, #playlist-list'});
+		$(entry).draggable({revert: "invalid", cursorAt: { top: 20, left: 100 }, appendTo: 'body', helper: 'clone', connectToSortable: "ul#queue-list"});
 
 		total_length += parseInt(song.length);
 	}
