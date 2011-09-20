@@ -10,6 +10,7 @@ body > tr {
 	height: 41px !important;
 	background-color: #006cae;
 	overflow: hidden;
+	opacity: 0.6;
 }
 body > tr > td {
 	display: block;
@@ -48,6 +49,12 @@ body > tr > td a {
 }
 body > tr > td a:hover {
 	text-decoration: none;
+}
+
+.queue-song-placeholder {
+	background-image: url('images/ui2/drop-target.svg');
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
 a, a:visited {

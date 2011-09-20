@@ -622,7 +622,8 @@ a img {
 					clear: both;
 				}
 			.queue-song-placeholder {
-				height: 40px;
+				height: 40px !important;
+				width: 100% !important;
 				overflow: hidden;
 				line-height: 40px;
 				display: block;
