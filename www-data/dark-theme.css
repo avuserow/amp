@@ -25,12 +25,18 @@ body > tr > td.search-results-entry-track {
 body > tr > td.search-results-entry-title {
 	display: block;
 	width: 100%;
+	margin-left: 2px;
+	margin-top: 2px;
 }
 body > tr > td.search-results-entry-album {
 	visibility: hidden;
 	display: block;
 	width: 20px !important;
 	overflow: hidden;
+}
+body > tr > td.search-results-entry-artist {
+	margin-top: 4px;
+	margin-left: 2px;
 }
 body > tr > td.search-results-entry-length {
 	font-size: 12px;
