@@ -2,6 +2,51 @@ body {
 	background-color: #666;
 }
 
+body > tr {
+	display: block;
+	width: 300px;
+	border: 1px solid #000;
+	background-color: #666;
+	height: 41px !important;
+	background-color: #006cae;
+	overflow: hidden;
+}
+body > tr > td {
+	display: block;
+	float: left;
+}
+body > tr > td .control-button {
+	display: none;
+}
+body > tr > td.search-results-entry-track {
+	display: none;
+}
+body > tr > td.search-results-entry-title {
+	display: block;
+	width: 100%;
+}
+body > tr > td.search-results-entry-album {
+	visibility: hidden;
+	display: block;
+	width: 20px !important;
+	overflow: hidden;
+}
+body > tr > td.search-results-entry-length {
+	font-size: 12px;
+	position: absolute;
+	right: 2px;
+	bottom: 2px;
+	color: #fff;
+}
+body > tr > td a img {
+	position: absolute;
+	top: 22px;
+	left: 2px;
+}
+body > tr > td a {
+	color: #fff !important;
+}
+
 a, a:visited {
 	color: #ccc;
 	text-decoration: none;
