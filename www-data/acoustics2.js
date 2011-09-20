@@ -627,14 +627,18 @@ function fillResultTable(json) {
 		$(".search-results-entry-title a", entry).html("<img class='mini-album-art' src='" + getAlbumArtUrl(song.artist,song.album,song.title,16) + "' width=16 />" + song.title);
 		$(".search-results-entry-title a", entry).attr('href',
 			'#SongDetails/' + song.song_id);
+		$(".search-results-entry-title a", entry).attr('title', song.title);
 
 		$(".search-results-entry-album a", entry).html(song.album);
 		$(".search-results-entry-album a", entry).attr('href',
 			'#SelectRequest/album/' + uriencode(song.album));
+		$(".search-reuslts-entry-album a", entry).attr('title', song.album);
 
 		$(".search-results-entry-artist a", entry).html(song.artist);
 		$(".search-results-entry-artist a", entry).attr('href',
 			'#SelectRequest/artist/' + uriencode(song.artist));
+		$(".search-results-entry-artist a", entry).attr('title', song.artist);
+
 		$("#search-results-table tbody").append(entry);
 		$(entry).draggable({appendTo: 'body', helper: 'clone', connectToSortable: '#queue-list, #playlist-list'});
 

@@ -335,17 +335,25 @@ a img {
 		#search-results-table {
 			width: 100%;
 			border-collapse: collapse;
+			table-layout: fixed;
+		}
+		#search-results-table thead tr td {
+			width: auto;
+			width: 100%;
 		}
 		#search-results-table tbody tr td {
 			font-size: 12px;
-			height: 14px;
-			vertical-align: top;
+			height: 20px;
+			vertical-align: middle;
 			overflow: hidden;
+			text-overflow: ellipsis;
+			text-overflow-mode: ellipsis;
+			white-space: nowrap;
 		}
 		.sr-th {
 			font-size: 14px;
 		}
-		#sr-vote { width: 20px; }
+		#sr-vote { width: 35px !important; }
 		#sr-track { width: 20px; }
 		#sr-length { width: 50px; }
 			.search-results-entry-song-id {
