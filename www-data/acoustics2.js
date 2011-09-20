@@ -230,12 +230,10 @@ $(document).ready(function() {
 				inverse = false;
 			th.click(function() {
 				if (!inverse) {
-					$("#search-results-table th").removeClass("sortUp");
-					$("#search-results-table th").removeClass("sortDown");
+					clearSortIndicators();
 					$(this).addClass("sortDown");
 				} else {
-					$("#search-results-table th").removeClass("sortUp");
-					$("#search-results-table th").removeClass("sortDown");
+					clearSortIndicators();
 					$(this).addClass("sortUp");
 				}
 				table.find('td').filter(function() {
@@ -280,6 +278,11 @@ $(document).ready(function() {
 	});
 
 });
+
+function clearSortIndicators() {
+	$("#search-results-table th").removeClass("sortUp");
+	$("#search-results-table th").removeClass("sortDown");
+}
 
 function setQueueWidth(width) {
 	$("#right-panel").css("width", width);
@@ -615,6 +618,7 @@ function hideShowSlide(what) {
 
 function fillResultTable(json) {
 	$("#search-results-table tbody tr").remove();
+	clearSortIndicators();
 	if (json.length < 1) {
 		$("#search-results-table tbody").append("<tr><td colspan=\"6\"><center><i>No results.</i></center></td></tr>");
 		$("#search-results-time").html("0 seconds");
