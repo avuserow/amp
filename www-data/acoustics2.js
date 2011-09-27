@@ -1047,7 +1047,7 @@ function handlePlayerStateRequest(json) {
 			userList_html.push("<a href='#' class='control-button button-link' onClick='managePurgeUser(this.textContent); return false;'>" + userList[i] + "</a>");
 		}
 		$("#manage-purge").html(userList_html.join("<br />"));
-		var length = $("#queue-list").contents().length;
+		var length = json.playlist.length;
 		if (length == 1) {
 			$("#queue-song-count").html("One song");
 		} else {
