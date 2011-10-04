@@ -734,7 +734,7 @@ function silentVote(song_id) {
 }
 
 function playlistPlay() {
-	var block;
+	var block = "";
 	$("#playlist-list .queue-song").each(function(index) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
