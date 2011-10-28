@@ -447,7 +447,11 @@ function loadPlaylist(pl) {
 					$(".queue-song-title a", entry).attr('href',
 						'#SongDetails/' + song.song_id);
 
-					$(".queue-song-artist a", entry).html("<img class='mini-album-art' src='" + getAlbumArtUrl(song.artist,song.album,song.title,16) + "' width=16 />" + song.artist);
+					album_art = $("<img />").attr("width","16").attr("class","mini-album-art").attr("src",getAlbumArtUrl(song.artist,song.album,song.title,16));
+
+					$(".queue-song-artist a", entry).empty();
+					$(".queue-song-artist a", entry).append(album_art)
+					$(".queue-song-artist a", entry).append(song.artist);
 					$(".queue-song-artist a", entry).attr('href',
 						'#SelectRequest/artist/' + uriencode(song.artist));
 
@@ -637,7 +641,10 @@ function fillResultTable(json) {
 		$(".search-results-entry-vote", entry).attr('href',
 			'javascript:voteSong(' + song.song_id + ')');
 
-		$(".search-results-entry-title a", entry).html("<img class='mini-album-art' src='" + getAlbumArtUrl(song.artist,song.album,song.title,16) + "' width=16 />" + song.title);
+		album_art = $("<img />").attr("width","16").attr("class","mini-album-art").attr("src",getAlbumArtUrl(song.artist,song.album,song.title,16));
+		$(".search-results-entry-title a", entry).empty();
+		$(".search-results-entry-title a", entry).append(album_art)
+		$(".search-results-entry-title a", entry).append(song.title);
 		$(".search-results-entry-title a", entry).attr('href',
 			'#SongDetails/' + song.song_id);
 		$(".search-results-entry-title a", entry).attr('title', song.title);
@@ -734,7 +741,7 @@ function silentVote(song_id) {
 }
 
 function playlistPlay() {
-	var block;
+	var block = "";
 	$("#playlist-list .queue-song").each(function(index) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
@@ -962,9 +969,11 @@ function handlePlayerStateRequest(json) {
 		$("#nothing-playing-info", nowPlayingPanel).remove();
 		$("#now-playing-info").replaceWith(nowPlayingPanel);
 		$("#now-playing-album-art").empty();
-		$("#now-playing-album-art").append("<a href='javascript:fixArt(\"" + jsencode(nowPlaying.artist) + "\",\"" +
-				jsencode(nowPlaying.album) + "\",\"" + jsencode(nowPlaying.title) + "\")'>" + 
-				"<img id='now-playing-album-art-img' src='" + getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,64) + "' width='64'/></a>");
+		album_art = $("<a href='javascript:fixArt(\"" + jsencode(nowPlaying.artist) + "\",\"" +
+				jsencode(nowPlaying.album) + "\",\"" + jsencode(nowPlaying.title) + "\")'></a>").append(
+				$("<img />").attr("id","now-playing-album-art-img").attr("src",getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,64)).attr("width","64"));
+		$("#now-playing-album-art").append(album_art);
+
 		$("#now-playing-album-art-img").reflect({height: 16});
 		$("#now-playing-progress").progressbar({value: 100 * (elapsedTime/totalTime)});
 		fixNPWidth();
@@ -974,9 +983,10 @@ function handlePlayerStateRequest(json) {
 		$("#fullscreen-artist").html(nowPlaying.artist);
 		$("#fullscreen-album").html(nowPlaying.album);
 		$("#fullscreen-album-art").empty();
-		$("#fullscreen-album-art").append("<a href='javascript:fixArt(\"" + jsencode(nowPlaying.artist) + "\",\"" +
-				jsencode(nowPlaying.album) + "\",\"" + jsencode(nowPlaying.title) + "\")'>" + 
-				"<img id='fullscreen-album-art-img' src='" + getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,300) + "' width='300'/></a>");
+		album_art = $("<a href='javascript:fixArt(\"" + jsencode(nowPlaying.artist) + "\",\"" +
+				jsencode(nowPlaying.album) + "\",\"" + jsencode(nowPlaying.title) + "\")'></a>").append(
+				$("<img />").attr("id","fullscreen-album-art-img").attr("src",getAlbumArtUrl(nowPlaying.artist,nowPlaying.album,nowPlaying.title,300)).attr("width","300"));
+		$("#fullscreen-album-art").append(album_art);
 		if (!$.browser.webkit) {
 			$("#fullscreen-album-art-img").reflect({height: 100});
 		}
@@ -1018,7 +1028,11 @@ function handlePlayerStateRequest(json) {
 			$(".queue-song-title a", entry).attr('href',
 				'#SongDetails/' + song.song_id);
 
-			$(".queue-song-artist a", entry).html("<img class='mini-album-art' src='" + getAlbumArtUrl(song.artist,song.album,song.title,16) + "' width=20 />" + song.artist);
+			album_art = $("<img />").attr("width","16").attr("class","mini-album-art").attr("src",getAlbumArtUrl(song.artist,song.album,song.title,16));
+
+			$(".queue-song-artist a", entry).empty();
+			$(".queue-song-artist a", entry).append(album_art)
+			$(".queue-song-artist a", entry).append(song.artist);
 			$(".queue-song-artist a", entry).attr('href',
 				'#SelectRequest/artist/' + uriencode(song.artist));
 
@@ -1147,9 +1161,10 @@ function songDetails(id) {
 			$("#song-details-file a").attr('href',
 				'#SelectRequest/path/' + uriencode(json.path));
 			$("#song-details-album-art").empty();
-			$("#song-details-album-art").append("<a href='javascript:fixArt(\"" + jsencode(json.artist) + "\",\"" +
-					jsencode(json.album) + "\",\"" + jsencode(json.title) + "\")'>" + 
-					"<img id='song-details-album-art-img' src='" + getAlbumArtUrl(json.artist,json.album,json.title,128) + "' width='128'/></a>");
+			album_art = $("<a href='javascript:fixArt(\"" + jsencode(json.artist) + "\",\"" +
+					jsencode(json.album) + "\",\"" + jsencode(json.title) + "\")'></a>").append(
+					$("<img />").attr("id","fullscreen-album-art-img").attr("src",getAlbumArtUrl(json.artist,json.album,json.title,128)).attr("width","128"));
+			$("#song-details-album-art").append(album_art);
 			$("#search-results-song-details").slideDown(300, function() {
 				$("#song-details-album-art img").reflect({height: 40});
 			});
@@ -1433,7 +1448,8 @@ function albumSearch(title) {
 				var title = data[album].album;
 				if (!title) { title = "<i>No Album</i>"; }
 				imgs[album].src = getAlbumArtUrl("",data[album].album,"",200);
-				$(".flow", _cf).append("<a class=\"item\" href=\"#SelectRequest/album/" + uriencode(data[album].album) + "\">\n\t<img class=\"content\" src=\"" + imgs[album].src + "\" />\n\t<span class=\"caption\">" + title + "</span>\n</a>\n");
+				album_art = $("<a class=\"item\"></a>").attr("href","#SelectRequest/album/" + uriencode(data[album].album)).append($("<img class=\"content\" />").attr("src",imgs[album].src)).append($("<span class=\"caption\"></span>").html(title));
+				$(".flow", _cf).append(album_art);
 				count++;
 			}
 			_cf.appendTo(".cf-container");
