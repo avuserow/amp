@@ -1286,8 +1286,8 @@ function jsencode(str) {
 
 function moreencode(str) {
 	str = uriencode(str);
-	str = str.replace(/\'/g, '&apos;');
-	str = str.replace(/\"/g, '&quot;');
+	str = str.replace(/\'/g, '%27');
+	str = str.replace(/\"/g, '%22');
 	return str;
 }
 
