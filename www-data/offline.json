@@ -1,0 +1,9 @@
+{
+    "now_playing":null,
+    "selected_player":"",
+    "players": [ ],
+    "player":null,
+    "playlist": [ ],
+    "who":null,
+    "can_skip":false,
+}
