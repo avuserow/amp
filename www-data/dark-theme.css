@@ -1,4 +1,5 @@
-/* vim: shiftwidth=4 tabstop=4 noexpandtab */
+/* vim: shiftwidth=4 tabstop=4 noexpandtab
+ */
 body {
 	background-color: #666;
 }
@@ -56,7 +57,7 @@ body > tr > td a:hover {
 }
 
 .queue-song-placeholder {
-	background-image: url('images/ui2/drop-target.svg');
+	background-image: url(images/ui2/drop-target.svg);
 	background-repeat: no-repeat;
 	background-position: center;
 }
@@ -520,7 +521,7 @@ a:hover {
 }
 
 .toolbar-fade-out {
-	background-image: url('images/ui2/hack-header.png');
+	background-image: url(images/ui2/hack-header.png);
 	position: absolute;
 	top: 0px;
 	right: 0px;
