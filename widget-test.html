@@ -1,0 +1,34 @@
+<!doctype html>
+<html manifest="cache.manifest">
+	<head>
+		<title>Acoustics IFrame Widget Sample</title>
+		<style>
+.acoustics-box {
+	padding: 4px;
+	border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px;
+	background-color: #222;
+	width: 250px;
+	height: 100px;
+}
+		</style>
+		<script>
+			function doIt() {
+				/* You can set a widget to a specific player with the setPlayer() command */
+				document.getElementById("default").contentWindow.setPlayer("default");
+				document.getElementById("extra").contentWindow.setPlayer("extra");
+			}
+			/* If we do this immediately, it will not work. */
+			setTimeout('doIt()', 3000);
+		</script>
+	</head>
+	<body>
+		Room 'default':
+		<div class="acoustics-box">
+			<iframe width="100%" height="100%" src="widget.html" frameBorder="0" id="default"></iframe>
+		</div>
+		Room 'extra':
+		<div class="acoustics-box">
+			<iframe width="100%" height="100%" src="widget.html" frameBorder="0" id="extra"></iframe>
+		</div>
+	</body>
+</html>

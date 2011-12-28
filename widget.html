@@ -1,0 +1,43 @@
+<!doctype html>
+<html manifest="cache.manifest">
+	<head>
+		<title>なぜここいるの？</title>
+		<meta charset="utf-8" />
+		<!-- CSS sheets -->
+		<link rel="stylesheet" href="www-data/jquery-ui-1.8.6.custom.css" />
+		<link rel="stylesheet" id="structure" href="www-data/acoustics2.css" />
+		<link rel="stylesheet" id="theme" href="www-data/dark-theme.css" />
+		<!-- JS includes -->
+		<script src="www-data/jquery.min.js"></script>
+		<script src="www-data/jquery-ui-1.8.6.custom.min.js"></script>
+		<script src="www-data/jquery.tablesorter.min.js"></script>
+		<script src="www-data/jquery.address-1.3.min.js"></script>
+		<script src="www-data/jquery.reflection.js"></script>
+		<script src="www-data/jquery.favicon.js"></script>
+		<script src="www-data/jquery.sortElements.js"></script>
+		<script src="www-data/ContentFlow/contentflow.js"></script>
+		<!-- JS core -->
+		<script src="www-data/acoustics2.js"></script>
+	</head>
+	<body>
+		<div id="now-playing-panel" class="panel">
+			<div id="nothing-playing-info">
+				Nothing playing.
+			</div>
+			<div id="now-playing-album-art">
+				<img id="now-playing-album-art-img" src="www-data/icons/cd_case.svg" alt="Art" />
+			</div>
+			<div id="now-playing-info">
+				<div id="now-playing-title"><a href="#">Nothing Playing</a></div>
+				<div id="now-playing-artist"><a href="#">No One</a></div>
+				<div id="now-playing-album"><a href="#">No Album</a></div>
+				<div id="now-playing-times"><span id="now-playing-time">0:00</span> / <span id="now-playing-total">0:00</span></div>
+			</div>
+			<div id="now-playing-shuffle"><img src="www-data/images/ui2/shuffle.svg" title="Random Mode" alt="Random Mode" /></div>
+			<div id="now-playing-progress-container">
+				<div id="now-playing-progress">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
