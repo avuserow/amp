@@ -2,14 +2,16 @@
  */
 /* Configuration data */
 var acoustics_version = "1.99-beta";
+var jsonSource = 'json.pl';
+var artSource = 'json.pl?mode=art';
+var _logged_in_as = "logged in as";
+var themes = ["dark","light","none"];
 
-/* Globals */
+/* Global State Variables */
 var currentUser = '';
 var volume;
 var stateTimer;
 var templates = {};
-var jsonSource = 'json.pl';
-var artSource = 'json.pl?mode=art';
 var playingTimer;
 var elapsedTime = 0;
 var totalTime = 0;
@@ -28,12 +30,10 @@ var playlistsReady = false;
 var currentPlaylist = 0;
 var currentId = 0;
 var _firstLoad = true;
-var _logged_in_as = "logged in as";
-
 var theme = 0;
-var themes = ["dark","light","none"];
 
 function toggleTheme() {
+	/* Toggle the theme when the star next to the login button is pressed */
 	theme++;
 	if (theme == themes.length) {
 		theme = 0;
@@ -43,10 +43,12 @@ function toggleTheme() {
 
 function orientationAdjust() {
 	if (window.orientation && Math.abs(window.orientation) == 90) {
+		/* Landscape */
 		hideQueue();
 		$("#header-bar").slideDown(200);
 		$("#main-content").css("top",'20px');
 	} else {
+		/* Portrait */
 		$("#right-panel").css("width", $(window).width());
 		$("#playlist-panel").css("width", $(window).width());
 		showQueue();
@@ -61,33 +63,35 @@ function mobilize() {
 	 * adjusting content widths, moving everything around as nececssary, and being
 	 * generally awesome. */
 	$("#structure").attr("href","www-data/acoustics-mobile.css");
+	/* Disable effects */
 	$.fx.off = true;
+	/* Simplify the username display */
 	_logged_in_as = ":";
 
+	/* Hide the right panel by default */
 	$("#toggle-right-panel").hide();
 
+	/* Enable orientation adjustment */
 	var supportsOrientationChange = "onorientationchange" in window,
 		orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
 	orientationAdjust();
-
 	window.addEventListener(orientationEvent, orientationAdjust, false);
 
 }
 
-function dedupArray(array)
-{
+function dedupArray(array) {
 	array.sort();
-	var cnt = array.length - 1;
+	var cnt = array.length;
 	var i=0;
 	var keepers = new Array();
-	while(i <= cnt){
-		if(array[i] != array[i + 1]){
+	while (i < cnt){
+		if (array[i] != array[i + 1]){
 			keepers.push(array[i]);
 			i++;
-		}else{
+		} else {
 			array.shift();
 		}
-		cnt = array.length - 1;
+		cnt = array.length;
 	}
 	return keepers;
 }
@@ -916,7 +920,7 @@ function handlePlayerStateRequest(json) {
 			if (json.players[i] == json.selected_player) {
 				$("#header-bar-menu-players-dropdown").append("<li><b><a href=\"javascript:changePlayer('" + json.players[i] + "');\" style='color: #FFF;'>" + json.players[i] + "</a></b></li>\n");
 			} else {
-				$("#header-bar-menu-players-dropdown").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a> <a href=\"javascript:migrateToPlayer('" + json.players[i] + "');\"><img src='www-data/images/ui2/arrow-left.svg'/></a></li>\n");
+				$("#header-bar-menu-players-dropdown").append("<li><a href=\"javascript:changePlayer('" + json.players[i] + "');\">" + json.players[i] + "</a> <a href=\"javascript:migrateToPlayer('" + json.players[i] + "');\"><img src='www-data/images/ui2/arrow-left.svg' alt='&lt;'/></a></li>\n");
 
 			}
 		}
