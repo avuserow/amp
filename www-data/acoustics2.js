@@ -33,6 +33,11 @@ var _firstLoad = true;
 var theme = 0;
 var _forcePlayer = false;
 
+window.setPlayer = function(player) {
+	_forcePlayer = player;
+	playerStateRequest();
+}
+
 function getPath(str) {
 	if (!_forcePlayer) {
 		return jsonSource + "?" + str;
@@ -237,7 +242,8 @@ $(document).ready(function() {
 
 	playerStateRequest();
 	if (stateTimer) clearInterval(stateTimer);
-	stateTimer = setInterval(function() {playerStateRequest();}, 15000);
+	stateTimer = setInterval('playerStateRequest()', 15000);
+
 	/* Table sorting */
 	var table = $("#search-results-table");
 	$("#search-results-table th").wrapInner("<span title='Click to Sort'/>")
@@ -325,7 +331,7 @@ function quickComplete(block) {
 
 function insertAdvancedSearch(id) {
 	var entry = templates.advancedSearchEntry.clone();
-	if (entry.attr) {
+	if (entry.attr("id")) {
 		if (id == 1) {
 			$("#adv-search-and-NUM",entry).remove();
 			$("#adv-search-or-NUM",entry).remove();
@@ -526,19 +532,19 @@ function readableTime(length) {
 	return length;
 }
 
-function startPlayingTimer() {
-	if (playingTimer) clearInterval(playingTimer);
-	playingTimer = setInterval(function() { updatePlayingTime() }, 1000);
-}
-
 function updatePlayingTime() {
 	if (elapsedTime < totalTime) {
 		$('#now-playing-time').html(readableTime(++elapsedTime));
 		$('#now-playing-progress').progressbar({value: 100 * (elapsedTime/totalTime)});
 		$('#fullscreen-progress').progressbar({value: 100 * (elapsedTime/totalTime)});
-	} else if (elapsedTime >= totalTime) {
+	} else if (elapsedTime >= totalTime && totalTime > 0) {
 		playerStateRequest();
 	}
+}
+
+function startPlayingTimer() {
+	if (playingTimer) clearInterval(playingTimer);
+	playingTimer = setInterval('updatePlayingTime()', 1000);
 }
 
 function playerStateRequest() {
@@ -917,6 +923,7 @@ function handlePlayerStateRequest(json) {
 
 	fixTabOffset();
 
+
 	// user
 	if (json.who) {
 		$("#header-bar-user-message").html(_logged_in_as);
@@ -959,7 +966,7 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-info").show();
 		$("#nothing-playing-info").hide();
 		if (nowPlaying.title.length > 0) {
-			$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title);
+			$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title + " : " + _forcePlayer);
 		} else {
 			$("#now-playing-title a", nowPlayingPanel).html('[untitled]');
 		}
