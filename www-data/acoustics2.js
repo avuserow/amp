@@ -41,6 +41,10 @@ function getPath(str) {
 	}
 }
 
+function getPath_(str) {
+	return jsonSource + "?" + str;
+}
+
 function toggleTheme() {
 	/* Toggle the theme when the star next to the login button is pressed */
 	theme++;
@@ -816,7 +820,7 @@ function unvoteSong(song_id) {
 
 function changePlayer(player_id) {
 	$.getJSON(
-		getPath("mode=change_player;player_id="+player_id),
+		getPath_("mode=change_player;player_id="+player_id),
 		function(data) { handlePlayerStateRequest(data);}
 	);
 }

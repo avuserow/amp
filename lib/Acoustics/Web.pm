@@ -89,7 +89,11 @@ sub BUILD {
 		cgi       => $self->cgi,
 	});
 
-	$self->acoustics->select_player($self->auth->player_id);
+	if ($self->cgi->param("player_id") ) {
+		$self->acoustics->select_player($self->cgi->param("player_id"));
+	} else {
+		$self->acoustics->select_player($self->auth->player_id);
+	}
 }
 
 =head1 METHODS THAT RETURN THE PLAYER STATE OBJECT
