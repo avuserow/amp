@@ -12,23 +12,24 @@
 }
 		</style>
 		<script>
-			function doIt() {
-				/* You can set a widget to a specific player with the setPlayer() command */
-				document.getElementById("default").contentWindow.setPlayer("default");
-				document.getElementById("extra").contentWindow.setPlayer("extra");
+			function setRoom(what, which) {
+				what.contentWindow.setPlayer(which);
 			}
-			/* If we do this immediately, it will not work. */
-			setTimeout('doIt()', 3000);
+			function force() {
+				setRoom(document.getElementById("rooma"),"default");
+				setRoom(document.getElementById("roomb"),"extra");
+			}
+			setTimeout('force()', 3000);
 		</script>
 	</head>
 	<body>
 		Room 'default':
 		<div class="acoustics-box">
-			<iframe width="100%" height="100%" src="widget.html" frameBorder="0" id="default"></iframe>
+			<iframe width="100%" height="100%" src="widget.html" frameBorder="0" id="rooma" onload="setRoom(this,'default')"></iframe>
 		</div>
 		Room 'extra':
 		<div class="acoustics-box">
-			<iframe width="100%" height="100%" src="widget.html" frameBorder="0" id="extra"></iframe>
+			<iframe width="100%" height="100%" src="widget.html" frameBorder="0" id="roomb" onload="setRoom(this,'extra')"></iframe>
 		</div>
 	</body>
 </html>
