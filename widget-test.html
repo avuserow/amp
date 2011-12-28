@@ -9,6 +9,19 @@
 	background-color: #222;
 	width: 250px;
 	height: 100px;
+	float: left;
+}
+.acoustics-queue {
+	margin-left: 10px;
+	padding: 4px;
+	border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px;
+	background-color: #222;
+	width: 400px;
+	height: 400px;
+	float: left;
+}
+.room-title {
+	clear: left;
 }
 		</style>
 		<script>
@@ -17,19 +30,31 @@
 			}
 			function force() {
 				setRoom(document.getElementById("rooma"),"default");
+				setRoom(document.getElementById("rooma_queue"),"default");
 				setRoom(document.getElementById("roomb"),"extra");
+				setRoom(document.getElementById("roomb_queue"),"extra");
 			}
 			setTimeout('force()', 3000);
 		</script>
 	</head>
 	<body>
-		Room 'default':
+		<div class="room-title">
+			Room 'default':
+		</div>
 		<div class="acoustics-box">
 			<iframe width="100%" height="100%" src="widget.html" frameBorder="0" id="rooma" onload="setRoom(this,'default')"></iframe>
 		</div>
-		Room 'extra':
+		<div class="acoustics-queue">
+			<iframe width="100%" height="100%" src="queue.html" frameBorder="0" id="rooma_queue" onload="setRoom(this,'default')"></iframe>
+		</div>
+		<div class="room-title">
+			Room 'extra':
+		</div>
 		<div class="acoustics-box">
 			<iframe width="100%" height="100%" src="widget.html" frameBorder="0" id="roomb" onload="setRoom(this,'extra')"></iframe>
+		</div>
+		<div class="acoustics-queue">
+			<iframe width="100%" height="100%" src="queue.html" frameBorder="0" id="roomb_queue" onload="setRoom(this,'extra')"></iframe>
 		</div>
 	</body>
 </html>
