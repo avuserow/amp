@@ -31,6 +31,15 @@ var currentPlaylist = 0;
 var currentId = 0;
 var _firstLoad = true;
 var theme = 0;
+var _forcePlayer = false;
+
+function getPath(str) {
+	if (!_forcePlayer) {
+		return jsonSource + "?" + str;
+	} else {
+		return jsonSource + "?player_id=" + _forcePlayer + "&" + str;
+	}
+}
 
 function toggleTheme() {
 	/* Toggle the theme when the star next to the login button is pressed */
@@ -183,7 +192,7 @@ $(document).ready(function() {
 			return;
 		}
 		$.getJSON(
-			jsonSource + '?mode=quick_search;q=' + search_value,
+			getPath('mode=quick_search;q=' + search_value),
 			function (data) {
 				if (currentId != _myid) return;
 				var output = Array();
@@ -298,7 +307,9 @@ function fixNPWidth() {
 	$("#now-playing-info").css("width",($("#now-playing-panel").width() - $("#now-playing-album-art").width() - 4) + 'px');
 }
 function fixTabOffset() {
-	$("#toggle-right-panel").offset({top: $("#toggle-right-panel").offset().top, left:($(window).width() - $("#right-panel").width() - $("#toggle-right-panel").width())});
+	if ($("#toggle-right-panel").width() != null) {
+		$("#toggle-right-panel").offset({top: $("#toggle-right-panel").offset().top, left:($(window).width() - $("#right-panel").width() - $("#toggle-right-panel").width())});
+	}
 }
 
 function quickComplete(block) {
@@ -310,24 +321,29 @@ function quickComplete(block) {
 
 function insertAdvancedSearch(id) {
 	var entry = templates.advancedSearchEntry.clone();
-	if (id == 1) {
-		$("#adv-search-and-NUM",entry).remove();
-		$("#adv-search-or-NUM",entry).remove();
-		$("#adv-label-and-NUM",entry).remove();
-		$("#adv-label-or-NUM",entry).remove();
-	} else {
-		$("#adv-search-if-NUM",entry).remove();
-		$("#adv-label-if-NUM",entry).remove();
+	if (entry.attr) {
+		if (id == 1) {
+			$("#adv-search-and-NUM",entry).remove();
+			$("#adv-search-or-NUM",entry).remove();
+			$("#adv-label-and-NUM",entry).remove();
+			$("#adv-label-or-NUM",entry).remove();
+		} else {
+			$("#adv-search-if-NUM",entry).remove();
+			$("#adv-label-if-NUM",entry).remove();
+		}
+		$("label",entry).addClass("expanded");
+		entry.attr("id",entry.attr("id").replace("-NUM","-"+id));
+		entry.html(entry.html().replace(/-NUM/g,"-"+id));
+		$("#advanced-search-submit").before(entry);
 	}
-	$("label",entry).addClass("expanded");
-	entry.attr("id",entry.attr("id").replace("-NUM","-"+id));
-	entry.html(entry.html().replace(/-NUM/g,"-"+id));
-	// Do stuff here
-	$("#advanced-search-submit").before(entry);
 }
 
 function _queue_width() {
-	return $("#right-panel").width().toString();
+	if ($("#right-panel").width() != null) {
+		return $("#right-panel").width().toString();
+	} else {
+		return 0;
+	}
 }
 
 function showQueue() {
@@ -390,7 +406,7 @@ function showPlaylist() {
 	$("#playlist-select-form").append("<option value='-' selected='selected'>Playlists...</option>");
 	/* Load the list of playlists */
 	$.getJSON(
-		jsonSource + '?mode=playlists;who=' + currentUser,
+		getPath('mode=playlists;who=' + currentUser),
 		function (data) {
 			for (id in data) {
 				var playlist = data[id];
@@ -413,10 +429,10 @@ function updatePlaylistOrder(event, ui) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
 	$.getJSON(
-		jsonSource + '?mode=remove_from_playlist;playlist_id=' + currentPlaylist + ';' + block,
+		getPath('mode=remove_from_playlist;playlist_id=' + currentPlaylist + ';' + block),
 		function (data) {
 			$.getJSON(
-				jsonSource + '?mode=add_to_playlist;playlist_id=' + currentPlaylist + ';' + block,
+				getPath('mode=add_to_playlist;playlist_id=' + currentPlaylist + ';' + block),
 				function (data) {
 					loadPlaylist(currentPlaylist);
 				}
@@ -438,7 +454,7 @@ function loadPlaylist(pl) {
 	}
 	currentPlaylist = pl;
 	$.getJSON(
-		jsonSource + '?mode=playlist_contents;playlist_id=' + pl,
+		getPath('?mode=playlist_contents;playlist_id=' + pl),
 		function (data) {
 			$("#playlist-list").empty();
 			var total_length = 0;
@@ -523,21 +539,23 @@ function updatePlayingTime() {
 
 function playerStateRequest() {
 	$.getJSON(
-		jsonSource + '?mode=status',
+		getPath('mode=status'),
 		function (json) {handlePlayerStateRequest(json);}
 	);
 }
 
 function doStats(who) {
 	$("#info-status").html("Getting statistics...");
-	$.getJSON(jsonSource + "?mode=stats;who=" + who,
+	$.getJSON(
+		getPath("mode=stats;who=" + who),
 		function (json) {
 			$("#info-status").html("Thank you for using Acoustics, the Social Music Player!");
 			$("#info-song-count").html(json.total_songs);
 			$("#info-top-artist").html(json.top_artists[0].artist);
 		}
 	);
-	$.getJSON(jsonSource + "?mode=top_voted;limit=1",
+	$.getJSON(
+		getPath("mode=top_voted;limit=1"),
 		function (json) {
 			$("#info-top-voted").html(json[0].title);
 		}
@@ -547,7 +565,7 @@ function doStats(who) {
 function doSearch(field, value) {
 	$("#search-results-status").html("Searching for '" + value + "'...");
 	$("#search-results-dim").show();
-	$.getJSON(jsonSource + "?mode=search;field=" + field + ";value=" + value,
+	$.getJSON(getPath("mode=search;field=" + field + ";value=" + value),
 		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
 			if (data.length > 1000) {
@@ -565,7 +583,7 @@ function doSearch(field, value) {
 function selectRequest(field, value) {
 	$("#search-results-status").html("Searching for '" + value + "'...");
 	$("#search-results-dim").show();
-	$.getJSON(jsonSource + "?mode=select;field=" + field + ";value=" + value,
+	$.getJSON(getPath("mode=select;field=" + field + ";value=" + value),
 		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
 			fillResultTable(data);
@@ -578,7 +596,7 @@ function selectRequest(field, value) {
 function loadRandomSongs(amount, seed) {
 	$("#search-results-dim").show();
 	$.getJSON(
-		jsonSource + "?mode=random;amount=" + amount + ";seed=" + seed,
+		getPath("mode=random;amount=" + amount + ";seed=" + seed),
 		function (data) {
 			$('#search-results-random a').attr('href',
 				'#RandomSongs/20/' + (Math.floor(Math.random()*1e9)));
@@ -592,7 +610,7 @@ function loadRandomSongs(amount, seed) {
 function loadRecentSongs(amount) {
 	$("#search-results-dim").show();
 	$.getJSON(
-		jsonSource + '?mode=recent;amount=' + amount,
+		getPath('mode=recent;amount=' + amount),
 		function (data) {
 			fillResultTable(data);
 			$("#search-results-status").html(amount + " Recently Added Songs");
@@ -604,7 +622,7 @@ function loadRecentSongs(amount) {
 function loadPlayHistory(amount, who) {
 	$("#search-results-dim").show();
 	$.getJSON(
-		jsonSource + '?mode=history;amount=' + amount + ";who=" + who,
+		getPath('mode=history;amount=' + amount + ";who=" + who),
 		function (data) {
 			fillResultTable(data);
 			var bywho = "";
@@ -683,7 +701,7 @@ function updateQueueOrder(event, ui) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
 	$.getJSON(
-		jsonSource + '?mode=reorder_queue;' + block,
+		getPath('mode=reorder_queue;' + block),
 		function (data) {handlePlayerStateRequest(data);}
 	);
 	return block;
@@ -692,7 +710,7 @@ function updateQueueOrder(event, ui) {
 function forceQueueOrder(queue_order) {
 	$("#search-results-status").html("The queue was reordered.");
 	$.getJSON(
-		jsonSource + '?mode=reorder_queue;' + queue_order,
+		getPath('mode=reorder_queue;' + queue_order),
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }
@@ -717,7 +735,7 @@ function shuffleQueue() {
 		block += "song_id=" + _queue[i] + ";";
 	}
 	$.getJSON(
-		jsonSource + '?mode=reorder_queue;' + block,
+		getPath('mode=reorder_queue;' + block),
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }
@@ -725,21 +743,21 @@ function shuffleQueue() {
 function voteSong(song_id) {
 	if (editingPlaylist) {
 		$.getJSON(
-			jsonSource + '?mode=add_to_playlist;playlist_id=' + currentPlaylist + ';song_id=' + song_id,
+			getPath('mode=add_to_playlist;playlist_id=' + currentPlaylist + ';song_id=' + song_id),
 			function (data) { loadPlaylist(currentPlaylist); }
 		);
 	} else {
 		$.getJSON(
-			jsonSource + '?mode=vote;song_id=' + song_id,
+			getPath('mode=vote;song_id=' + song_id),
 			function (data) {handlePlayerStateRequest(data);}
 		);
 	}
 }
 function silentVote(song_id) {
 	if (editingPlaylist) {
-		$.getJSON(jsonSource + '?mode=add_to_playlist;playlist_id=' + currentPlaylist + ';song_id=' + song_id);
+		$.getJSON(getPath('mode=add_to_playlist;playlist_id=' + currentPlaylist + ';song_id=' + song_id));
 	} else {
-		$.getJSON(jsonSource + '?mode=vote;song_id=' + song_id);
+		$.getJSON(getPath('mode=vote;song_id=' + song_id));
 	}
 
 }
@@ -749,9 +767,9 @@ function playlistPlay() {
 	$("#playlist-list .queue-song").each(function(index) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
-	var command = "?mode=vote;";
+	var command = "mode=vote;";
 	$.getJSON(
-			jsonSource + command + block,
+			getPath(command + block),
 			function(data){
 				handlePlayerStateRequest(data);
 				window.location.hash = "#";
@@ -765,7 +783,7 @@ function playlistNew() {
 		"experiment " + Math.floor(Math.random()*10000)
 	);
 	if (title) $.getJSON(
-		jsonSource + '?mode=create_playlist;title=' + title,
+		getPath('mode=create_playlist;title=' + title),
 		function() {
 			showPlaylist();
 		}
@@ -776,7 +794,7 @@ function playlistDelete() {
 	var answer = confirm("Really delete this playlist?");
 	if (answer) {
 		$.getJSON(
-			jsonSource + '?mode=delete_playlist;playlist_id=' + currentPlaylist,
+			getPath('mode=delete_playlist;playlist_id=' + currentPlaylist),
 			function() { showPlaylist(); }
 		);
 	}
@@ -785,12 +803,12 @@ function playlistDelete() {
 function unvoteSong(song_id) {
 	if (editingPlaylist) {
 		$.getJSON(
-			jsonSource + '?mode=remove_from_playlist;playlist_id=' + currentPlaylist + ';song_id=' + song_id,
+			getPath('mode=remove_from_playlist;playlist_id=' + currentPlaylist + ';song_id=' + song_id),
 			function (data) { loadPlaylist(currentPlaylist); }
 		);
 	} else {
 		$.getJSON(
-			jsonSource + '?mode=unvote;song_id=' + song_id,
+			getPath('mode=unvote;song_id=' + song_id),
 			function (data) {handlePlayerStateRequest(data);}
 		);
 	}
@@ -798,7 +816,7 @@ function unvoteSong(song_id) {
 
 function changePlayer(player_id) {
 	$.getJSON(
-		jsonSource + "?mode=change_player;player_id="+player_id,
+		getPath("mode=change_player;player_id="+player_id),
 		function(data) { handlePlayerStateRequest(data);}
 	);
 }
@@ -810,16 +828,16 @@ function migrateToPlayer(player_id) {
 			block += "song_id=" + $(".queue-song-id",this).text() + ";";
 		}
 	});
-	var command = "?mode=unvote;";
+	var command = "mode=unvote;";
 	$.getJSON(
-		jsonSource + command + block,
+		getPath(command + block),
 		function (data) {
 			$.getJSON(
-				jsonSource + "?mode=change_player;player_id=" + player_id,
+				getPath("mode=change_player;player_id=" + player_id),
 				function(data) {
-					command = "?mode=vote;" + block;
+					command = "mode=vote;" + block;
 					$.getJSON(
-						jsonSource + command,
+						getPath(command),
 						function(data) {
 							handlePlayerStateRequest(data);
 						}
@@ -838,12 +856,12 @@ function voteAll() {
 	});
 	var command;
 	if (editingPlaylist) {
-		command = "?mode=add_to_playlist;playlist_id=" + currentPlaylist + ";";
+		command = "mode=add_to_playlist;playlist_id=" + currentPlaylist + ";";
 	} else {
-		command = "?mode=vote;";
+		command = "mode=vote;";
 	}
 	$.getJSON(
-			jsonSource + command + block,
+			getPath(command + block),
 			function(data){handlePlayerStateRequest(data);}
 	);
 }
@@ -861,12 +879,12 @@ function voteOne() {
 	});
 	var command;
 	if (editingPlaylist) {
-		command = "?mode=add_to_playlist;playlist_id=" + currentPlaylist + ";";
+		command = "mode=add_to_playlist;playlist_id=" + currentPlaylist + ";";
 	} else {
-		command = "?mode=vote;";
+		command = "mode=vote;";
 	}
 	$.getJSON(
-			jsonSource + command + block,
+			getPath(command + block),
 			function(data){handlePlayerStateRequest(data);}
 	);
 }
@@ -876,9 +894,9 @@ function clearQueue() {
 	$("#queue-list li").each(function(index) {
 		block += "song_id=" + $(".queue-song-id",this).text() + ";";
 	});
-	var command = "?mode=unvote;";
+	var command = "mode=unvote;";
 	$.getJSON(
-			jsonSource + command + block,
+			getPath(command + block),
 			function(data){handlePlayerStateRequest(data);}
 	);
 }
@@ -1088,21 +1106,21 @@ function controlPlayPause() {
 		command = 'pause';
 	}
 	$.getJSON(
-			jsonSource + '?mode=' + command,
+			getPath('mode=' + command),
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }
 
 function controlStop() {
 	$.getJSON(
-		jsonSource + '?mode=stop',
+		getPath('mode=stop'),
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }
 
 function controlNext() {
 	$.getJSON(
-		jsonSource + '?mode=skip',
+		getPath('mode=skip'),
 		function (data) {handlePlayerStateRequest(data);}
 	);
 }
@@ -1119,7 +1137,7 @@ function controlVolumeDown() {
 	if (volume != undefined) {
 		volume -= 10;
 		$.getJSON(
-			jsonSource + '?mode=volume;value=' + volume,
+			getPath('mode=volume;value=' + volume),
 			function (data) {handlePlayerStateRequest(data);}
 		);
 	}
@@ -1130,7 +1148,7 @@ function controlVolumeUp() {
 		volume += 10;
 		if (volume > 100) { volume = 100; }
 		$.getJSON(
-			jsonSource + '?mode=volume;value=' + volume,
+			getPath('mode=volume;value=' + volume),
 			function (data) {handlePlayerStateRequest(data);}
 		);
 	}
@@ -1142,7 +1160,7 @@ function toggleAdvancedSearch() {
 
 function songDetails(id) {
 	$.getJSON(
-		jsonSource + '?mode=get_details;song_id='+id,
+		getPath('mode=get_details;song_id='+id),
 		function(json) {
 			json = json.song;
 			$("#song-details-title a").html(json.title);
@@ -1247,7 +1265,7 @@ function advancedSearchFormSubmit() {
 	conditions.push(inner); // handle the last one
 	JSON.stringify(conditions);
 
-	$.getJSON(jsonSource + "?mode=search;query=" + JSON.stringify(conditions),
+	$.getJSON(getPath("mode=search;query=" + JSON.stringify(conditions)),
 		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
 			if (data.length > 1000) {
@@ -1302,6 +1320,10 @@ function pageLoadChange(hash) {
 	if (!args[0]) args[0] = '';
 	if (!args[1]) args[1] = '';
 	hideSongDetails();
+	if (action == 'Player') {
+		_forcePlayer = args.shift();
+		action = args.shift();
+	}
 	if (action == '' && fresh) {
 		loadRandomSongs(20, (new Date()).getTime());
 		fresh = false;
@@ -1416,7 +1438,7 @@ function albumSearch(title) {
 		title = nowPlaying.album;
 	}
 	$("#album-search-status").html("Searching for '" + title + "'...");
-	$.getJSON(jsonSource + "?mode=album_search;album=" + title,
+	$.getJSON(getPath("mode=album_search;album=" + title),
 		function (data) {
 			$("#album-search-albums").empty();
 			$(".cf-container").empty();
@@ -1483,7 +1505,7 @@ function toggleCF() {
 function manageZapPlayer() {
 	if (player){
 		$.getJSON(
-			jsonSource + '?mode=zap;value=' + player,
+			getPath('mode=zap;value=' + player),
 			function(data) { handlePlayerStateRequest(data); }
 		);
 	}
@@ -1491,7 +1513,7 @@ function manageZapPlayer() {
 
 function managePurgeUser(user) {
 	$.getJSON(
-		jsonSource + '?mode=purge;who=' + user,
+		getPath('mode=purge;who=' + user),
 		function(data) { handlePlayerStateRequest(data); }
 	);
 }
@@ -1499,7 +1521,7 @@ function managePurgeUser(user) {
 function manageScanDirectory() {
 	var path = $("#manage-scan-directory").val();
 	$.getJSON(
-		jsonSource + '?mode=scan;path=' + path,
+		getPath('mode=scan;path=' + path),
 		function(data) {
 			showMessage("Scan Complete","Directory scanning of '" + path + "' has finished.");
 		}
