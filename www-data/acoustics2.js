@@ -966,7 +966,7 @@ function handlePlayerStateRequest(json) {
 		$("#now-playing-info").show();
 		$("#nothing-playing-info").hide();
 		if (nowPlaying.title.length > 0) {
-			$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title + " : " + _forcePlayer);
+			$("#now-playing-title a", nowPlayingPanel).html(nowPlaying.title);
 		} else {
 			$("#now-playing-title a", nowPlayingPanel).html('[untitled]');
 		}
