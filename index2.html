@@ -62,10 +62,10 @@
 			<div id="search-results" class="panel panel-left">
 				<div id="search-results-toolbar" class="toolbar">
 					<ul id="search-results-toolbar-list" class="toolbar-list">
+						<li id="search-results-advanced"><a href="javascript:toggleAdvancedSearch()"><img src="www-data/images/ui2/buttons/search-advanced.svg" alt="V" title="Advanced"/></a></li>
 						<li id="search-results-search">
 							<form onSubmit="return formSearch();" class="input-split-form">
-								<span class="input-split-button" onClick="javascript:toggleAdvancedSearch();">V</span>
-								<input id="search-box" class="input-split-box" placeholder="Search" />
+								<input id="search-box" class="input-split-box input-split-button" placeholder="Search" />
 							</form>
 						</li>
 						<li id="search-results-suggestions"></li>

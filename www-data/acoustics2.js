@@ -273,11 +273,10 @@ $(document).ready(function() {
 		});
 
 	//$("#search-results-table").tablesorter({widgets: ['zebra']});
-	$(".header-bar-menu-root").hover(function() {
+	$(".header-bar-menu-root").click(function() {
 		$("#"+$(this).attr('id')+"-dropdown").show();
 	});
-	$('.header-bar-menu-dropdown').hover(function() {
-	}, function() {
+	$('.header-bar-menu-dropdown').click(function() {
 		$(this).hide();
 	});
 	$("#toggle-right-panel").draggable({axis: 'x', snap: "body", snapTolerance: 100, drag: function(event, ui) {
