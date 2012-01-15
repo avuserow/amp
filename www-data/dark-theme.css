@@ -267,6 +267,18 @@ a:hover {
 	background-color: #777;
 	border-right: 0;
 }
+.input-split-left {
+	-webkit-border-top-left-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-left: 1px solid #000;
+	border-top: 1px solid #000;
+	border-bottom: 1px solid #000;
+	background-color: #777;
+}
 .input-split-dropdown {
 	border: 1px solid #000;
 	background-color: #777;
@@ -287,8 +299,9 @@ a:hover {
 	-moz-border-radius-bottomright: 6px;
 	border-top-right-radius: 6px;
 	border-bottom-right-radius: 6px;
-	border: 1px solid #000;
-	background-color: #777;
+	border-right: 1px solid #000;
+	border-top: 1px solid #000;
+	border-bottom: 1px solid #000;
 }
 .input-split-disabled {
 	background-color: #555;
