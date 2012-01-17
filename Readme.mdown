@@ -1,8 +1,10 @@
 Acoustics Media Player
 =======================
 
-A community jukebox
+The Social Media Player.
 
+
+Acoustics is a web-based music indexer and jukebox that supports operation on multiple machines, with multiple players. It supports all major audio formats through the use of an Mplayer backend and provides clients with a rich JSON API for controlling players and viewing the song database.
 
 Features
 --------
@@ -12,9 +14,9 @@ Features
     - Multiple player support
     - Extensible plugin system (*under heavy development*)
     - Backends for Mplayer and Icecast (*more to come maybe*)
-    - MySQL backend (*Postgres and SQLite planned to come*)
-    - Multiple authentication schemes
-    - Runs on anything with a CGI layer (*Apache, lighttpd, nginx, Cherokee*), with either mod\_cgi or fastcgi
+    - MySQL and SQLite backends (*Postgres planned*)
+    - Multiple authentication schemes (*Generic, basic auth, Kerberos*)
+    - Runs on anything with a CGI layer (*Apache, lighttpd, nginx, Cherokee, etc.*), with either mod\_cgi or fastcgi
 
 - Multiplayer Voting
     - Vote up songs others have voted for
@@ -25,14 +27,17 @@ Features
     - Very structured and clean output
     - [Detailed on the wiki page](https://github.com/avuserow/amp/wiki/json-api)
 
+- Pure, "Client-heavy" web interface
+    - Drag and drop songs
+    - Reorder queues
+    - Manage playlists
+    - Select and view album art
+
 Future Plans
 ------------
 
 - Single CPAN module
     - Resolve dependencies
 
-- Make result tables more fancy
-    - Drag and Drop songs
-    - Reorder queues by Mouse
-
 - Support more players and databases
+
