@@ -662,6 +662,12 @@ function fillResultTable(json) {
 	}
 	var total_length = 0;
 	$("#search-results-table tbody").empty();
+	var votedSongs = Array();
+	$("#queue-list li").each(function(index) {
+		if ($(".queue-song-id",this).hasClass("queue-song-voted")) {
+			votedSongs[votedSongs.length] = $(".queue-song-id", this).text();
+		}
+	});
 	for (i in json) {
 		var song = json[i];
 		var entry = templates.searchResultSong.clone();
@@ -670,7 +676,10 @@ function fillResultTable(json) {
 		$(".search-results-entry-length", entry).html(readableTime(song.length));
 
 		$(".search-results-entry-vote", entry).attr('href',
-			'javascript:voteSong(' + song.song_id + ')');
+			'javascript:voteSongSearch(' + song.song_id + ')');
+		if ($.inArray(song.song_id.toString(), votedSongs) > -1) {
+			$(".search-results-entry-vote", entry).addClass("search-results-entry-voted");
+		}
 
 		album_art = $("<img />").attr("width","16").attr("class","mini-album-art").attr("src",getAlbumArtUrl(song.artist,song.album,song.title,16));
 		$(".search-results-entry-title a", entry).empty();
@@ -762,6 +771,16 @@ function voteSong(song_id) {
 		);
 	}
 }
+
+function voteSongSearch(song_id) {
+	voteSong(song_id);
+	$("#search-results-table tbody tr").each(function(index) {
+		if ( $(".search-results-entry-song-id",this).text() == song_id) {
+			$(".search-results-entry-vote", this).addClass("search-results-entry-voted");
+		}
+	});
+}
+
 function silentVote(song_id) {
 	if (editingPlaylist) {
 		$.getJSON(getPath('mode=add_to_playlist;playlist_id=' + currentPlaylist + ';song_id=' + song_id));

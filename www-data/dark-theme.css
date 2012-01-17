@@ -348,6 +348,10 @@ a:hover {
 	color: #fff !important;
 	text-decoration: none;
 }
+.search-results-entry-voted {
+	background: none !important;
+	background-color: #006cae !important;
+}
 #search-results-song-details div a {
 	color: #fff;
 }
