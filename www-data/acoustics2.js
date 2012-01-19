@@ -463,7 +463,7 @@ function loadPlaylist(pl) {
 	}
 	currentPlaylist = pl;
 	$.getJSON(
-		getPath('?mode=playlist_contents;playlist_id=' + pl),
+		getPath('mode=playlist_contents;playlist_id=' + pl),
 		function (data) {
 			$("#playlist-list").empty();
 			var total_length = 0;
