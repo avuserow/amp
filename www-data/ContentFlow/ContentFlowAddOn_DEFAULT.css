@@ -1,4 +1,4 @@
-/*  ContentFlowAddOn_DEFAULT, version 1.0.2 
+/*  ContentFlowAddOn_DEFAULT, version 1.0.2
  *  (c) 2008 - 2010 Sebastian Kutsch
  *  <http://www.jacksasylum.eu/ContentFlow/>
  *
@@ -30,13 +30,13 @@
  * 3. Make the changes you like
  *
  * 4. Reload your page :-)
- * 
+ *
  */
 
 /* ========== ContentFlow ========== */
 /*
  * Within this file you can adjust the styling of ContentFlow
- * to your personal needs. The default styling is the same as found on the 
+ * to your personal needs. The default styling is the same as found on the
  * project page.
  *
  */
@@ -93,7 +93,7 @@
             height: 16px;
             background: url(img/slider_white.png) center center no-repeat;
         }
-        
+
         /* only for IE <= 6 and a alphatransparent slider image */
         * html .ContentFlow .scrollbar .slider { background-image: none; }
         * html .ContentFlow .scrollbar .slider .virtualSlider {

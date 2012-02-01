@@ -31,7 +31,7 @@ load $modules{$command} if exists $modules{$command};
 
 if ($command =~ /^player\-/) {
 	$command =~ s/^player\-//;
-	
+
 	if ($command eq 'help') {
 		# TODO
 		exit 1;

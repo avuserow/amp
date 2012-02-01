@@ -806,7 +806,7 @@ a img {
 .album-icon-image img {
 	-webkit-box-shadow: 2px 2px 2px #000;
 	-moz-box-shadow: 2px 2px 2px #000;
-	box-shadow: 2px 2px 2px #000; 
+	box-shadow: 2px 2px 2px #000;
 }
 .album-icon span {
 	font-size: 16px;
