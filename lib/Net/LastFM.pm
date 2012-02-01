@@ -148,7 +148,7 @@ This makes a signed request:
 
 =head2 create_http_request
 
-If you want to integrate this module into another HTTP framework, this 
+If you want to integrate this module into another HTTP framework, this
 method will simple create an unsigned L<HTTP::Request> object:
 
   my $http_request = $lastfm->create_http_request(
@@ -157,7 +157,7 @@ method will simple create an unsigned L<HTTP::Request> object:
 
 =head2 create_http_request_signed
 
-If you want to integrate this module into another HTTP framework, this 
+If you want to integrate this module into another HTTP framework, this
 method will simple create a signed L<HTTP::Request> object:
 
   my $http_request = $lastfm->create_http_request_signed(
@@ -175,5 +175,5 @@ Copyright (C) 2008-9, Leon Brocard.
 
 =head1 LICENSE
 
-This module is free software; you can redistribute it or 
+This module is free software; you can redistribute it or
 modify it under the same terms as Perl itself.

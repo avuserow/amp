@@ -8,7 +8,7 @@ jsonSource = '[% api_url %]';
 
 /* Backport some useful functionality */
 
-// who doesn't have Object.keys by now? 
+// who doesn't have Object.keys by now?
 if(!Object.keys) Object.keys = function(o){
 	if (o !== Object(o))
 		throw new TypeError('Object.keys called on non-object');

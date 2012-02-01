@@ -301,7 +301,7 @@ sub zap {
 	my $zap_player = $self->cgi->param('value');
 	INFO("zap requested by " . $self->who . " for player " . $zap_player);
 	$self->acoustics->rpc('zap',$zap_player);
-	
+
 	sleep 0.25;
 
 	$self->status;
@@ -559,7 +559,7 @@ sub _search_or_select {
 	}
 
 	$where->{online} = 1;
-	
+
 	my @results = $self->acoustics->query('select_songs', $where, [qw(artist album track)]);
 
 	@results = $self->acoustics->dedupe(@results);
@@ -925,7 +925,7 @@ sub rename_playlist {
 
 	my $where = {};
 	$where->{playlist_id} = {$id};
-	
+
 	my $set = {};
 	$set->{title} = $new;
 	return [], [$self->acoustics->query('update_playlists', $set, $where)];
@@ -1009,12 +1009,12 @@ sub stats
 	my $acoustics = $self->acoustics;
 	my $db = $acoustics->db;
 	my $results = {};
-	
+
 	my $totalsongs = $db->prepare("SELECT count(*) from songs");
 	$totalsongs->execute();
 	$results->{total_songs} = ($db->selectrow_array($totalsongs))[0];
 
-	if($who) 
+	if($who)
 	{
 		my $topartists = $db->prepare('select artist,count(songs.artist) as count from songs,history where songs.song_id = history.song_id and history.who = ? group by artist order by count(songs.artist) desc limit 10;');
 		$topartists->execute($who);

@@ -57,7 +57,7 @@ sub list {
 					$debt{$a} < $debt{$b} ? $a : $b
 				}
 		} @who;
-		
+
 
 		# use up this vote and remove it from the votes hash
 		my $song = delete $votes{$next_songs{$best_choice}{song_id}};

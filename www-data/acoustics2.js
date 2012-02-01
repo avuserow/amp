@@ -196,7 +196,7 @@ $(document).ready(function() {
 		var search_value = $("#search-box").val().toLowerCase();
 		currentId += 1;
 		var _myid = currentId;
-		if (search_value.length < 3) { 
+		if (search_value.length < 3) {
 			$("#search-results-suggestions").html("");
 			return;
 		}

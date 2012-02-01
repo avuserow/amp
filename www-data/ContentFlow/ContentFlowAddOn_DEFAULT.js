@@ -1,4 +1,4 @@
-/*  ContentFlowAddOn_DEFAULT, version 1.0.2 
+/*  ContentFlowAddOn_DEFAULT, version 1.0.2
  *  (c) 2008 - 2010 Sebastian Kutsch
  *  <http://www.jacksasylum.eu/ContentFlow/>
  *
@@ -23,12 +23,12 @@
  */
 new ContentFlowAddOn ('DEFAULT', {
 
-    /* 
+    /*
      * AddOn configuration object, defining the default configuration values.
      */
     conf: {},
 
-    /* 
+    /*
      * This function will be executed on creation of this object (on load of this file).
      * It's mostly intended to automatically add additional stylesheets and javascripts.
      *
@@ -47,8 +47,8 @@ new ContentFlowAddOn ('DEFAULT', {
         // this.addScript();
         // this.addStylesheet();
     },
-    
-    /* 
+
+    /*
      * This method will be executed for each ContentFlow on the page after the
      * HTML document is loaded (when the whole DOM exists). You can use it to
      * add elements automatically to the flow.
@@ -64,9 +64,9 @@ new ContentFlowAddOn ('DEFAULT', {
     onloadInit: function (flow) {
     },
 
-    /* 
+    /*
      * This method will be executed _after_ the initialization of each ContentFlow.
-     */    
+     */
     afterContentFlowInit: function (flow) {
     },
     /*
@@ -97,7 +97,7 @@ new ContentFlowAddOn ('DEFAULT', {
         scrollWheelSpeed: 1.0,          // how fast should the mouse wheel scroll. nagive values will revers the scroll direction (0:= deactivate mouse wheel)
         keys: {                         // key => function definition, if set to {} keys ar deactivated
             13: function () { this.conf.onclickActiveItem(this._activeItem) },
-            37: function () { this.moveTo('pre') }, 
+            37: function () { this.moveTo('pre') },
             38: function () { this.moveTo('visibleNext') },
             39: function () { this.moveTo('next') },
             40: function () { this.moveTo('visiblePre') }
@@ -116,10 +116,10 @@ new ContentFlowAddOn ('DEFAULT', {
          * For an explanation of each method take a look at the documentation.
          *
          * BEWARE:  All methods are bond to the ContentFlow!!!
-         *          This means that the keyword 'this' refers to the ContentFlow 
+         *          This means that the keyword 'this' refers to the ContentFlow
          *          which called the method.
          */
-        
+
         /* ==================== actions ==================== */
 
         /*
@@ -150,7 +150,7 @@ new ContentFlowAddOn ('DEFAULT', {
                     window.location.href = url;
             }
         },
-        
+
         /*
          * called when an item becomes inactive.
          */
@@ -160,7 +160,7 @@ new ContentFlowAddOn ('DEFAULT', {
          * called when an item becomes active.
          */
         onMakeActive: function (item) {},
-        
+
         /*
          * called when the target item/position is reached
          */
@@ -183,7 +183,7 @@ new ContentFlowAddOn ('DEFAULT', {
             this.moveToIndex('pre');
             Event.stop(event);
         },
-        
+
         /*
          * called if the next-button is clicked.
          */
@@ -191,7 +191,7 @@ new ContentFlowAddOn ('DEFAULT', {
             this.moveToIndex('next');
             Event.stop(event);
         },
-        
+
         /* ==================== calculations ==================== */
 
         /*
@@ -214,13 +214,13 @@ new ContentFlowAddOn ('DEFAULT', {
             }
             return stepwidth;
         },
-        
+
 
         /*
          * calculates the size of the item at its relative position x
          *
          * relativePosition: Math.round(Position(activeItem)) - Position(item)
-         * side: -1, 0, 1 :: Position(item)/Math.abs(Position(item)) or 0 
+         * side: -1, 0, 1 :: Position(item)/Math.abs(Position(item)) or 0
          * returns a size object
          */
         calcSize: function (item) {
@@ -235,27 +235,27 @@ new ContentFlowAddOn ('DEFAULT', {
          * calculates the position of an item within the flow depending on it's relative position
          *
          * relativePosition: Math.round(Position(activeItem)) - Position(item)
-         * side: -1, 0, 1 :: Position(item)/Math.abs(Position(item)) or 0 
+         * side: -1, 0, 1 :: Position(item)/Math.abs(Position(item)) or 0
          */
         calcCoordinates: function (item) {
             var rP = item.relativePosition;
             //var rPN = item.relativePositionNormed;
-            var vI = this.conf.visibleItems; 
+            var vI = this.conf.visibleItems;
 
             var f = 1 - 1/Math.exp( Math.abs(rP)*0.75);
-            var x =  item.side * vI/(vI+1)* f; 
+            var x =  item.side * vI/(vI+1)* f;
             var y = 1;
 
             return {x: x, y: y};
         },
-        
+
         /*
          * calculates the position of an item relative to it's calculated coordinates
          * x,y = 0 ==> center of item has the position calculated by
          * calculateCoordinates
          *
          * relativePosition: Math.round(Position(activeItem)) - Position(item)
-         * side: -1, 0, 1 :: Position(item)/Math.abs(Position(item)) or 0 
+         * side: -1, 0, 1 :: Position(item)/Math.abs(Position(item)) or 0
          * size: size object calculated by calcSize
          */
         calcRelativeItemPosition: function (item) {
@@ -284,7 +284,7 @@ new ContentFlowAddOn ('DEFAULT', {
         calcOpacity: function (item) {
             return Math.max(1 - ((1 - this.conf.endOpacity ) * Math.sqrt(Math.abs(item.relativePositionNormed))), this.conf.endOpacity);
         }
-	
+
     }
 
 });
