@@ -351,6 +351,7 @@ a img {
 			right: 20px;
 			height: 150px;
 			padding: 20px;
+			overflow: hidden;
 		}
 			#song-details-album-art {
 				height: 180px;
