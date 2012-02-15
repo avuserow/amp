@@ -700,7 +700,7 @@ function fillResultTable(json) {
 		var entry = templates.searchResultSong.clone();
 		$(".search-results-entry-song-id", entry).html(song.song_id);
 		$(".search-results-entry-track", entry).html(song.track);
-		var track_sort = song.track;
+		var track_sort = parseInt(song.track);
 		if (!isNaN(parseInt(song.disc))) {
 			track_sort += 1000 *parseInt(song.disc);
 		}
