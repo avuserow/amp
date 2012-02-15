@@ -209,16 +209,17 @@ $(document).ready(function() {
 				var link = "<a href='#' onClick='quickComplete(this); return false;'>";
 				var link_tail = "</a>";
 				var regex = new RegExp( '(' + search_value + ')', 'gi' );
+				var formatString = "<b><u>$1</u></b>";
 				for (id in data) {
 					var result = data[id];
 					if (result.artist.toLowerCase().indexOf(search_value) != -1) {
-						output.push(link + result.artist.replace(regex, "<b>$1</b>") + link_tail);
+						output.push(link + result.artist.replace(regex, formatString) + link_tail);
 					}
 					if (result.album.toLowerCase().indexOf(search_value) != -1) {
-						output.push(link + result.album.replace(regex, "<b>$1</b>") + link_tail);
+						output.push(link + result.album.replace(regex, formatString) + link_tail);
 					}
 					if (result.title.toLowerCase().indexOf(search_value) != -1) {
-						output.push(link + result.title.replace(regex, "<b>$1</b>") + link_tail);
+						output.push(link + result.title.replace(regex, formatString) + link_tail);
 					}
 				}
 				$("#search-results-suggestions").html(dedupArray(output).join(" "));
@@ -1250,7 +1251,7 @@ $("#message-box").ready(function() {
 	$("#message-box").ajaxError(function (e, xhr, opts, err) {
 		/* If there's no message to show, let's not bother */
 		if (xhr.responseText.length > 10) {
-			showMessage("Communication Error", xhr.responseText);
+			showMessageImportant("Communication Error", xhr.responseText);
 		}
 	});
 });
@@ -1260,15 +1261,20 @@ function showMessage(title, message) {
 	$("#message-box-message").empty();
 	$("#message-box-title").html(title);
 	$("#message-box-message").html(message);
-	$("#message-box").show(100, function() {
-		var h = $("#message-box-inner").height() + 10;
+	$("#message-box").slideDown(300, function() {
+		var h = $("#message-box-inner").height() + 20;
 		$("#message-box").height(h);
-		$("#message-box").css("margin-top", (-h / 2) + "px");
 	});
 }
 
+function showMessageImportant(title, message) {
+	$("#message-box-dimmer").fadeIn();
+	showMessage(title, message);
+}
+
 function closeMessageBox() {
-	$("#message-box").hide(300);
+	$("#message-box-dimmer").fadeOut();
+	$("#message-box").slideUp();
 }
 
 function advancedSearchFormSubmit() {

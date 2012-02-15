@@ -1,5 +1,5 @@
 <!doctype html>
-<html manifest="cache.manifest">
+<html>
 	<head>
 		<title>Acoustics</title>
 		<meta charset="utf-8" />
@@ -147,8 +147,12 @@
 					<div id="song-details-album"><a href="#">Their Big Album</a></div>
 					<div id="song-details-file"><a href="#">Path</a></div>
 					<div id="song-details-voters">Voters</div>
+					<div id="song-details-edit-button">
+						<a id="song-details-edit-album-art" class="control-button button-link">
+							<img src="www-data/images/ui2/pencil.svg" />
+						</a>
+					</div>
 					<div id="song-details-close">
-						<a id="song-details-edit-album-art" class="control-button button-link">edit art</a>
 						<a id="song-details-vote" class="control-button button-link">vote</a>
 						<a href="javascript:hideSongDetails()" class="control-button button-link">close</a>
 					</div>
@@ -365,6 +369,8 @@
 			<div id="fullscreen-close">
 				<a href="javascript:unfullscreen()"><img src="www-data/images/ui2/fullscreen.svg" alt="Fullscreen" title="Fullscreen" /></a>
 			</div>
+		</div>
+		<div id="message-box-dimmer">
 		</div>
 		<div id="message-box">
 			<div id="message-box-inner">

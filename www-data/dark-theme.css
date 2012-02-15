@@ -483,6 +483,11 @@ a:hover {
 				color-stop(1, rgba(0, 0, 0, 0.9)));
 }
 
+#song-details-edit-album-art img {
+	vertical-align: top;
+	margin-top: 2px;
+}
+
 #controls-stop {
 	-webkit-border-top-left-radius: 15px;
 	-moz-border-radius-topleft: 15px;

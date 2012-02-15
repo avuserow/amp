@@ -361,6 +361,12 @@ a img {
 				bottom: 10px;
 				padding: 10px;
 			}
+			#song-details-edit-button {
+				position: absolute;
+				left: 168px;
+				bottom: 10px;
+				padding: 10px;
+			}
 			#search-results-song-details div {
 				white-space: nowrap;
 				overflow: hidden;
@@ -761,31 +767,47 @@ a img {
 	padding-right: 2px;
 }
 
+#message-box-dimmer {
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	right: 0%;
+	bottom: 0%;
+	background-color: rgba(0,0,0,0.8);
+	display: none;
+}
+
 #message-box {
 	position: absolute;
-	top: 50%;
+	top: 0%;
 	left: 50%;
 	width: 600px;
 	height: 120px;
-	margin-top: -60px;
 	margin-left: -300px;
 	z-index: 3;
 	padding: 20px;
 	padding-top: 5px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	-moz-border-radius-bottomright: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
 	-moz-box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
 	-webkit-box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
 	box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
-	border: 1px solid #B62222;
-	background-color: #EC3232;
-	background-color: rgba(236,50,50,0.9);
+	border: 1px solid rgb(20,20,20);
+	border-top: none;
+	background-color: rgba(30,30,30,0.9);
 	color: #FFF;
 	text-align: center;
-
+	overflow: hidden;
 	display: none;
 }
+	#message-box-inner {
+		overflow: hidden;
+		font-size: 12px;
+	}
 	#message-box div h1 {
 		font-size: 16px;
 		font-weight: bold;
