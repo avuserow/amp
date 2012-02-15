@@ -700,7 +700,7 @@ function fillResultTable(json) {
 		var entry = templates.searchResultSong.clone();
 		$(".search-results-entry-song-id", entry).html(song.song_id);
 		$(".search-results-entry-track", entry).html(song.track);
-		$(".search-results-entry-track-sort", entry).html(parseInt(song.track) + parseInt(song.disc) * 1000);
+		$(".search-results-entry-track-sort", entry).html(parseInt("" + song.track) + parseInt("" + song.disc) * 1000);
 		$(".search-results-entry-length", entry).html(readableTime(song.length));
 		$(".search-results-entry-length-internal", entry).html(song.length);
 
