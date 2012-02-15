@@ -23,7 +23,7 @@ sub file_to_info {
 		$hash{$key} =~ s/^\s+//;
 		$hash{$key} =~ s/\s+$//;
 	}
-	%hash = map {$_ => $hash{$_}} qw(path artist album title length track);
+	%hash = map {$_ => $hash{$_}} qw(path artist album title disc length track);
 	$hash{online} = 1; # set the online bit
 	return %hash;
 }

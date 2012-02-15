@@ -247,7 +247,8 @@ $(document).ready(function() {
 
 	/* Table sorting */
 	var table = $("#search-results-table");
-	$("#search-results-table th").wrapInner("<span title='Click to Sort'/>")
+	/* String sort */
+	$("#sr-title, #sr-artist, #sr-album").wrapInner("<span title='Click to Sort'/>")
 		.each(function() {
 			var th = $(this),
 				thIndex = th.index(),
@@ -272,8 +273,33 @@ $(document).ready(function() {
 				inverse = !inverse;
 			});
 		});
+	/* Hidden integer sort */
+	$("#sr-length, #sr-track").wrapInner("<span title='Click to Sort'/>")
+		.each(function() {
+			var th = $(this),
+				thIndex = th.index(),
+				inverse = false;
+			th.click(function() {
+				if (!inverse) {
+					clearSortIndicators();
+					$(this).addClass("sortDown");
+				} else {
+					clearSortIndicators();
+					$(this).addClass("sortUp");
+				}
+				table.find('td').filter(function() {
+					return $(this).index() - 1 === thIndex;
+				}).sortElements(function(a, b) {
+					return parseInt($(a).text()) > parseInt($(b).text()) ?
+					inverse ? -1 : 1 :
+					inverse ? 1 : -1;
+				}, function() {
+					return this.parentNode;
+				});
+				inverse = !inverse;
+			});
+		});
 
-	//$("#search-results-table").tablesorter({widgets: ['zebra']});
 	$(".header-bar-menu-root").click(function() {
 		$("#"+$(this).attr('id')+"-dropdown").show();
 	});
@@ -674,7 +700,9 @@ function fillResultTable(json) {
 		var entry = templates.searchResultSong.clone();
 		$(".search-results-entry-song-id", entry).html(song.song_id);
 		$(".search-results-entry-track", entry).html(song.track);
+		$(".search-results-entry-track-sort", entry).html(song.track + song.disc * 1000);
 		$(".search-results-entry-length", entry).html(readableTime(song.length));
+		$(".search-results-entry-length-internal", entry).html(song.length);
 
 		$(".search-results-entry-vote", entry).attr('href',
 			'javascript:voteSongSearch(' + song.song_id + ')');

@@ -335,6 +335,9 @@ a img {
 		.sr-th {
 			font-size: 14px;
 		}
+		.sr-hidden {
+			display: none;
+		}
 		#sr-vote { width: 35px !important; }
 		#sr-track { width: 20px; }
 		#sr-length { width: 50px; }
@@ -883,4 +886,11 @@ a img {
 	right: 0px;
 	width: 40px;
 	bottom: 20px;
+}
+
+.search-results-entry-length-internal {
+	display: none;
+}
+.search-results-entry-track-sort {
+	display: none;
 }
