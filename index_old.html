@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Acoustics</title>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" >
+		<link title="Acoustics" rel="stylesheet" href="www-data/jquery-ui-1.8.6.custom.css" />
+		<link title="Acoustics" rel="stylesheet" href="www-data/acoustics.css" />
+		<link rel="SHORTCUT ICON" href="www-data/icons/favicon.ico"/>
+		<script src="www-data/jquery.min.js"></script>
+		<script src="www-data/jquery-ui-1.8.6.custom.min.js"></script>
+		<script src="www-data/jquery.tablesorter.min.js"></script>
+		<script src="www-data/jquery.address-1.3.min.js"></script>
+		<script src="www-data/handlebars-min.js"></script>
+		<script src="www-data/acoustics.js"></script>
+	</head>
+	<body>
+		<div id="announcement" style="position: absolute; top: 0px; left: 0px; width: 800px;height: 30px; border-bottom: 1px solid #cc2222; border-right: 1px solid #cc2222; background-color: #ff8888; color: #000; z-index: 4; padding: 4px;">
+			<b>Hello there!</b> We'd like to remind you that a new Acoustics experience is being actively developed <a href="index2.html">here</a>. <a href="whats_new.html">See what's new.</a><br />
+			You can continue to use this interface, but we strongly encourage all users to migrate to the beta and provide feedback.
+			<script type="text/javascript">
+				function hideThis() {
+					$("#announcement").hide(200);
+				}
+			</script>
+			<div style="position: absolute; right: 10px; bottom: 4px;"><a href="javascript:hideThis();">[ok]</a></div>
+		</div>
+		<div id="container">
+			<div id="top">
+				<img id="logo" src="www-data/amp.png" />
+				<div id="subheader">
+					<form id="search" action="" onSubmit="javascript:formSearch(this.field.value, formencode(this.search_value.value)); return false;">
+						Search:
+						<input type="text" id="search_value" />
+						<select id="field">
+							<option value="any">Any</option>
+							<option value="artist">Artist</option>
+							<option value="album">Album</option>
+							<option value="title">Title</option>
+							<option value="path">Path</option>
+							<option value="stats">Stats</option>
+							<option value="history">History</option>
+							<option value="playlist">Playlists (by owner)</option>
+						</select>
+						<input type="submit" />
+					</form>
+					<div id="loginbox">
+						<a href="javascript:login()">Log In</a>
+					</div>
+				</div>
+				<div id="center" class="column">
+					Browse by:
+					<a id="randomlink" href="#RandomSongs/20"><img src="www-data/icons/sport_8ball.png" alt="" /> Random</a>
+					<a href="#RecentSongs/50"><img src="www-data/icons/new.png" alt="" /> Recently Added</a>
+					<a href="#PlayHistory/25/"><img src="www-data/icons/hourglass.png" alt="" /> Recently Played</a>
+					<a href="#StatsRequest/"><img src="www-data/icons/music.png" alt="" /> Statistics</a>
+					<br />
+
+					<div id="userstats"></div>
+
+					<br />
+					<span id="result_title"></span>
+					<div id="voterand">(<a href="javascript:voteRandom()"><img src="www-data/icons/database_lightning.png" alt="" /> pick one from this list</a>)</div>
+				</div>
+			</div>
+			<div id="songresults" class="ruled"></div>
+			<div id="voteall"><a href="javascript:voteAll()"><img src="www-data/icons/bomb.png" alt="" /> Vote them all up</a></div>
+		</div>
+
+		<div id="right" class="column">
+			<div id="nowplaying">
+				<div id="currentsong">
+				</div>
+				<div id="playcontrols">
+					<ul>
+						<li><a href="javascript:sendPlayerCommand('stop')"><img src="www-data/icons/controls/stop2.png" alt="stop" /></a></li> 
+						<li><a href="javascript:sendPlayerCommand('start')"><img src="www-data/icons/controls/play2.png" alt="start" /></a></li> 
+						<li id="skip_link"><a href="javascript:sendPlayerCommand('skip')"><img src="www-data/icons/controls/skip2.png" alt="skip" /></a></li> 
+					</ul>
+				</div>
+			</div>
+			<img src="www-data/icons/sound.png" alt="" /> volume
+			<div id="volume"></div>
+			<br />
+			<img src="www-data/icons/music.png" alt="" />
+			<form action="" onSubmit="return false" style="display: inline">
+				<select onChange="selectPlaylist(this.value)" id="playlistchooser" name="playlistchooser">
+					<option value="">Queue</option>
+				</select>
+			</form>
+			(<span id="playlist_action"><a href="javascript:shuffleVotes()"><img src="www-data/icons/sport_8ball.png" alt="" /> shuffle my votes</a></span>)
+			<div id="playlist">
+			</div>
+			<br />
+			<br />
+			(<span id="playlist_remove"><a href="javascript:purgeSongs(currentUser)"><img src="www-data/icons/disconnect.png" alt="" /> clear my votes</a></span>)
+			<div id="purgeuser">
+				<form action="" onSubmit="javascript:purgeSongs(this.user.value); return false;">
+					Purge User:
+					<select id="user" size='1'></select>
+					<input type="submit" value="Purge" />
+				</form>
+			</div>
+			<div id="zap">
+				<a href="javascript:zapPlayer()"><img src="www-data/icons/wrench_orange.png" alt="zap" /> Zap The Player</a>
+			</div>
+		</div>
+		<div id="footer"></div>
+	</div>
+	<div id="messageBox">no text... why?</div>
+	<script>
+		startPlayerStateTimer();
+		startPlayingTimer();
+	</script>
+	<p>Acoustics's code is available at <a
+		href="http://github.com/avuserow/amp">GitHub</a>. Please report
+	bugs to our <a href="http://github.com/avuserow/amp/issues">GitHub
+		issue tracker</a>.<br />
+</body>
+</html>

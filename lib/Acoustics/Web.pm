@@ -139,6 +139,56 @@ sub status {
 	return [], $data;
 }
 
+=head2 global_status
+
+Returns listings for all of the players in the system that are currently playing songs
+as well a list of the player names (for all players).
+
+The listings are available as:
+
+{
+	players: {
+		some_player_name: {
+			info: {
+				/* Standard status listing */
+			},
+			song: {
+				/* Standard song listing */
+			}
+		}
+	},
+	player_names: [
+		"some_player_name",
+		"non_playing_player"
+	]
+}
+
+=cut
+
+sub global_status {
+	my $self = shift;
+	my $acoustics = $self->acoustics;
+	my $data = {};
+	$data->{players} = {};
+
+	$data->{player_names} = [split /\s*,\s*/, $self->acoustics->config->{_}{players}];
+
+	my $sth = $self->acoustics->db->prepare('SELECT * FROM players');
+	$sth->execute();
+	my @results = @{$sth->fetchall_arrayref({})};
+
+
+	foreach (@results) {
+		$data->{players}->{$_->{player_id}}{info} = $_;
+		$data->{players}->{$_->{player_id}}{song} = $acoustics->query(
+			'select_songs', {song_id => $_->{song_id}},
+		);
+	}
+
+	$data->{who} = $self->who;
+	return [], $data;
+}
+
 sub can_skip {
 	my $self = shift;
 	my $acoustics = $self->acoustics;
