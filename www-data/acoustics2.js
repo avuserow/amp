@@ -1283,7 +1283,7 @@ $("#message-box").ready(function() {
 	$("#message-box").ajaxError(function (e, xhr, opts, err) {
 		/* If there's no message to show, let's not bother */
 		if (xhr.responseText.length > 10) {
-			showMessageImportant("Communication Error", xhr.responseText);
+			showMessageImportant("Communication Error", xhr.responseText.replace(/<style.*<\/style>/g,""));
 		}
 	});
 });
