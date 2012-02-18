@@ -638,6 +638,39 @@ a img {
 				list-style-type: none;
 			}
 
+	#playlist-panel-actual {
+		position: absolute;
+		top: 200px;
+		left: 0px;
+		bottom: 0px;
+		right: 0px;
+	}
+	#playlist-panel-search {
+		position: absolute;
+		top: 0px;
+		height: 200px;
+		left: 0px;
+		right: 0px;
+	}
+
+	#playlist-search-container div {
+		width: 100%;
+		background: #666;
+	}
+	#playlist-search-container div:nth-child(odd) {
+		background: #222;
+	}
+
+	#playlist-search-container div span {
+		display: block;
+		padding: 4px;
+	}
+
+	#playlist-search-container div span span {
+		padding: 0px;
+		float: right;
+	}
+
 	#playlist-panel {
 		position: absolute;
 		float: right;

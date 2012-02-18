@@ -429,6 +429,15 @@ a:hover {
 #playlist-panel {
 	background-color: #666;
 }
+	#playlist-search-container {
+		background-color: #666;
+		color: #FFF;
+		font-size: 12px;
+	}
+
+	#playlist-search-container div span a {
+		color: #FFF;
+	}
 
 /* Control button is styled off the toolbar buttons. I hate code duplication, so this makes me sad */
 .control-button {

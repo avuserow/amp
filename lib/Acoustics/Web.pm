@@ -799,6 +799,23 @@ sub playlist_contents {
 	)];
 }
 
+=head2 playlist_info
+
+Gives information on a playlist (like its name and owner)
+
+=cut
+
+sub playlist_info {
+	my $self = shift;
+	my $plid = $self->cgi->param('playlist_id');
+
+	return bad_request('No playlist_id specified.') unless $plid;
+
+	my $data =  $self->acoustics->query('select_playlists', {playlist_id => $plid});
+
+	return [], $data;
+}
+
 =head2 add_to_playlist
 
 Adds all the songs (specified by the C<song_id> parameter(s)) to the given
@@ -956,6 +973,21 @@ sub playlists {
 	$where->{title} = {-like => "%$title%"} if $title;
 
 	return [], [$self->acoustics->query('select_playlists', $where)];
+}
+
+=head2 playlists_loose
+
+=cut
+
+sub playlists_loose {
+	my $self = shift;
+	my $value = $self->cgi->param('value') || '';
+
+	my $sth = $self->acoustics->db->prepare('SELECT * FROM playlists WHERE who LIKE ? OR title LIKE ?');
+	$sth->execute("%$value%", "%$value%");
+	my @results = @{$sth->fetchall_arrayref({})};
+
+	return [], \@results;
 }
 
 =head2 rename_playlist

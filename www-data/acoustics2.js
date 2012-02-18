@@ -477,18 +477,37 @@ function updatePlaylistOrder(event, ui) {
 	);
 }
 
+function loadPlaylistSearch(query) {
+	$.getJSON(
+		getPath('mode=playlists_loose;value=' + query),
+		function (data) {
+			$("#playlist-search-container").html("<b></b>");
+			for (var i in data) {
+				$("#playlist-search-container").append("<div><span><a href='#/Playlists/" + data[i].playlist_id + "'>" + data[i].title + "</a> <span>" + data[i].who + "</span></span></div>");
+			}
+			if (data.length == 1) {
+				$("#playlist-search-status").html("One playlist");
+			} else {
+				$("#playlist-search-status").html(data.length + " playlists");
+			}
+		}
+	);
+}
+
 function loadPlaylist(pl) {
 	if (pl == -1) {
-		pl = $("#playlist-select-form").val();
-		if (pl == '-') {
-			return ;
-		}
-		window.location.hash = "Playlists/" + pl;
+		return;
 	}
 	if (pl == 0) {
 		return;
 	}
 	currentPlaylist = pl;
+	$.getJSON(
+		getPath('mode=playlist_info;playlist_id=' + pl),
+		function (data) {
+			$("#playlist-select span").html(data.title);
+		}
+	);
 	$.getJSON(
 		getPath('mode=playlist_contents;playlist_id=' + pl),
 		function (data) {
@@ -528,7 +547,6 @@ function loadPlaylist(pl) {
 				$("#playlist-status").html(length + " songs");
 			}
 			$("#playlist-length").html(readableTime(total_length));
-			$("#playlist-select-form").val(pl);
 		}
 	);
 }
@@ -1347,6 +1365,11 @@ function formSearch() {
 	return false;
 }
 
+function playlistSearch() {
+	$.address.value("PlaylistSearch/" + formencode($("#playlist-search-box").val()));
+	return false;
+}
+
 function uriencode(str) {
 	return encodeURIComponent(formencode(str));
 }
@@ -1418,6 +1441,14 @@ function pageLoadChange(hash) {
 		editingPlaylist = true;
 		if (args.length > 0) {
 			loadPlaylist(args[0]);
+		}
+	} else if (action == 'PlaylistSearch') {
+		setLeftPanel("search-results");
+		setMenuItem("playlists");
+		showPlaylist();
+		editingPlaylist = true;
+		if (args.length > 0) {
+			loadPlaylistSearch(args[0]);
 		}
 	} else if (action == 'Albums') {
 		restoreQueue();
