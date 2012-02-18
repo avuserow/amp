@@ -36,7 +36,7 @@
 					}
 				);
 			}
-			function initialize() {
+			function refreshPlayers() {
 				$.getJSON(
 					getPath('mode=global_status'),
 					function (json) {
@@ -51,7 +51,7 @@
 										json.players[json.player_names[i]].song.artist,
 										json.players[json.player_names[i]].song.album,
 										json.players[json.player_names[i]].song.title,
-										70)
+										100)
 									);
 									$("a", player).append("<br />" + json.players[json.player_names[i]].song.title);
 									$("a", player).append("<br />" + json.players[json.player_names[i]].song.artist);
@@ -67,6 +67,10 @@
 						}
 					}
 				);
+			}
+			function initialize() {
+				refreshTimer = setInterval('refreshPlayers()', 15000);
+				refreshPlayers();
 			}
 		</script>
 		<style>
