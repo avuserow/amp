@@ -864,8 +864,13 @@ function playlistNew() {
 	);
 	if (title) $.getJSON(
 		getPath('mode=create_playlist;title=' + title),
-		function() {
-			showPlaylist();
+		function(data) {
+			for (i in data) {
+				if (data[i].title == title) {
+					loadPlaylist(data[i].playlist_id);
+					return;
+				}
+			}
 		}
 	);
 }
