@@ -32,6 +32,7 @@ var currentId = 0;
 var _firstLoad = true;
 var theme = 0;
 var _forcePlayer = false;
+var is_admin = false;
 
 window.setPlayer = function(player) {
 	_forcePlayer = player;
@@ -999,6 +1000,7 @@ function handlePlayerStateRequest(json) {
 		$("#user-name").html(json.who);
 		currentUser = json.who;
 		$("#header-bar-menu-playlists").show();
+		is_admin = json.is_admin;
 	} else {
 		$("#header-bar-menu-playlists").hide();
 	}
@@ -1259,7 +1261,13 @@ function songDetails(id) {
 			$("#song-details-file a").attr('href',
 				'#SelectRequest/path/' + uriencode(json.path));
 			$("#song-details-album-art").empty();
-			$("#song-details-edit-album-art").attr("href","javascript:fixArt(\"" + jsencode(json.artist) + "\",\"" + jsencode(json.album) + "\",\"" + jsencode(json.title) + "\")");
+			if (is_admin) {
+				$("#song-details-edit-button").show();
+				$("#song-details-edit-album-art").attr("href","javascript:fixArt(\"" + jsencode(json.artist) + "\",\"" + jsencode(json.album) + "\",\"" + jsencode(json.title) + "\")");
+				$("#song-details-delete-album-art").attr("href","javascript:deleteArt(\"" + jsencode(json.artist) + "\",\"" + jsencode(json.album) + "\",\"" + jsencode(json.title) + "\")");
+			} else {
+				$("#song-details-edit-button").hide();
+			}
 			album_art = $("<img />").attr("id","fullscreen-album-art-img").attr("src",getAlbumArtUrl(json.artist,json.album,json.title,128)).attr("width","128");
 			$("#song-details-album-art").append(album_art);
 			$("#search-results-song-details").slideDown(300, function() {
@@ -1270,12 +1278,17 @@ function songDetails(id) {
 			} else {
 				$("#song-detaititlevoters").html("");
 			}
-			if (json.who.indexOf(currentUser) != -1) {
-				$("#song-details-vote").attr("href","javascript:unvoteSong(" + id + ")");
-				$("#song-details-vote").html("unvote");
+			if (currentUser) {
+				$("#song-details-vote").show();
+				if (json.who.indexOf(currentUser) != -1) {
+					$("#song-details-vote").attr("href","javascript:unvoteSong(" + id + ")");
+					$("#song-details-vote").html("unvote");
+				} else {
+					$("#song-details-vote").attr("href","javascript:voteSong(" + id + ")");
+					$("#song-details-vote").html("vote");
+				}
 			} else {
-				$("#song-details-vote").attr("href","javascript:voteSong(" + id + ")");
-				$("#song-details-vote").html("vote");
+				$("#song-details-vote").hide();
 			}
 		}
 	);
@@ -1502,6 +1515,13 @@ function fixArt(artist, album, title) {
 	newArt = prompt("Correct album art for " + title + " by " + artist + ":", "http://example.com/some_image.jpg");
 	if (newArt) {
 		$.get(getAlbumArtUrl(artist,album,title,0) + "&set=yes&image=" + newArt);
+	}
+}
+
+function deleteArt(artist, album, title) {
+	newArt = confirm("Confirm deletion of album art for " + title + " by " + artist + ".");
+	if (newArt) {
+		$.get(getAlbumArtUrl(artist,album,title,0) + "&set=delete");
 	}
 }
 

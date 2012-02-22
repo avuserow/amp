@@ -496,6 +496,10 @@ a:hover {
 	vertical-align: top;
 	margin-top: 2px;
 }
+#song-details-delete-album-art img {
+	vertical-align: top;
+	margin-top: 2px;
+}
 
 #controls-stop {
 	-webkit-border-top-left-radius: 15px;

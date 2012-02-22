@@ -1144,11 +1144,19 @@ sub art
 	# This is a request to set to a specific URL.
 	if ($set && $set eq "yes") {
 		return access_denied('You must log in.') unless $self->who;
+		return access_denied('Only admins may change album art.') unless $self->is_admin;
 		my $url = $self->cgi->param("image");
 		my $image = get $url;
 		INFO("adding art cache for " . $title . ": " . $url);
 		$self->acoustics->query('delete_art_cache', {artist => $artist, album => $album, title => $title});
 		$self->acoustics->query('insert_art_cache', {artist => $artist, album => $album, title => $title, image => $image, url => $url });
+		return [], {};
+	}
+	if ($set && $set eq "delete") {
+		return access_denied('You must log in.') unless $self->who;
+		return access_denied('Only admins may change album art.') unless $self->is_admin;
+		INFO("delete art cache for " . $title);
+		$self->acoustics->query('delete_art_cache', {artist => $artist, album => $album, title => $title});
 		return [], {};
 	}
 
