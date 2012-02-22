@@ -306,6 +306,7 @@ $(document).ready(function() {
 	});
 	$('.header-bar-menu-dropdown').click(function() {
 		$(this).hide();
+		return false;
 	});
 	$("#toggle-right-panel").draggable({axis: 'x', snap: "body", snapTolerance: 100, drag: function(event, ui) {
 		var width = ($(window).width() - $("#toggle-right-panel").offset().left - $("#toggle-right-panel").width());
