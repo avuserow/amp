@@ -34,6 +34,17 @@ var theme = 0;
 var _forcePlayer = false;
 var is_admin = false;
 
+/* Search pagination */
+var search_offset = 0;
+var search_value  = "";
+var search_limit  = 20;
+var search_valid  = 0;
+var search_per_page = 20;
+var search_first  = 20;
+
+var results_length = 0;
+var results_time   = 0;
+
 window.setPlayer = function(player) {
 	_forcePlayer = player;
 	playerStateRequest();
@@ -620,28 +631,60 @@ function doStats(who) {
 function doSearch(field, value) {
 	$("#search-results-status").html("Searching for '" + value + "'...");
 	$("#search-results-dim").show();
-	$.getJSON(getPath("mode=search;field=" + field + ";value=" + value),
+	search_offset = 0;
+	search_limit = search_first;
+	$("#search-results-container").scrollTop(0);
+	$.getJSON(getPath("mode=paged_search;value=" + value + ";limit=" + search_limit + ";offset="+search_offset),
 		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
-			if (data.length > 1000) {
-				if (!confirm("Your search returned a lot of results (" + data.length +"). Do you still want to continue?")) {
-					return false;
-				}
-			}
-			fillResultTable(data);
+			fillResultTable(data, 0);
 			$("#search-results-status").html("Search results for '" + value + "'.");
 			$("#search-results-dim").hide();
+			if (data.length == search_first) {
+				$("#search-results-bottom").show();
+				if ($("#search-results-container").scrollTop() >= $("#search-results-table").height() - $("#search-results-container").height()) {
+					doSearchAppend();
+				}
+			} else {
+				$("#search-results-bottom").hide();
+			}
 	});
+	search_value = value;
+	search_offset += search_limit;
+	search_limit = search_per_page;
+	search_valid = 1;
 	return false;
 }
 
+function doSearchAppend() {
+	$.getJSON(getPath("mode=paged_search;value=" + search_value + ";limit=" + search_limit + ";offset="+search_offset),
+		function (data) {
+			$("#search-results-status").html("Processing " + data.length + " results.");
+			results_time += appendSearchResults(data);
+			$("#search-results-status").html("Search results for '" + search_value + "'.");
+			if (data.length) {
+				results_length += data.length;
+				updateResults();
+				$("#search-results-bottom").show();
+				if ($("#search-results-container").scrollTop() >= $("#search-results-table").height() - $("#search-results-container").height()) {
+					doSearchAppend();
+				}
+			} else {
+				$("#search-results-bottom").hide();
+			}
+	});
+	search_offset += search_limit;
+}
+
 function selectRequest(field, value) {
+	search_valid = 0;
 	$("#search-results-status").html("Searching for '" + value + "'...");
 	$("#search-results-dim").show();
 	$.getJSON(getPath("mode=select;field=" + field + ";value=" + value),
 		function (data) {
 			$("#search-results-status").html("Processing " + data.length + " results.");
 			fillResultTable(data);
+			$("#search-results-bottom").hide();
 			$("#search-results-status").html("Songs where " + field + " is '"
 				+ value + "'.");
 			$("#search-results-dim").hide();
@@ -697,6 +740,15 @@ function hideShowSlide(what) {
 	$("#"+what).slideToggle(300);
 }
 
+function updateResults() {
+	$("#search-results-time").html(readableTime(results_time));
+	if (results_length == 1) {
+		$("#search-results-count").html("One song");
+	} else {
+		$("#search-results-count").html(results_length +" songs");
+	}
+}
+
 function fillResultTable(json) {
 	$("#search-results-table tbody tr").remove();
 	clearSortIndicators();
@@ -706,8 +758,15 @@ function fillResultTable(json) {
 		$("#search-results-count").html("0 songs");
 		return false;
 	}
-	var total_length = 0;
+	results_time = 0;
 	$("#search-results-table tbody").empty();
+	results_time += appendSearchResults(json);
+	results_length = json.length;
+	updateResults();
+}
+
+function appendSearchResults(json) {
+	var total_length = 0;
 	var votedSongs = Array();
 	$("#queue-list li").each(function(index) {
 		if ($(".queue-song-id",this).hasClass("queue-song-voted")) {
@@ -756,12 +815,17 @@ function fillResultTable(json) {
 
 		total_length += parseInt(song.length);
 	}
-	$("#search-results-time").html(readableTime(total_length));
-	if (json.length == 1) {
-		$("#search-results-count").html("One song");
-	} else {
-		$("#search-results-count").html(json.length +" songs");
+	if (search_valid) {
+		if (json.length > 0) {
+			$("#search-results-container").scroll(function() {
+				if ($("#search-results-container").scrollTop() >= $("#search-results-table").height() - $("#search-results-container").height()) {
+					$("#search-results-container").unbind("scroll");
+					doSearchAppend();
+				}
+			});
+		}
 	}
+	return total_length;
 }
 
 function updateQueueOrder(event, ui) {
