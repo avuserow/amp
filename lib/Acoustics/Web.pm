@@ -623,7 +623,7 @@ sub paged_search {
 	my $value = $self->cgi->param('value');
 	my $limit = $self->cgi->param('limit') || 10;
 	my $offset = $self->cgi->param('offset') || 0;
-	my $sth = $self->acoustics->db->prepare('SELECT * FROM songs WHERE album LIKE ? OR artist LIKE ? OR title LIKE ? OR path LIKE ? ORDER BY album, disc, track LIMIT ? OFFSET ?');
+	my $sth = $self->acoustics->db->prepare('SELECT * FROM songs WHERE online == 1 AND (album LIKE ? OR artist LIKE ? OR title LIKE ? OR path LIKE ?) ORDER BY album, disc, track LIMIT ? OFFSET ?');
 	$sth->execute("%$value%", "%$value%", "%$value%", "%$value%", $limit, $offset);
 	my @results = @{$sth->fetchall_arrayref({})};
 
