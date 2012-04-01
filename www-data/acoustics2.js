@@ -1350,7 +1350,7 @@ function songDetails(id) {
 			if (json.who.length > 0) {
 				$("#song-details-voters").html(htmlForVoters(json.who));
 			} else {
-				$("#song-detaititlevoters").html("");
+				$("#song-details-voters").html("");
 			}
 			if (currentUser) {
 				if (json.who.indexOf(currentUser) != -1) {
