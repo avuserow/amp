@@ -1136,7 +1136,7 @@ sub art
 	my $self = shift;
 	my $song_id = $self->cgi->param("song_id") || 0;
 
-	my @results = $self->acoustics->query('select_songs', {song_id => $song_id});
+	my @results = $self->acoustics->query('select_songs', {song_id => $song_id, online => 1});
 
 	return [],{error => "Song does not exist."} unless @results;
 
@@ -1170,7 +1170,7 @@ sub album_search
 	my $self  = shift;
 	my $album = $self->cgi->param('album') || '';
 
-	my $sth = $self->acoustics->db->prepare('SELECT album, song_id FROM songs WHERE album LIKE ? OR artist LIKE ? GROUP BY album');
+	my $sth = $self->acoustics->db->prepare('SELECT album, song_id FROM songs WHERE album LIKE ? OR artist LIKE ? AND online=1 GROUP BY album');
 	$sth->execute("%$album%", "%$album%");
 	my @results = @{$sth->fetchall_arrayref({})};
 
