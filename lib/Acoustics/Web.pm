@@ -1131,6 +1131,40 @@ Return album art image for the requested song.
 
 =cut
 
+sub art_new
+{
+	my $self = shift;
+	my $song_id = $self->cgi->param("song_id") || 0;
+
+	my @results = $self->acoustics->query('select_songs', {song_id => $song_id});
+
+	return [],{error => "Song does not exist."} unless @results;
+
+	my $directory = substr $results[0]->{path}, 0, rindex($results[0]->{path}, '/');
+	my $albumart  = $directory . "/" . "acoustics-art.png";
+	my $art_type  = "image/png";
+
+	unless (-e $albumart) {
+		$albumart = $directory . "/" . "acoustics-art.jpg";
+		$art_type = "image/jpg";
+
+		unless (-e $albumart) {
+			$albumart = "www-data/icons/cd_case.png";
+			$art_type = "image/png";
+		}
+	}
+
+	open ART, "<", $albumart or return [], {error => "Failed to open art file."};
+	binmode ART;
+	my ($buf, $data, $n);
+	while (($n = read ART, $data, 4) != 0) {
+		$buf .= $data;
+	}
+	close(ART);
+
+	return [-type => $art_type], $buf;
+}
+
 sub art
 {
 	my $self = shift;
@@ -1228,7 +1262,7 @@ sub album_search
 	my $self  = shift;
 	my $album = $self->cgi->param('album') || '';
 
-	my $sth = $self->acoustics->db->prepare('SELECT album FROM songs WHERE album LIKE ? OR artist LIKE ? GROUP BY album');
+	my $sth = $self->acoustics->db->prepare('SELECT album, song_id FROM songs WHERE album LIKE ? OR artist LIKE ? GROUP BY album');
 	$sth->execute("%$album%", "%$album%");
 	my @results = @{$sth->fetchall_arrayref({})};
 
