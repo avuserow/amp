@@ -1131,7 +1131,7 @@ Return album art image for the requested song.
 
 =cut
 
-sub art_new
+sub art
 {
 	my $self = shift;
 	my $song_id = $self->cgi->param("song_id") || 0;
@@ -1163,98 +1163,6 @@ sub art_new
 	close(ART);
 
 	return [-type => $art_type], $buf;
-}
-
-sub art
-{
-	my $self = shift;
-	my $artist = $self->cgi->param("artist");
-	my $album  = $self->cgi->param("album");
-	my $title  = $self->cgi->param("title");
-	my $set    = $self->cgi->param("set");
-	my $size   = 128;
-	if ($self->cgi->param("size")) {
-		$size = int($self->cgi->param("size"));
-	}
-
-	# It's okay if an argument is blank, for the most part.
-	if (!$artist) { $artist = ""; }
-	if (!$album)  { $album  = ""; }
-	if (!$title)  { $title  = ""; }
-	my $ret    = {};
-
-	# Fix issues with albumless tracks
-	if (length $album < 1) {
-		$album = $title . "__" . $artist;
-	}
-
-	# This is a request to set to a specific URL.
-	if ($set && $set eq "yes") {
-		return access_denied('You must log in.') unless $self->who;
-		return access_denied('Only admins may change album art.') unless $self->is_admin;
-		my $url = $self->cgi->param("image");
-		my $image = get $url;
-		INFO("adding art cache for " . $title . ": " . $url);
-		$self->acoustics->query('delete_art_cache', {artist => $artist, album => $album, title => $title});
-		$self->acoustics->query('insert_art_cache', {artist => $artist, album => $album, title => $title, image => $image, url => $url });
-		return [], {};
-	}
-	if ($set && $set eq "delete") {
-		return access_denied('You must log in.') unless $self->who;
-		return access_denied('Only admins may change album art.') unless $self->is_admin;
-		INFO("delete art cache for " . $title);
-		$self->acoustics->query('delete_art_cache', {artist => $artist, album => $album, title => $title});
-		return [], {};
-	}
-
-	# Check the database first.
-	my @queries = (
-		{artist => $artist, album => $album, title => $title},
-		{artist => $artist, album => $album},
-		{album => $album},
-	);
-
-	my @results;
-
-	# Try some queries until we get results.
-	while (!@results && @queries) {
-		@results = $self->acoustics->query('select_art_cache', shift @queries);
-	}
-
-	# We have a result from the database, dump that and bale.
-	if (@results) {
-		unless (length $results[0]->{image} > 10) {
-			# We found something, but we only have a URL stored for some reason.
-			# This could be because a plugin added it but didn't store the result.
-			$results[0]->{image} = get $results[0]->{url};
-			INFO("updating art cache for " . $results[0]->{title});
-			$self->acoustics->query('delete_art_cache', {artist => $artist, album => $album, title => $title});
-			$self->acoustics->query('insert_art_cache', {artist => $artist, album => $album, title => $title, image => $results[0]->{image}, url => $results[0]->{url} });
-		}
-		return [-type => "image/png"], $results[0]->{image};
-	}
-
-	# XXX: Extension hooks should be added here to
-	#      pull from LastFM / Amazon / whatever
-
-	# Fall back to local icon.
-	my $last_try = "www-data/icons/cd_case.png";
-	if ($size < 100) {
-		$last_try = "www-data/icons/cd_case_small.png";
-	} else {
-		$last_try = "www-data/icons/cd_case.png";
-	}
-	open IMAGE, $last_try;
-	local $/;
-	$ret->{image} = <IMAGE>;
-	close IMAGE;
-
-
-	# TODO: We should probably use Perl's GD bindings to resize
-	#       the result image to the requested size. I'm not
-	#       entirely sure whether I want to, though - klange
-
-	return [-type => "image/png"], $ret->{image};
 }
 
 sub album_search

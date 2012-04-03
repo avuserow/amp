@@ -1083,12 +1083,6 @@ function handlePlayerStateRequest(json) {
 		$("#header-bar-menu-manage").show();
 	}
 
-	if (is_admin) {
-		$("#song-details-edit-button").show();
-	} else {
-		$("#song-details-edit-button").hide();
-	}
-
 	// players
 	if (json.players.length > 1) {
 		$("#header-bar-menu-players-dropdown li").remove();
@@ -1582,26 +1576,8 @@ function setMenuItem(item) {
 	$("#header-bar-menu-" + item).addClass("header-bar-menu-selected", speed);
 }
 
-function fixArt(artist, album, title) {
-	newArt = prompt("Correct album art for " + title + " by " + artist + ":", "http://example.com/some_image.jpg");
-	if (newArt) {
-		$.get(getAlbumArtUrl(artist,album,title,0) + "&set=yes&image=" + newArt);
-	}
-}
-
-function deleteArt(artist, album, title) {
-	newArt = confirm("Confirm deletion of album art for " + title + " by " + artist + ".");
-	if (newArt) {
-		$.get(getAlbumArtUrl(artist,album,title,0) + "&set=delete");
-	}
-}
-
-function getAlbumArtUrl(artist, album, title, size) {
-	return artSource + "&artist=" + moreencode(artist) + "&album=" + moreencode(album) + "&title=" + moreencode(title) + "&size=" + size
-}
-
 function newArtUrl(song_id) {
-	return getPath("mode=art_new;song_id=" + song_id);
+	return getPath("mode=art;song_id=" + song_id);
 }
 
 function unfullscreen() {
