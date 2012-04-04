@@ -1157,7 +1157,7 @@ sub art
 	open ART, "<", $albumart or return [], {error => "Failed to open art file."};
 	binmode ART;
 	my ($buf, $data, $n);
-	while (($n = read ART, $data, 4) != 0) {
+	while (($n = read ART, $data, 655360) != 0) {
 		$buf .= $data;
 	}
 	close(ART);
