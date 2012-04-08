@@ -940,3 +940,9 @@ a img {
 	opacity: 0.6;
 	display: none;
 }
+
+#playlist-search-help {
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+}
