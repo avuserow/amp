@@ -1144,14 +1144,40 @@ sub art
 	my $albumart  = $directory . "/" . "acoustics-art.png";
 	my $art_type  = "image/png";
 
+	# XXX: There is a much better way to do this, I know, but I don't know enough Perl to actually do it.
+
+	#my @locations = (
+	#	{name => "acoustics-art.png", type => "image/png" },
+	#	{name => "acoustics-art.jpg", type => "image/jpg" },
+	#	{name => "cover.png", type => "image/png"},
+	#	{name => "cover.jpg", type => "image/jpg"},
+	#	{name => "Folder.png", type => "image/png"},
+	#	{name => "Folder.jpg", type => "image/jpg"},
+	#);
+
 	unless (-e $albumart) {
 		$albumart = $directory . "/" . "acoustics-art.jpg";
 		$art_type = "image/jpg";
-
-		unless (-e $albumart) {
-			$albumart = "www-data/icons/cd_case.png";
-			$art_type = "image/png";
-		}
+	}
+	unless (-e $albumart) {
+		$albumart = $directory . "/" . "cover.png";
+		$art_type = "image/png";
+	}
+	unless (-e $albumart) {
+		$albumart = $directory . "/" . "cover.jpg";
+		$art_type = "image/png";
+	}
+	unless (-e $albumart) {
+		$albumart = $directory . "/" . "Folder.png";
+		$art_type = "image/png";
+	}
+	unless (-e $albumart) {
+		$albumart = $directory . "/" . "Folder.jpg";
+		$art_type = "image/png";
+	}
+	unless (-e $albumart) {
+		$albumart = "www-data/icons/cd_case.png";
+		$art_type = "image/png";
 	}
 
 	open ART, "<", $albumart or return [], {error => "Failed to open art file."};
