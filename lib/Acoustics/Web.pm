@@ -9,8 +9,7 @@ use Moose;
 use Module::Load 'load';
 use List::Util 'shuffle';
 use LWP::Simple;
-use Image::Imlib2;
-use File::Temp qw/ tempfile /;
+use Image::Resize;
 
 
 has 'psgi_env'  => (is => 'ro', isa => 'HashRef');
@@ -1167,20 +1166,9 @@ sub art
 		$albumart = "www-data/icons/cd_case.png";
 	}
 
-	my $image_in  = Image::Imlib2->load($albumart);
-	my $image_out = $image_in->create_scaled_image($size,0);
-	my ($fh, $filename) = tempfile(SUFFIX => '.png');
-	close($fh);
-	$image_out->image_set_format("png");
-	$image_out->save($filename);
-
-	open ART, "<", $filename or return [], {error => "Failed to open art file."};
-	binmode ART;
-	my ($buf, $data, $n);
-	while (($n = read ART, $data, 655360) != 0) {
-		$buf .= $data;
-	}
-	close(ART);
+	my $image_in  = Image::Resize->new($albumart);
+	my $image_out = $image_in->resize($size,$size);
+	my $buf = $image_out->png();
 
 	return [-type => $art_type], $buf;
 }
