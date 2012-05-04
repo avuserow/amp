@@ -9,6 +9,9 @@ use Moose;
 use Module::Load 'load';
 use List::Util 'shuffle';
 use LWP::Simple;
+use Image::Imlib2;
+use File::Temp qw/ tempfile /;
+
 
 has 'psgi_env'  => (is => 'ro', isa => 'HashRef');
 has 'acoustics' => (is => 'ro', isa => 'Acoustics');
@@ -1135,6 +1138,7 @@ sub art
 {
 	my $self = shift;
 	my $song_id = $self->cgi->param("song_id") || 0;
+	my $size    = $self->cgi->param("size") || 500;
 
 	my @results = $self->acoustics->query('select_songs', {song_id => $song_id, online => 1});
 
@@ -1144,43 +1148,33 @@ sub art
 	my $albumart  = $directory . "/" . "acoustics-art.png";
 	my $art_type  = "image/png";
 
-	# XXX: There is a much better way to do this, I know, but I don't know enough Perl to actually do it.
-
-	#my @locations = (
-	#	{name => "acoustics-art.png", type => "image/png" },
-	#	{name => "acoustics-art.jpg", type => "image/jpg" },
-	#	{name => "cover.png", type => "image/png"},
-	#	{name => "cover.jpg", type => "image/jpg"},
-	#	{name => "Folder.png", type => "image/png"},
-	#	{name => "Folder.jpg", type => "image/jpg"},
-	#);
-
 	unless (-e $albumart) {
 		$albumart = $directory . "/" . "acoustics-art.jpg";
-		$art_type = "image/jpg";
 	}
 	unless (-e $albumart) {
 		$albumart = $directory . "/" . "cover.png";
-		$art_type = "image/png";
 	}
 	unless (-e $albumart) {
 		$albumart = $directory . "/" . "cover.jpg";
-		$art_type = "image/png";
 	}
 	unless (-e $albumart) {
 		$albumart = $directory . "/" . "Folder.png";
-		$art_type = "image/png";
 	}
 	unless (-e $albumart) {
 		$albumart = $directory . "/" . "Folder.jpg";
-		$art_type = "image/png";
 	}
 	unless (-e $albumart) {
 		$albumart = "www-data/icons/cd_case.png";
-		$art_type = "image/png";
 	}
 
-	open ART, "<", $albumart or return [], {error => "Failed to open art file."};
+	my $image_in  = Image::Imlib2->load($albumart);
+	my $image_out = $image_in->create_scaled_image($size,0);
+	my ($fh, $filename) = tempfile(SUFFIX => '.png');
+	close($fh);
+	$image_out->image_set_format("png");
+	$image_out->save($filename);
+
+	open ART, "<", $filename or return [], {error => "Failed to open art file."};
 	binmode ART;
 	my ($buf, $data, $n);
 	while (($n = read ART, $data, 655360) != 0) {
