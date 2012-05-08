@@ -47,7 +47,7 @@
 								player.append("<a href=\"javascript:selectAndGo('" + json.player_names[i] + "');\"><span>" + json.player_names[i] + "</span></a>");
 								if (json.players[json.player_names[i]]) {
 									$("a", player).append("<br /><img height='70' width='70' />");
-									$("a img", player).attr("src", newArtUrl(json.players[json.player_names[i]].song.song_id));
+									$("a img", player).attr("src", newArtUrl(json.players[json.player_names[i]].song.song_id,70));
 									$("a", player).append("<br />" + json.players[json.player_names[i]].song.title);
 									$("a", player).append("<br />" + json.players[json.player_names[i]].song.artist);
 								} else {
