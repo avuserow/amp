@@ -1182,6 +1182,8 @@ sub art
 	}
 	close(ART);
 
+	unlink($filename);
+
 	return [-type => $art_type], $buf;
 }
 
